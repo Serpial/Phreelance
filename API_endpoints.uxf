@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>8</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>88</x>
+      <y>8</y>
+      <w>104</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>/api/auctions/...</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>208</x>
+      <y>8</y>
+      <w>136</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>GET .../
+--
+Retreive list of
+all auctions</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>352</x>
+      <y>120</y>
+      <w>136</w>
+      <h>64</h>
+    </coordinates>
+    <panel_attributes>GET .../watch/:userid
+--
+Retreive list of
+all auctions watched/
+bid on by a user</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>208</x>
+      <y>120</y>
+      <w>136</w>
+      <h>64</h>
+    </coordinates>
+    <panel_attributes>GET .../creator/:userid
+--
+Retreive list of
+all auctions created
+by a user</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>208</x>
+      <y>64</y>
+      <w>136</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>GET .../:auctionid
+--
+Get auction by ID</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>352</x>
+      <y>64</y>
+      <w>136</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>PATCH .../:auctionid
+--
+Update Auction with
+ID</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>496</x>
+      <y>64</y>
+      <w>136</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>DELETE .../:auctionid
+--
+Delete Auction with
+ID</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>352</x>
+      <y>8</y>
+      <w>136</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>POST .../:userid
+--
+Create new Auction by
+user</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>88</x>
+      <y>200</y>
+      <w>104</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>/api/bids/...</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>208</x>
+      <y>312</y>
+      <w>136</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>GET .../auction/:auctionid
+--
+Retreive list of all bids
+by auction by auction ID.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>352</x>
+      <y>200</y>
+      <w>136</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>POST .../:userid
+--
+Create bid for user.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>208</x>
+      <y>200</y>
+      <w>136</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>GET .../:userid
+--
+Retreive list of all bids
+by user.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>208</x>
+      <y>256</y>
+      <w>136</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>PATCH .../:userid
+--
+Update bid for user.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>352</x>
+      <y>256</y>
+      <w>136</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>DELETE .../:userid
+--
+DELETE bid for user.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>88</x>
+      <y>376</y>
+      <w>104</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>/api/users/...</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>208</x>
+      <y>376</y>
+      <w>136</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>POST .../signup
+--
+sign up user.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>208</x>
+      <y>488</y>
+      <w>136</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>DELETE .../:userid
+--
+Delete user by id.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>208</x>
+      <y>432</y>
+      <w>136</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>PATCH .../:userid
+--
+Update user details by id.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>352</x>
+      <y>376</y>
+      <w>136</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>POST .../login
+--
+login user.</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
