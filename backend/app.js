@@ -1,5 +1,8 @@
+require("dotenv").config();
+
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 
 const ErrorWithCode = require("./models/error-with-code");
 const auctionsRoutes = require("./routes/auctions-routes");
@@ -27,4 +30,10 @@ app.use((error, req, res, next) => {
     .json({ message: error.message || "Unknown error." });
 });
 
-app.listen(5000);
+mongoose
+  .connect(
+    `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}` +
+      "@testcluster.shi6n.mongodb.net/places?retryWrites=true&w=majority"
+  )
+  .then(() => app.listen(5000))
+  .catch((err) => console.log(err));
