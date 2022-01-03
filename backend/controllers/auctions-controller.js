@@ -1,3 +1,5 @@
+const { validationResult } = require("express-validator");
+
 const ErrorWithCode = require("../models/error-with-code");
 
 let DUMMY_AUCTIONS = [
@@ -34,6 +36,13 @@ const getAuctionById = (req, res, next) => {
 };
 
 const createAuction = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new ErrorWithCode("Inputs are invalid. Please check before trying again.", 422)
+    );
+  }
+
   const userId = req.params.userID;
   const {
     title,
@@ -66,6 +75,13 @@ const createAuction = (req, res, next) => {
 };
 
 const updateAuction = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new ErrorWithCode("Inputs are invalid. Please check before trying again.", 422)
+    );
+  }
+
   const auctionId = req.params.auctionID;
   const index = DUMMY_AUCTIONS.findIndex((a) => a.auctionId === auctionId);
 

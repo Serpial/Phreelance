@@ -30,8 +30,14 @@ const getBidsByUser = (req, res, next) => {
 };
 
 const createBidForUser = (req, res, next) => {
-  const userId = req.params.userID;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new ErrorWithCode("Inputs are invalid. Please check before trying again.", 422)
+    );
+  }
 
+  const userId = req.params.userID;
   const { auctionId, value, description, timeEstimation } = req.body;
 
   const newBid = {
@@ -73,6 +79,13 @@ const getBid = (req, res, next) => {
 };
 
 const updateBid = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new ErrorWithCode("Inputs are invalid. Please check before trying again.", 422)
+    );
+  }
+  
   const bidId = req.params.bidID;
   const index = DUMMY_BIDS.findIndex((b) => b.bidId === bidId);
 
