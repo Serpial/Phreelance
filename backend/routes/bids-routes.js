@@ -10,7 +10,7 @@ router.get("/auction/:auctionID", bidsController.getBidsByAuction);
 router.get("/:bidID", bidsController.getBid);
 
 router.post(
-  "/create/:userID/:auctionID",
+  "/create/:auctionID/:userID",
   [
     check("value").isNumeric(),
     check("description").isLength({ min: 10 }),
