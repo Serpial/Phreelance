@@ -33,7 +33,7 @@ app.use((error, req, res, next) => {
 mongoose
   .connect(
     `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}` +
-      "@testcluster.shi6n.mongodb.net/places?retryWrites=true&w=majority"
+      "@phreelance.zcglt.mongodb.net/auctions?retryWrites=true&w=majority"
   )
   .then(() => app.listen(5000))
   .catch((err) => console.log(err));

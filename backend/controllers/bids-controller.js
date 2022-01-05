@@ -1,125 +1,203 @@
+const mongoose = require("mongoose");
+const { validationResult } = require("express-validator");
+
 const ErrorWithCode = require("../models/error-with-code");
+const Bid = require("../models/data/bid");
+const User = require("../models/data/user");
+const Auction = require("../models/data/auction");
 
-const DUMMY_BIDS = [
-  {
-    bidId: "b1",
-    auctionId: "a1",
-    value: 0.01,
-    description: "I would like to do the work in this direction",
-    timeEstimation: 10,
-    creator: "u2",
-    created: Date.now(),
-    lastChange: Date.now(),
-  },
-];
-
-const getBidsByUser = (req, res, next) => {
-  const userId = req.params.userID;
-  const bids = DUMMY_BIDS.filter((b) => b.creator === userId);
-
-  if (bids.length < 1) {
+const createBidForUser = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
     return next(
       new ErrorWithCode(
-        "Could not find any bids active created by this user",
+        "Inputs are invalid. Please check before trying again.",
         422
       )
     );
   }
 
-  res.json(bids);
-};
-
-const createBidForUser = (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return next(
-      new ErrorWithCode("Inputs are invalid. Please check before trying again.", 422)
-    );
-  }
-
   const userId = req.params.userID;
-  const { auctionId, value, description, timeEstimation } = req.body;
+  const auctionId = req.params.auctionID;
+  const { value, description, timeEstimation } = req.body;
 
-  const newBid = {
-    bidId: "b2",
-    auctionId,
+  const newBid = new Bid({
+    auction: auctionId,
     value,
     description,
     timeEstimation,
     creator: userId,
     created: Date.now(),
     lastChange: Date.now(),
-  };
+  });
 
-  DUMMY_BIDS.push(newBid);
-  res.json(newBid);
+  let user, auction;
+  try {
+    user = await User.findById(userId);
+    auction = await Auction.findById(auctionId);
+  } catch (error) {
+    return next(
+      new ErrorWithCode("Could not create bid. Please try again.", 404)
+    );
+  }
+
+  if (!user || !auction) {
+    return next(
+      new ErrorWithCode("Could not create bid. Please try again.", 422)
+    );
+  }
+
+  try {
+    const mongooseSession = await mongoose.startSession();
+    mongooseSession.startTransaction();
+
+    await newBid.save({ session: mongooseSession });
+
+    user.bids.push(newBid);
+    await user.save({ session: mongooseSession });
+
+    auction.bids.push(newBid);
+    await auction.save({ session: mongooseSession });
+
+    await mongooseSession.commitTransaction();
+  } catch (err) {
+    console.log(err);
+    return next(
+      new ErrorWithCode("Could not create bid. Please try again.", 500)
+    );
+  }
+  res.status(201).json({ bid: newBid.toObject({ getters: true }) });
 };
 
-const getBidsByAuction = (req, res, next) => {
-  const auctionId = req.params.auctionID;
+const getBidsByUser = async (req, res, next) => {
+  const userId = req.params.userID;
 
-  const bids = DUMMY_BIDS.filter((b) => b.auctionId === auctionId);
+  let bids;
+  try {
+    bids = await Bid.find({ creator: userId });
+  } catch (err) {}
 
-  if (bids.length <= 0) {
+  if (!bids | (bids.length <= 0)) {
     return next(new ErrorWithCode("Could not find bids for auction.", 422));
   }
 
-  res.json(bids);
+  res.json({ bids: bids.toObject({ getters: true }) });
 };
 
-const getBid = (req, res, next) => {
+const getBidsByAuction = async (req, res, next) => {
+  const auctionId = req.params.auctionID;
+
+  let bids;
+  try {
+    bids = await Bid.find({ auction: auctionId });
+  } catch (err) {}
+
+  if (!bids | (bids.length <= 0)) {
+    return next(new ErrorWithCode("Could not find bids for auction.", 422));
+  }
+
+  res.json({ bids: bids.toObject({ getters: true }) });
+};
+
+const getBid = async (req, res, next) => {
   const bidId = req.params.bidID;
-  const bid = DUMMY_BIDS.find((b) => b.bidId === bidId);
+
+  let bid;
+  try {
+    bid = await Bid.findById(bidId);
+  } catch (error) {
+    return next(new ErrorWithCode("Could not retrieve bid. Try again later."));
+  }
 
   if (!bid) {
     return next(new ErrorWithCode("Could not find a bid with ID.", 422));
   }
 
-  res.json(bid);
+  res.json({ bid: bid.toObject({ getters: true }) });
 };
 
-const updateBid = (req, res, next) => {
+const updateBid = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(
-      new ErrorWithCode("Inputs are invalid. Please check before trying again.", 422)
+      new ErrorWithCode(
+        "Inputs are invalid. Please check before trying again.",
+        422
+      )
     );
   }
-  
-  const bidId = req.params.bidID;
-  const index = DUMMY_BIDS.findIndex((b) => b.bidId === bidId);
 
-  if (index < 0) {
+  const bidId = req.params.bidID;
+  const { value, description, timeEstimation } = req.body;
+
+  let bid;
+  try {
+    bid = await Bid.findById(bidId);
+  } catch (err) {
+    return next(
+      new ErrorWithCode("Could not retreive bid. Please try again.", 500)
+    );
+  }
+
+  if (!bid) {
     return next(new ErrorWithCode("Could not find a bid with ID.", 422));
   }
 
-  const { value, description, timeEstimation } = req.body;
-  const updatedBid = {
-    ...DUMMY_BIDS[index],
-    value,
-    description,
-    timeEstimation,
-    lastChange: Date.now(),
-  };
+  bid.value = value;
+  bid.description = description;
+  bid.timeEstimation = timeEstimation;
+  bid.lastChange = Date.now();
 
-  DUMMY_BIDS[index] = updatedBid;
-  res.json(DUMMY_BIDS[index]);
+  try {
+    await bid.save();
+  } catch (err) {
+    return next(
+      new ErrorWithCode("Could not update auction. Please try again.", 500)
+    );
+  }
+
+  res.json({ bid: bid.toObject({ getters: true }) });
 };
 
-const deleteBid = (req, res, next) => {
+const deleteBid = async (req, res, next) => {
   const bidId = req.params.bidID;
 
-  const index = DUMMY_BIDS.findIndex((b) => b.bidId === bidId);
-  if (index < 0) {
+  let bid;
+  try {
+    bid = await Bid.findById(bidId)
+      .populate("creator")
+      .populate("auction")
+      .exec();
+  } catch (err) {
+    return next(new ErrorWithCode("Could not delete bid.", 500));
+  }
+
+  if (!bid) {
     return next(new ErrorWithCode("Could not find bid to remove!", 422));
   }
 
-  DUMMY_BIDS.splice(index, 1);
+  try {
+    const mongooseSession = await mongoose.startSession();
+    mongooseSession.startTransaction();
+
+    await bid.deleteOne({ session: mongooseSession });
+
+    bid.creator.bids.pull(bid);
+    await bid.creator.save({ session: mongooseSession });
+
+    bid.auction.bids.pull(bid);
+    await bid.auction.save({ session: mongooseSession });
+
+    await mongooseSession.commitTransaction();
+  } catch (err) {
+    console.log(err);
+    return next(new ErrorWithCode("Could not delete bid.", 500));
+  }
   res.json({ message: "Bid removed" });
 };
 
-exports.getBidsByUser = getBidsByUser;
 exports.createBidForUser = createBidForUser;
+exports.getBidsByUser = getBidsByUser;
 exports.getBidsByAuction = getBidsByAuction;
 exports.getBid = getBid;
 exports.updateBid = updateBid;
