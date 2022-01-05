@@ -3,6 +3,18 @@ const { validationResult } = require("express-validator");
 const User = require("../models/data/user");
 const ErrorWithCode = require("../models/error-with-code");
 
+const getUsers = async (req, res, next) => {
+  let users;
+  try {
+    users = await User.find();
+  } catch (err) {
+    return next(
+      new ErrorWithCode("Could not generate user list. Please try again.")
+    );
+  }
+  res.json({ users: users.map((u) => u.toObject({ getters: true })) });
+};
+
 const createUser = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -66,5 +78,6 @@ const loginUser = async (req, res, next) => {
   res.json({ message: "Login successful!" });
 };
 
+exports.getUsers = getUsers;
 exports.createUser = createUser;
 exports.loginUser = loginUser;

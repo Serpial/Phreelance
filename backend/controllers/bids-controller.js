@@ -61,6 +61,7 @@ const createBidForUser = async (req, res, next) => {
 
     await mongooseSession.commitTransaction();
   } catch (err) {
+    console.log(err)
     return next(
       new ErrorWithCode("Could not complete creation transaction. Please try again.", 500)
     );
