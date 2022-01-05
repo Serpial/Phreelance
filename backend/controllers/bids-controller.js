@@ -22,11 +22,11 @@ const createBidForUser = async (req, res, next) => {
   const { value, description, timeEstimation } = req.body;
 
   const newBid = new Bid({
-    auction: auctionId,
     value,
     description,
     timeEstimation,
     creator: userId,
+    auction: auctionId,
     created: Date.now(),
     lastChange: Date.now(),
   });
@@ -43,7 +43,7 @@ const createBidForUser = async (req, res, next) => {
 
   if (!user || !auction) {
     return next(
-      new ErrorWithCode("Could not create bid. Please try again.", 422)
+      new ErrorWithCode("Could not retreive user or auction. Please try again.", 422)
     );
   }
 
@@ -61,9 +61,8 @@ const createBidForUser = async (req, res, next) => {
 
     await mongooseSession.commitTransaction();
   } catch (err) {
-    console.log(err);
     return next(
-      new ErrorWithCode("Could not create bid. Please try again.", 500)
+      new ErrorWithCode("Could not complete creation transaction. Please try again.", 500)
     );
   }
   res.status(201).json({ bid: newBid.toObject({ getters: true }) });
