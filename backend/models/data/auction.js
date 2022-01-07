@@ -14,7 +14,6 @@ const auctionSchema = new Schema({
   created: { type: Date, required: true },
   starting: { type: Date, required: true },
   finishing: { type: Date, required: true },
-  bids: [{ type: mongoose.Types.ObjectId, required: true, ref: "Bid" }],
 });
 
 auctionSchema.plugin(uniqueValidator);

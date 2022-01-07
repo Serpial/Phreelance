@@ -43,27 +43,22 @@ const createBidForUser = async (req, res, next) => {
 
   if (!user || !auction) {
     return next(
-      new ErrorWithCode("Could not retreive user or auction. Please try again.", 422)
+      new ErrorWithCode(
+        "Could not retreive user or auction. Please try again.",
+        422
+      )
     );
   }
 
   try {
-    const mongooseSession = await mongoose.startSession();
-    mongooseSession.startTransaction();
-
-    await newBid.save({ session: mongooseSession });
-
-    user.bids.push(newBid);
-    await user.save({ session: mongooseSession });
-
-    auction.bids.push(newBid);
-    await auction.save({ session: mongooseSession });
-
-    await mongooseSession.commitTransaction();
+    await newBid.save();
   } catch (err) {
-    console.log(err)
+    console.log(err);
     return next(
-      new ErrorWithCode("Could not complete creation transaction. Please try again.", 500)
+      new ErrorWithCode(
+        "Could not complete creation transaction. Please try again.",
+        500
+      )
     );
   }
   res.status(201).json({ bid: newBid.toObject({ getters: true }) });
@@ -164,10 +159,7 @@ const deleteBid = async (req, res, next) => {
 
   let bid;
   try {
-    bid = await Bid.findById(bidId)
-      .populate("creator")
-      .populate("auction")
-      .exec();
+    bid = await Bid.findById(bidId);
   } catch (err) {
     return next(new ErrorWithCode("Could not delete bid.", 500));
   }
@@ -177,18 +169,7 @@ const deleteBid = async (req, res, next) => {
   }
 
   try {
-    const mongooseSession = await mongoose.startSession();
-    mongooseSession.startTransaction();
-
-    await bid.deleteOne({ session: mongooseSession });
-
-    bid.creator.bids.pull(bid);
-    await bid.creator.save({ session: mongooseSession });
-
-    bid.auction.bids.pull(bid);
-    await bid.auction.save({ session: mongooseSession });
-
-    await mongooseSession.commitTransaction();
+    await bid.deleteOne();
   } catch (err) {
     console.log(err);
     return next(new ErrorWithCode("Could not delete bid.", 500));

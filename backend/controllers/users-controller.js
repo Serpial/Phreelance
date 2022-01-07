@@ -42,8 +42,6 @@ const createUser = async (req, res, next) => {
     name,
     email,
     password,
-    bids: [],
-    auctions: [],
   });
 
   try {

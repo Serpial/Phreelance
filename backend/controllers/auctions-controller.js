@@ -108,7 +108,6 @@ const createAuction = async (req, res, next) => {
     created: creationTime,
     starting: startTime,
     finishing: finishTime,
-    bids: [],
   });
 
   let user;
@@ -125,16 +124,9 @@ const createAuction = async (req, res, next) => {
   }
 
   try {
-    const mongooseSession = await mongoose.startSession();
-    mongooseSession.startTransaction();
-
-    await newAuction.save({ session: mongooseSession });
-
-    user.auctions.push(newAuction);
-    await user.save({ session: mongooseSession });
-
-    await mongooseSession.commitTransaction();
+    await newAuction.save();
   } catch (err) {
+    console.log(err);
     return next(
       new ErrorWithCode("Could not create auction. Please try again.", 500)
     );
@@ -193,10 +185,7 @@ const deleteAuction = async (req, res, next) => {
 
   let auction;
   try {
-    auction = await Auction.findById(auctionId)
-      .populate("creator")
-      .populate("bids")
-      .exec();
+    auction = await Auction.findById(auctionId);
   } catch (err) {
     console.log(err);
     return next(
@@ -213,9 +202,6 @@ const deleteAuction = async (req, res, next) => {
     mongooseSession.startTransaction();
 
     await auction.deleteOne({ session: mongooseSession });
-
-    auction.creator.auctions.pull(auction);
-    await auction.creator.save({ session: mongooseSession });
 
     await Bid.deleteMany({ auction: auction }, { session: mongooseSession });
 
