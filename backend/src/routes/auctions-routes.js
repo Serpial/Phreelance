@@ -2,7 +2,7 @@ const express = require("express");
 const { check, oneOf } = require("express-validator");
 
 const auctionsController = require("../controllers/auctions-controller");
-const dateTimeValidator = require("../util/date-time-validator");
+const dateTimeValidator = require("./util/date-time-validator");
 
 const router = express.Router();
 
