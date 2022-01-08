@@ -4,6 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
+const config = require("config");
 const ErrorWithCode = require("./models/error-with-code");
 const auctionsRoutes = require("./routes/auctions-routes");
 const bidsRoutes = require("./routes/bids-routes");
@@ -30,10 +31,13 @@ app.use((error, req, res, next) => {
     .json({ message: error.message || "Unknown error." });
 });
 
+const connectionString =
+  `mongodb+srv://${process.env.MONGODB_USER}` +
+  `:${process.env.MONGODB_PASS}` +
+  `@${config.DBHost}`;
 mongoose
-  .connect(
-    `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}` +
-      "@phreelance.zcglt.mongodb.net/auctions?retryWrites=true&w=majority"
-  )
+  .connect(connectionString)
   .then(() => app.listen(5000))
   .catch((err) => console.log(err));
+
+module.exports = app;

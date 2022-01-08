@@ -6,7 +6,7 @@ const Auction = require("../models/data/auction");
 const User = require("../models/data/user");
 const Bid = require("../models/data/bid");
 
-const getAuctions = async (req, res, next) => {
+const getAuctions = async (_req, res, next) => {
   let publicAuctions;
   try {
     publicAuctions = await Auction.find({ isPublic: true });
@@ -16,7 +16,7 @@ const getAuctions = async (req, res, next) => {
 
   if (!publicAuctions || publicAuctions.length == 0) {
     return next(
-      new ErrorWithCode("There are no public auctions at this time", 422)
+      new ErrorWithCode("There are no public auctions at this time", 200)
     );
   }
 
@@ -87,14 +87,11 @@ const createAuction = async (req, res, next) => {
   } = req.body;
 
   const creationTime = Date.now();
-  const startTime = starting ? Date.parse(starting) : creationTime;
+  const startTime = starting ? Date.parse(starting) + 60000 : creationTime;
   const finishTime = Date.parse(finishing);
 
-  // 86400 seconds in a 24 hours
-  if (finishTime < startTime + 86400 || startTime < creationTime) {
-    return next(
-      new ErrorWithCode("Time constraints not formatted correctly.", 422)
-    );
+  if (!dateIsWithinOfRange(creationTime, startTime, finishTime)) {
+    return next(new ErrorWithCode("Time contraint is not within range.", 422));
   }
 
   const newAuction = new Auction({
@@ -126,7 +123,6 @@ const createAuction = async (req, res, next) => {
   try {
     await newAuction.save();
   } catch (err) {
-    console.log(err);
     return next(
       new ErrorWithCode("Could not create auction. Please try again.", 500)
     );
@@ -214,6 +210,24 @@ const deleteAuction = async (req, res, next) => {
   }
 
   res.json({ message: "Auction deleted!" });
+};
+
+const dateIsWithinOfRange = (creation, start, finish) => {
+  const day = 86400000;
+  const threeMonths = 8035200000;
+  const year = 31622400000;
+
+  const startIsWithinThreeMonths = start < creation + threeMonths;
+  const startIsNotBeforeCreation = start > creation;
+  const auctionLengthIsAtLeastADay = start + day < finish;
+  const finishTimeIsWithinAYear = finish < start + year;
+
+  return (
+    startIsWithinThreeMonths &&
+    startIsNotBeforeCreation &&
+    auctionLengthIsAtLeastADay &&
+    finishTimeIsWithinAYear
+  );
 };
 
 exports.getAuctions = getAuctions;
