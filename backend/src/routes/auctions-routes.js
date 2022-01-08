@@ -2,7 +2,7 @@ const express = require("express");
 const { check, oneOf } = require("express-validator");
 
 const auctionsController = require("../controllers/auctions-controller");
-const dateTimeValidator = require("../util/date-time-validator");
+const dateTimeValidator = require("./util/date-time-validator");
 
 const router = express.Router();
 
@@ -15,12 +15,15 @@ router.post(
   [
     check("title").notEmpty(),
     check("description").isLength({ min: 10 }),
+    check("finishing").custom((input, meta) => dateTimeValidator(input)),
     oneOf([
       check("auctionType").equals("eng"),
       check("auctionType").equals("dut"),
     ]),
-    check("starting").custom((input, meta) => dateTimeValidator(input)),
-    check("finishing").custom((input, meta) => dateTimeValidator(input)),
+    oneOf([
+      check("starting").custom((input, meta) => dateTimeValidator(input)),
+      check("starting").isEmpty(),
+    ]),
   ],
   auctionsController.createAuction
 );
@@ -30,12 +33,15 @@ router.patch(
   [
     check("title").notEmpty(),
     check("description").isLength({ min: 10 }),
+    check("finishing").custom((input, meta) => dateTimeValidator(input)),
     oneOf([
       check("auctionType").equals("eng"),
       check("auctionType").equals("dut"),
     ]),
-    check("starting").custom((input, meta) => dateTimeValidator(input)),
-    check("finishing").custom((input, meta) => dateTimeValidator(input)),
+    oneOf([
+      check("starting").custom((input, meta) => dateTimeValidator(input)),
+      check("starting").isEmpty(),
+    ]),
   ],
   auctionsController.updateAuction
 );
