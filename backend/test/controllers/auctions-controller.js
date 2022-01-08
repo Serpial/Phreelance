@@ -12,6 +12,37 @@ chai.use(chaiHttp);
 const URL_PREFIX = "/api/auctions";
 const DATE_RANGE_ERROR = "Time contraint is not within range.";
 
+const sampleAuction = {
+  title: "New Auction",
+  description: "sample description",
+  auctionType: "eng",
+  isPublic: true,
+  starting: new Date(Date.now() + 1000).toUTCString(),
+  finishing: new Date(Date.now() + 100000000).toUTCString(),
+};
+
+const sampleUser = {
+  name: "test",
+  email: "test@test.com",
+  password: "testing",
+};
+
+const addArbitraryAuction = async (creator) => {
+  const newAuction = new Auction({
+    ...sampleAuction,
+    creator: creator || new mongoose.Types.ObjectId(),
+    created: new Date(Date.now()).toUTCString(),
+  });
+
+  try {
+    await newAuction.save();
+  } catch (err) {
+    throw err;
+  }
+
+  return newAuction;
+};
+
 describe("Auctions", () => {
   let userId;
 
@@ -242,34 +273,3 @@ describe("Auctions", () => {
     });
   });
 });
-
-const addArbitraryAuction = async (creator) => {
-  const newAuction = new Auction({
-    ...sampleAuction,
-    creator: creator || new mongoose.Types.ObjectId(),
-    created: new Date(Date.now()).toUTCString(),
-  });
-
-  try {
-    await newAuction.save();
-  } catch (err) {
-    throw err;
-  }
-
-  return newAuction;
-};
-
-const sampleAuction = {
-  title: "New Auction",
-  description: "sample description",
-  auctionType: "eng",
-  isPublic: true,
-  starting: new Date(Date.now() + 1000).toUTCString(),
-  finishing: new Date(Date.now() + 100000000).toUTCString(),
-};
-
-const sampleUser = {
-  name: "test",
-  email: "test@test.com",
-  password: "testing",
-};
