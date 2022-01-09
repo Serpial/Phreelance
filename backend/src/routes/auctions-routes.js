@@ -15,7 +15,6 @@ router.post(
   [
     check("title").notEmpty(),
     check("description").isLength({ min: 10 }),
-    check("finishing").custom((input, meta) => dateTimeValidator(input)),
     oneOf([
       check("auctionType").equals("eng"),
       check("auctionType").equals("dut"),
@@ -24,6 +23,7 @@ router.post(
       check("starting").custom((input, meta) => dateTimeValidator(input)),
       check("starting").isEmpty(),
     ]),
+    check("finishing").custom((input, meta) => dateTimeValidator(input)),
   ],
   auctionsController.createAuction
 );

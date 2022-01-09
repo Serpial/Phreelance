@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <diagram program="umlet" version="14.3.0">
-  <zoom_level>8</zoom_level>
+  <zoom_level>9</zoom_level>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>80</x>
-      <y>80</y>
-      <w>104</w>
-      <h>24</h>
+      <x>18</x>
+      <y>45</y>
+      <w>117</w>
+      <h>27</h>
     </coordinates>
     <panel_attributes>/api/auctions/...</panel_attributes>
     <additional_attributes/>
@@ -15,10 +15,10 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>200</x>
-      <y>80</y>
-      <w>136</w>
-      <h>48</h>
+      <x>153</x>
+      <y>45</y>
+      <w>153</w>
+      <h>54</h>
     </coordinates>
     <panel_attributes>GET .../
 --
@@ -29,10 +29,10 @@ all auctions</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>200</x>
-      <y>192</y>
-      <w>136</w>
-      <h>64</h>
+      <x>153</x>
+      <y>171</y>
+      <w>153</w>
+      <h>72</h>
     </coordinates>
     <panel_attributes>GET .../creator/:userid
 --
@@ -44,10 +44,10 @@ by a user</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>200</x>
-      <y>136</y>
-      <w>136</w>
-      <h>48</h>
+      <x>153</x>
+      <y>108</y>
+      <w>153</w>
+      <h>54</h>
     </coordinates>
     <panel_attributes>GET .../:auctionid
 --
@@ -57,10 +57,10 @@ Get auction by ID</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>344</x>
-      <y>136</y>
-      <w>136</w>
-      <h>48</h>
+      <x>315</x>
+      <y>108</y>
+      <w>153</w>
+      <h>54</h>
     </coordinates>
     <panel_attributes>PATCH .../:auctionid
 --
@@ -71,10 +71,10 @@ ID</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>488</x>
-      <y>136</y>
-      <w>136</w>
-      <h>48</h>
+      <x>477</x>
+      <y>108</y>
+      <w>153</w>
+      <h>54</h>
     </coordinates>
     <panel_attributes>DELETE .../:auctionid
 --
@@ -85,10 +85,10 @@ ID</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>344</x>
-      <y>80</y>
-      <w>136</w>
-      <h>48</h>
+      <x>315</x>
+      <y>45</y>
+      <w>153</w>
+      <h>54</h>
     </coordinates>
     <panel_attributes>POST .../:userid
 --
@@ -99,10 +99,10 @@ user</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>80</x>
-      <y>272</y>
-      <w>104</w>
-      <h>24</h>
+      <x>18</x>
+      <y>261</y>
+      <w>117</w>
+      <h>27</h>
     </coordinates>
     <panel_attributes>/api/bids/...</panel_attributes>
     <additional_attributes/>
@@ -110,10 +110,10 @@ user</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>344</x>
-      <y>272</y>
-      <w>136</w>
-      <h>48</h>
+      <x>315</x>
+      <y>261</y>
+      <w>153</w>
+      <h>54</h>
     </coordinates>
     <panel_attributes>POST .../create/:userid
 --
@@ -123,10 +123,10 @@ Create bid for user.</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>200</x>
-      <y>272</y>
-      <w>136</w>
-      <h>48</h>
+      <x>153</x>
+      <y>261</y>
+      <w>153</w>
+      <h>54</h>
     </coordinates>
     <panel_attributes>GET .../user/:userid
 --
@@ -137,10 +137,10 @@ by user.</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>344</x>
-      <y>328</y>
-      <w>136</w>
-      <h>48</h>
+      <x>315</x>
+      <y>324</y>
+      <w>153</w>
+      <h>54</h>
     </coordinates>
     <panel_attributes>PATCH .../:bidid
 --
@@ -150,10 +150,10 @@ Update bid for user.</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>488</x>
-      <y>328</y>
-      <w>136</w>
-      <h>48</h>
+      <x>477</x>
+      <y>324</y>
+      <w>153</w>
+      <h>54</h>
     </coordinates>
     <panel_attributes>DELETE .../:bidid
 --
@@ -163,10 +163,10 @@ DELETE bid for user.</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>80</x>
-      <y>392</y>
-      <w>104</w>
-      <h>24</h>
+      <x>18</x>
+      <y>396</y>
+      <w>117</w>
+      <h>27</h>
     </coordinates>
     <panel_attributes>/api/users/...</panel_attributes>
     <additional_attributes/>
@@ -174,10 +174,10 @@ DELETE bid for user.</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>200</x>
-      <y>392</y>
-      <w>136</w>
-      <h>48</h>
+      <x>153</x>
+      <y>396</y>
+      <w>153</w>
+      <h>54</h>
     </coordinates>
     <panel_attributes>POST .../signup
 --
@@ -187,10 +187,10 @@ sign up user.</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>200</x>
-      <y>504</y>
-      <w>136</w>
-      <h>48</h>
+      <x>153</x>
+      <y>522</y>
+      <w>153</w>
+      <h>54</h>
     </coordinates>
     <panel_attributes>DELETE .../:userid
 --
@@ -200,10 +200,10 @@ Delete user by id.</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>200</x>
-      <y>448</y>
-      <w>136</w>
-      <h>48</h>
+      <x>153</x>
+      <y>459</y>
+      <w>153</w>
+      <h>54</h>
     </coordinates>
     <panel_attributes>PATCH .../:userid
 --
@@ -213,10 +213,10 @@ Update user details by id.</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>344</x>
-      <y>392</y>
-      <w>136</w>
-      <h>48</h>
+      <x>315</x>
+      <y>396</y>
+      <w>153</w>
+      <h>54</h>
     </coordinates>
     <panel_attributes>POST .../login
 --
@@ -226,10 +226,10 @@ login user.</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>488</x>
-      <y>272</y>
-      <w>136</w>
-      <h>48</h>
+      <x>477</x>
+      <y>261</y>
+      <w>153</w>
+      <h>54</h>
     </coordinates>
     <panel_attributes>GET .../auction/:auctionid
 --
@@ -240,10 +240,10 @@ by auction by auction ID.</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>200</x>
-      <y>328</y>
-      <w>136</w>
-      <h>48</h>
+      <x>153</x>
+      <y>324</y>
+      <w>153</w>
+      <h>54</h>
     </coordinates>
     <panel_attributes>GET .../:bidid
 --
