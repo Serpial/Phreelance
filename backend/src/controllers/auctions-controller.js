@@ -159,6 +159,12 @@ const updateAuction = async (req, res, next) => {
     return next(new ErrorWithCode("Could not find auction with ID.", 422));
   }
 
+  const startTime = new Date(starting);
+  const finishTime = new Date(finishing);
+  if (!dateIsWithinOfRange(Date.now(), startTime, finishTime)) {
+    return next(new ErrorWithCode("Time contraint is not within range.", 422));
+  }
+
   auction.title = title;
   auction.description = description;
   auction.attachments = attachments;
@@ -183,7 +189,6 @@ const deleteAuction = async (req, res, next) => {
   try {
     auction = await Auction.findById(auctionId);
   } catch (err) {
-    console.log(err);
     return next(
       new ErrorWithCode("Could not delete auction. Please try again.", 500)
     );
@@ -203,7 +208,6 @@ const deleteAuction = async (req, res, next) => {
 
     await mongooseSession.commitTransaction();
   } catch (err) {
-    console.log(err);
     return next(
       new ErrorWithCode("Could not delete auction. Please try again later", 500)
     );
@@ -218,7 +222,7 @@ const dateIsWithinOfRange = (creation, start, finish) => {
   const year = 31622400000;
 
   const startIsWithinThreeMonths = start < creation + threeMonths;
-  const startIsNotBeforeCreation = start > creation;
+  const startIsNotBeforeCreation = start >= creation;
   const auctionLengthIsAtLeastADay = start + day < finish;
   const finishTimeIsWithinAYear = finish < start + year;
 

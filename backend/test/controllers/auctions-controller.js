@@ -12,7 +12,7 @@ chai.use(chaiHttp);
 const URL_PREFIX = "/api/auctions";
 const DATE_RANGE_ERROR = "Time contraint is not within range.";
 
-const sampleAuction = {
+const SAMPLE_AUCTION = {
   title: "New Auction",
   description: "sample description",
   auctionType: "eng",
@@ -29,7 +29,7 @@ const sampleUser = {
 
 const addArbitraryAuction = async (creator) => {
   const newAuction = new Auction({
-    ...sampleAuction,
+    ...SAMPLE_AUCTION,
     creator: creator || new mongoose.Types.ObjectId(),
     created: new Date(Date.now()).toUTCString(),
   });
@@ -48,9 +48,9 @@ describe("Auctions", () => {
 
   beforeEach(async () => {
     try {
-      userId = (await new User(sampleUser).save())._id.toString();
+      userId = (await new User(sampleUser).save()).id.toString();
     } catch (err) {
-      console.log("afterEach failed : " + err);
+      console.log("beforeEach failed : " + err);
     }
   });
 
@@ -62,7 +62,7 @@ describe("Auctions", () => {
         await Auction.deleteMany({});
       }
     } catch (err) {
-      console.log("beforeEach failed : " + err);
+      console.log("afterEach failed : " + err);
     }
   });
 
@@ -106,13 +106,13 @@ describe("Auctions", () => {
     it("given arbitrary auctions, get the auction", (done) => {
       chai
         .request(App)
-        .get(URL_PREFIX + "/" + auction._id)
+        .get(URL_PREFIX + "/" + auction.id)
         .end((_err, res) => {
           res.should.have.status(200);
           res.body.should.not.have.property("message");
           res.body.should.have.property("auction");
           res.body.auction.should.have.property("id");
-          res.body.auction.id.should.equal(auction._id.toString());
+          res.body.auction.id.should.equal(auction.id.toString());
           done();
         });
     });
@@ -147,7 +147,7 @@ describe("Auctions", () => {
       chai
         .request(App)
         .post(URL_PREFIX + "/" + userId)
-        .send(sampleAuction)
+        .send(SAMPLE_AUCTION)
         .end((_err, res) => {
           res.should.have.status(201);
           res.body.should.be.a("Object");
@@ -166,7 +166,7 @@ describe("Auctions", () => {
       chai
         .request(App)
         .post(URL_PREFIX + "/" + userId)
-        .send({ ...sampleAuction, title: "" })
+        .send({ ...SAMPLE_AUCTION, title: "" })
         .end((_err, res) => {
           res.should.have.status(422);
           done();
@@ -179,7 +179,7 @@ describe("Auctions", () => {
       chai
         .request(App)
         .post(URL_PREFIX + "/" + userId)
-        .send({ ...sampleAuction, description: "" })
+        .send({ ...SAMPLE_AUCTION, description: "" })
         .end((_err, res) => {
           res.should.have.status(422);
           done();
@@ -192,7 +192,7 @@ describe("Auctions", () => {
       chai
         .request(App)
         .post(URL_PREFIX + "/" + userId)
-        .send({ ...sampleAuction, auctionType: "asdf" })
+        .send({ ...SAMPLE_AUCTION, auctionType: "asdf" })
         .end((_err, res) => {
           res.should.have.status(422);
           done();
@@ -205,7 +205,7 @@ describe("Auctions", () => {
       chai
         .request(App)
         .post(URL_PREFIX + "/" + userId)
-        .send({ ...sampleAuction, starting: new Date(0).toUTCString() })
+        .send({ ...SAMPLE_AUCTION, starting: new Date(0).toUTCString() })
         .end((_err, res) => {
           res.should.have.status(422);
           res.body.should.have.property("message");
@@ -222,7 +222,7 @@ describe("Auctions", () => {
         .request(App)
         .post(URL_PREFIX + "/" + userId)
         .send({
-          ...sampleAuction,
+          ...SAMPLE_AUCTION,
           starting: new Date(
             Date.now() + moreThanThreeMonths + 1000
           ).toUTCString(),
@@ -243,7 +243,7 @@ describe("Auctions", () => {
         .request(App)
         .post(URL_PREFIX + "/" + userId)
         .send({
-          ...sampleAuction,
+          ...SAMPLE_AUCTION,
           finishing: new Date(Date.now() + decade).toUTCString(),
         })
         .end((_err, res) => {
@@ -263,7 +263,7 @@ describe("Auctions", () => {
     it("given arbitrary auctions, get the auction", (done) => {
       chai
         .request(App)
-        .delete(URL_PREFIX + "/" + auction._id)
+        .delete(URL_PREFIX + "/" + auction.id)
         .end((_err, res) => {
           res.should.have.status(200);
           res.body.should.have.property("message");
