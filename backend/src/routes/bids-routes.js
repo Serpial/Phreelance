@@ -12,18 +12,18 @@ router.get("/:bidID", bidsController.getBid);
 router.post(
   "/create/:auctionID/:userID",
   [
-    check("value").isNumeric(),
+    check("value").isFloat({ min: 0.01 }),
     check("description").isLength({ min: 10 }),
-    check("timeEstimation").isInt(),
+    check("timeEstimation").isInt({ min: 1 }),
   ],
   bidsController.createBidForUser
 );
 router.patch(
   "/:bidID",
   [
-    check("value").isNumeric(),
+    check("value").isFloat({ min: 0.01 }),
     check("description").isLength({ min: 10 }),
-    check("timeEstimation").isInt(),
+    check("timeEstimation").isInt({ min: 1 }),
   ],
   bidsController.updateBid
 );
