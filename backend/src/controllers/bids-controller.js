@@ -31,11 +31,10 @@ const createBidForUser = async (req, res, next) => {
     lastChange: Date.now(),
   });
 
-  let user, auction, bidsForAuction, existingBids;
+  let user, auction, existingBids;
   try {
     user = await User.findById(userId);
     auction = await Auction.findById(auctionId);
-    bidsForAuction = await Bid.find({ auction: auction.id });
     existingBids = await Bid.find({ auction: auction.id, creator: user.id });
   } catch (err) {
     return next(
@@ -43,7 +42,7 @@ const createBidForUser = async (req, res, next) => {
     );
   }
 
-  if (!user || !auction || !existingBids || !bidsForAuction) {
+  if (!user || !auction || !existingBids) {
     return next(
       new ErrorWithCode(
         "Could not retreive user or auction. Please try again.",
@@ -51,7 +50,7 @@ const createBidForUser = async (req, res, next) => {
       )
     );
   }
-  
+
   if (auction.creator.toString() === user.id) {
     return next(
       new ErrorWithCode("Creator cannot bid on their own auction", 422)
@@ -67,24 +66,19 @@ const createBidForUser = async (req, res, next) => {
     );
   }
 
-  if (!auction.isSealed && !bidsForAuction.length > 0) {
-    const minValue = Math.min(bidsForAuction.map((b) => b.value));
-
-    if (minValue != 0 && value >= minValue) {
-      return next(
-        new ErrorWithCode("Bid is not lower than current offer.", 422)
-      );
-    }
-  }
-
   try {
+    const error = await validateNewValue(value, auction);
+    if (error) {
+      throw error;
+    }
+
     await newBid.save();
   } catch (err) {
+    if (err.responseCode) {
+      return next(err);
+    }
     return next(
-      new ErrorWithCode(
-        "Could not complete creation transaction. Please try again.",
-        500
-      )
+      new ErrorWithCode("Could not complete creation transaction.", 500)
     );
   }
   res.status(201).json({ bid: newBid.toObject({ getters: true }) });
@@ -153,7 +147,7 @@ const updateBid = async (req, res, next) => {
 
   let bid;
   try {
-    bid = await Bid.findById(bidId);
+    bid = await Bid.findById(bidId).populate("auction");
   } catch (err) {
     return next(
       new ErrorWithCode("Could not retreive bid. Please try again.", 500)
@@ -170,8 +164,16 @@ const updateBid = async (req, res, next) => {
   bid.lastChange = Date.now();
 
   try {
+    const error = await validateNewValue(value, bid.auction);
+    if (error) {
+      throw error;
+    }
+
     await bid.save();
   } catch (err) {
+    if (err.responseCode) {
+      return next(err);
+    }
     return next(
       new ErrorWithCode("Could not update auction. Please try again.", 500)
     );
@@ -200,6 +202,22 @@ const deleteBid = async (req, res, next) => {
     return next(new ErrorWithCode("Could not delete bid.", 500));
   }
   res.json({ message: "Bid removed" });
+};
+
+const validateNewValue = async (value, auction) => {
+  let bidsForAuction;
+  try {
+    bidsForAuction = await Bid.find({ auction: auction.id });
+  } catch (err) {
+    return new ErrorWithCode("Could not fetch auction with ID.", 422);
+  }
+
+  if (!auction.isSealed && bidsForAuction.length > 0) {
+    const minValue = Math.min(bidsForAuction.map((b) => b.value));
+    if (minValue != 0 && value >= minValue) {
+      return new ErrorWithCode("Bid is not lower than current offer.", 422);
+    }
+  }
 };
 
 exports.createBidForUser = createBidForUser;
