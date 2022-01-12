@@ -10,37 +10,21 @@ chai.should();
 chai.use(chaiHttp);
 
 const URL_PREFIX = "/api/auctions";
-const DATE_RANGE_ERROR = "Time contraint is not within range.";
 
 const SAMPLE_AUCTION = {
   title: "New Auction",
   description: "sample description",
   auctionType: "eng",
   isPublic: true,
-  starting: new Date(Date.now() + 1000).toUTCString(),
+  created: new Date(Date.now()).toUTCString(),
+  starting: new Date(Date.now()).toUTCString(),
   finishing: new Date(Date.now() + 100000000).toUTCString(),
 };
 
-const sampleUser = {
+const SAMPLE_USER = {
   name: "test",
   email: "test@test.com",
   password: "testing",
-};
-
-const addArbitraryAuction = async (creator) => {
-  const newAuction = new Auction({
-    ...SAMPLE_AUCTION,
-    creator: creator || new mongoose.Types.ObjectId(),
-    created: new Date(Date.now()).toUTCString(),
-  });
-
-  try {
-    await newAuction.save();
-  } catch (err) {
-    throw err;
-  }
-
-  return newAuction;
 };
 
 describe("Auctions", () => {
@@ -48,7 +32,7 @@ describe("Auctions", () => {
 
   beforeEach(async () => {
     try {
-      userId = (await new User(sampleUser).save()).id.toString();
+      userId = (await new User(SAMPLE_USER).save()).id.toString();
     } catch (err) {
       console.log("beforeEach failed : " + err);
     }
@@ -150,7 +134,6 @@ describe("Auctions", () => {
         .send(SAMPLE_AUCTION)
         .end((_err, res) => {
           res.should.have.status(201);
-          res.body.should.be.a("Object");
           res.body.auction.should.have.property("attachments");
           res.body.auction.should.have.property("isPublic");
           res.body.auction.should.have.property("isSealed");
@@ -209,7 +192,6 @@ describe("Auctions", () => {
         .end((_err, res) => {
           res.should.have.status(422);
           res.body.should.have.property("message");
-          res.body.message.should.equal(DATE_RANGE_ERROR);
           done();
         });
     });
@@ -230,7 +212,6 @@ describe("Auctions", () => {
         .end((_err, res) => {
           res.should.have.status(422);
           res.body.should.have.property("message");
-          res.body.message.should.equal(DATE_RANGE_ERROR);
           done();
         });
     });
@@ -249,7 +230,6 @@ describe("Auctions", () => {
         .end((_err, res) => {
           res.should.have.status(422);
           res.body.should.have.property("message");
-          res.body.message.should.equal(DATE_RANGE_ERROR);
           done();
         });
     });
@@ -273,3 +253,18 @@ describe("Auctions", () => {
     });
   });
 });
+
+const addArbitraryAuction = async (creator) => {
+  const newAuction = new Auction({
+    ...SAMPLE_AUCTION,
+    creator: creator || new mongoose.Types.ObjectId(),
+  });
+
+  try {
+    await newAuction.save();
+  } catch (err) {
+    throw err;
+  }
+
+  return newAuction;
+};
