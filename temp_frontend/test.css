@@ -1,6 +1,7 @@
 .login {
   height: 100vh;
-  width: 100vw;
+  min-width: 100vw;
+  width: auto;
   background-color: rgb(37, 126, 153);
 }
 
@@ -26,10 +27,11 @@
 }
 
 .login-form {
-  height: 10rem;
+  height: auto;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: space-between;
+  row-gap: 0.25rem;
 }
 
 .logo-container {
@@ -75,13 +77,17 @@
     transform: rotate(270deg);
     width: 60%;
     top: 40%;
-    left: -20%;
   }
 }
 
 @media only screen and (min-width: 768px) {
   .logo {
     width: 40%;
-    left: -10%;
+  }  
+}
+
+@media only screen and (min-width: 1800px) {
+  .logo {
+    transform: translate(0);
   }  
 }
