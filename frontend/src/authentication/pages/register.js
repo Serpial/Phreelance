@@ -13,7 +13,7 @@ const Register = () => {
   const password = useRef();
   const passwordConfirm = useRef();
 
-  const { signup } = useAuth();
+  const { register } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -24,9 +24,13 @@ const Register = () => {
       return setError("Passwords do not match.");
     }
 
-    setLoading(true);
     try {
-      await signup(email.current.value, password.current.value);
+      setLoading(true);
+      await register(
+        name.current.value,
+        email.current.value,
+        password.current.value
+      );
     } catch (error) {
       console.log(error);
       setError("Could not create user");
