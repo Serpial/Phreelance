@@ -13,7 +13,9 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState();
 
   const register = (name, email, password) => {
-    createUserWithEmailAndPassword(auth, email, password);
+    createUserWithEmailAndPassword(auth, email, password).then(userCredentials => {
+      console.log(userCredentials.user.uid);
+    });
   };
 
   useEffect(() => {
