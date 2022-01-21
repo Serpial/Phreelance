@@ -3,11 +3,10 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
 import LoginCard from "../components/LoginCard";
-import LoginPageContainer from "../components/LoginPageContainer";
 
 const Login = () => {
   return (
-    <LoginPageContainer>
+    <>
       <LoginCard title="Login">
         <Form.Control type="email" placeholder="Email address" />
         <Form.Control type="password" placeholder="Password" />
@@ -23,7 +22,7 @@ const Login = () => {
           Register
         </Button>
       </LoginCard>
-    </LoginPageContainer>
+    </>
   );
 };
 

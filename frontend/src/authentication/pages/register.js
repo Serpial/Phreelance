@@ -4,7 +4,6 @@ import Form from "react-bootstrap/Form";
 import Alert from "react-bootstrap/Alert";
 
 import LoginCard from "../components/LoginCard";
-import LoginPageContainer from "../components/LoginPageContainer";
 import { useAuth } from "../../shared/contexts/AuthContext";
 
 const Register = () => {
@@ -39,7 +38,7 @@ const Register = () => {
   };
 
   return (
-    <LoginPageContainer>
+    <>
       <LoginCard title="Register" onSubmit={handleSubmit}>
         {error && <Alert variant="danger">{error}</Alert>}
         <Form.Label>Name</Form.Label>
@@ -57,7 +56,7 @@ const Register = () => {
           Already have an account? Log in
         </Button>
       </LoginCard>
-    </LoginPageContainer>
+    </>
   );
 };
 
