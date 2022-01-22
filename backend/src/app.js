@@ -1,10 +1,10 @@
-require("dotenv").config();
+require("dotenv").config({ path: ".env.local" });
 
+const config = require("config");
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
-const config = require("config");
 const ErrorWithCode = require("./models/error-with-code");
 const auctionsRoutes = require("./routes/auctions-routes");
 const bidsRoutes = require("./routes/bids-routes");
