@@ -23,11 +23,11 @@ const createUser = async (req, res, next) => {
     );
   }
 
-  const { name, email, password } = req.body;
+  const { name, authId } = req.body;
 
   let userExists;
   try {
-    userExists = await User.findOne({ email: email });
+    userExists = await User.findOne({ authId: authId });
   } catch (err) {
     next(
       new ErrorWithCode("Could not sign up. Try again at another time.", 500)
@@ -35,13 +35,14 @@ const createUser = async (req, res, next) => {
   }
 
   if (userExists) {
-    return next(new ErrorWithCode("Email address already in use.", 409));
+    return next(
+      new ErrorWithCode("User with this ID is already created.", 409)
+    );
   }
 
   const newUser = new User({
     name,
-    email,
-    password,
+    authId,
   });
 
   try {
@@ -52,30 +53,5 @@ const createUser = async (req, res, next) => {
   res.status(201).json({ user: newUser.toObject({ getters: true }) });
 };
 
-const loginUser = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return next(
-      new ErrorWithCode("Invalid inputs passed, please check your data.", 422)
-    );
-  }
-
-  const { email, password } = req.body;
-
-  let user;
-  try {
-    user = await User.findOne({ email: email });
-  } catch (err) {
-    return next(new ErrorWithCode("Log in failed!"));
-  }
-
-  if (!user || user.password !== password) {
-    return next(new ErrorWithCode("Unable to log in.!", 401));
-  }
-
-  res.json({ message: "Login successful!" });
-};
-
 exports.getUsers = getUsers;
 exports.createUser = createUser;
-exports.loginUser = loginUser;

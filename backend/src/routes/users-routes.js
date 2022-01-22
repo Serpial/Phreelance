@@ -11,15 +11,9 @@ router.post(
   "/signup",
   [
     check("name").notEmpty(),
-    check("email").isEmail(),
-    check("password").notEmpty(),
+    check("authId").notEmpty(),
   ],
   usersController.createUser
-);
-router.post(
-  "/login",
-  [check("email").isEmail(), check("password").notEmpty()],
-  usersController.loginUser
 );
 
 module.exports = router;
