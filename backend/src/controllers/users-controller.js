@@ -28,6 +28,7 @@ const createUser = async (req, res, next) => {
   let userExists;
   try {
     userExists = await User.findOne({ authId: authId });
+    userExists = userExists && User.findOne({ email });
   } catch (err) {
     next(
       new ErrorWithCode("Could not sign up. Try again at another time.", 500)
@@ -42,12 +43,14 @@ const createUser = async (req, res, next) => {
 
   const newUser = new User({
     name,
+    email,
     authId,
   });
 
   try {
     await newUser.save();
   } catch (err) {
+    console.log(err);
     return next(new ErrorWithCode("Sign up failed. Try again later.", 500));
   }
   res.status(201).json({ user: newUser.toObject({ getters: true }) });

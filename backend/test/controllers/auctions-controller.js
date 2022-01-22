@@ -23,7 +23,8 @@ const SAMPLE_AUCTION = {
 
 const SAMPLE_USER = {
   name: "test",
-  authId: "testauth"
+  email: "test@test.com",
+  authId: "testauth",
 };
 
 describe("Auctions", () => {

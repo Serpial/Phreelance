@@ -32,7 +32,8 @@ const SAMPLE_BID = {
 
 const SAMPLE_USER = {
   name: "test",
-  authId: "TESTID1",
+  email: "T1@test.com",
+  authId: "T1",
 };
 
 describe("Bids", () => {
@@ -62,7 +63,7 @@ describe("Bids", () => {
       try {
         const creator = await addArbitraryUser();
         auction = await addArbitraryAuction(creator.id);
-        bidder = await addArbitraryUser("T3ST1D");
+        bidder = await addArbitraryUser("T2");
       } catch (err) {
         console.log("Could not create set-up");
       }
@@ -113,7 +114,7 @@ describe("Bids", () => {
       try {
         const creator = await addArbitraryUser();
         auction = await addArbitraryAuction(creator.id);
-        user = await addArbitraryUser("T3ST1D");
+        user = await addArbitraryUser("T2");
 
         const newBid = new Bid({
           ...SAMPLE_BID,
@@ -144,8 +145,8 @@ describe("Bids", () => {
       try {
         const creator = await addArbitraryUser();
         auction = await addArbitraryAuction(creator.id);
-        const initialBidder = await addArbitraryUser("T3ST1D");
-        user = await addArbitraryUser("T3ST1D2");
+        const initialBidder = await addArbitraryUser("T2");
+        user = await addArbitraryUser("T3");
 
         const newBid = new Bid({
           ...SAMPLE_BID,
@@ -187,10 +188,11 @@ const addArbitraryAuction = async (creator) => {
   return newAuction;
 };
 
-const addArbitraryUser = async (authId) => {
+const addArbitraryUser = async (userIdentifier) => {
   const newUser = new User({
     ...SAMPLE_USER,
-    authId: authId || "TESTID",
+    authId: userIdentifier || "T1",
+    email: `${userIdentifier || "T1"}@test.com`,
   });
 
   try {

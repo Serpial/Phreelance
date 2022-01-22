@@ -12,17 +12,23 @@ const usersRoutes = require("./routes/users-routes");
 
 const app = express();
 
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", config.FrontEndHost); // update to match the domain you will make the request from
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 app.use(bodyParser.json());
 
 app.use("/api/auctions", auctionsRoutes);
 app.use("/api/bids", bidsRoutes);
 app.use("/api/users", usersRoutes);
 
-app.use((req, res, next) => {
+app.use((_req, _res, _next) => {
   throw new ErrorWithCode("Could not find this route.", 404);
 });
 
-app.use((error, req, res, next) => {
+app.use((error, _req, res, next) => {
   if (res.headerSent) {
     return next(error);
   }

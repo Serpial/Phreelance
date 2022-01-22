@@ -11,6 +11,7 @@ router.post(
   "/signup",
   [
     check("name").notEmpty(),
+    check("email").isEmail(),
     check("authId").notEmpty(),
   ],
   usersController.createUser
