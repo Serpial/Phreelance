@@ -24,7 +24,7 @@ const SAMPLE_AUCTION = {
 const SAMPLE_USER = {
   name: "test",
   email: "test@test.com",
-  password: "testing",
+  authId: "testauth",
 };
 
 describe("Auctions", () => {
