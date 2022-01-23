@@ -23,7 +23,7 @@ const createUser = async (req, res, next) => {
     );
   }
 
-  const { name, authId } = req.body;
+  const { name, email, authId } = req.body;
 
   let userExists;
   try {
@@ -50,7 +50,6 @@ const createUser = async (req, res, next) => {
   try {
     await newUser.save();
   } catch (err) {
-    console.log(err);
     return next(new ErrorWithCode("Sign up failed. Try again later.", 500));
   }
   res.status(201).json({ user: newUser.toObject({ getters: true }) });
