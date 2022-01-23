@@ -20,6 +20,9 @@ const Login = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    setError("");
+    setIsLoading(true);
+
     try {
       setError("");
       setIsLoading(true);
