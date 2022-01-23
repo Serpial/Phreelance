@@ -1,10 +1,14 @@
 import React, { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Alert from "react-bootstrap/Alert";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Popover from "react-bootstrap/Popover";
 
-import LoginCard from "../components/LoginCard";
 import { useAuth } from "../../shared/contexts/AuthContext";
+import LoginCard from "../components/LoginCard";
 
 const Register = () => {
   const name = useRef();
@@ -12,51 +16,86 @@ const Register = () => {
   const password = useRef();
   const passwordConfirm = useRef();
 
-  const { register } = useAuth();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const passwordPopover = (
+    <Popover id="popover-basic">
+      <Popover.Body>
+        Make sure you password is greater than 6 characters long.
+      </Popover.Body>
+    </Popover>
+  );
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const navigate = useNavigate();
+
+  const { register } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
     if (password.current.value !== passwordConfirm.current.value) {
-      return setError("Passwords do not match.");
+      setError("Passwords do not match.");
+      return;
     }
 
     try {
-      setLoading(true);
+      setError("");
+      setIsLoading(true);
       await register(
-        name.current.value,
+        name.current.value.trim(),
         email.current.value,
         password.current.value
       );
-    } catch (error) {
-      console.log(error);
-      setError("Could not create user");
+      setIsLoading(false);
+      navigate("/auctions");
+    } catch (err) {
+      setIsLoading(false);
+      setError(err.message);
     }
-    setLoading(false);
   };
 
   return (
-    <>
-      <LoginCard title="Register" onSubmit={handleSubmit}>
-        {error && <Alert variant="danger">{error}</Alert>}
-        <Form.Label>Name</Form.Label>
-        <Form.Control type="text" ref={name} />
-        <Form.Label>Email</Form.Label>
-        <Form.Control type="email" ref={email} />
-        <Form.Label>Password</Form.Label>
-        <Form.Control type="password" ref={password} />
-        <Form.Label>Re-type password</Form.Label>
-        <Form.Control type="password" ref={passwordConfirm} />
-        <Button variant="primary" type="submit" disabled={loading}>
-          Register
-        </Button>
-        <Button variant="outline-secondary" type="button">
-          Already have an account? Log in
-        </Button>
-      </LoginCard>
-    </>
+    <LoginCard title="Register" onSubmit={handleSubmit}>
+      {error && <Alert variant="danger">{error}</Alert>}
+      <Form.Label>Name</Form.Label>
+      <Form.Control
+        type="text"
+        ref={name}
+        placeholder="You or your company's name."
+        required
+        minLength={6}
+      />
+      <Form.Label>Email</Form.Label>
+      <Form.Control
+        type="email"
+        ref={email}
+        placeholder="john@doe.com"
+        required
+      />
+      <Form.Label>Password</Form.Label>
+      <OverlayTrigger
+        trigger="focus"
+        placement="auto"
+        overlay={passwordPopover}
+      >
+        <Form.Control type="password" ref={password} required minLength={6} />
+      </OverlayTrigger>
+      <Form.Label>Re-type password</Form.Label>
+      <Form.Control type="password" ref={passwordConfirm} required />
+      <Button
+        as="input"
+        variant="primary"
+        type="submit"
+        value="Register"
+        disabled={isLoading}
+      />
+      <Button
+        as="input"
+        variant="outline-secondary"
+        type="button"
+        value="Already have an account? Log in"
+        onClick={() => navigate("/login")}
+      />
+    </LoginCard>
   );
 };
 
