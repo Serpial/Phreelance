@@ -23,9 +23,10 @@ const App = () => {
       <Router>
         <Routes>
           <Route path="/" element={<AuthOutlet />}>
-            <Route exact path="login" element={<Login />} />
-            <Route exact path="register" element={<Register />} />
-            <Route exact path="password-reset" element={<Forgot />} />
+            <Route exact path="/" element={<Navigate to="/login" />} />
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<Register />} />
+            <Route path="password-reset" element={<Forgot />} />
           </Route>
           <Route path="/" element={<MainOutlet />}>
             <Route exact path="/auctions" element={<Auctions />} />
