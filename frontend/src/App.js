@@ -15,26 +15,23 @@ import Auctions from "./auctions/Pages/auctions";
 import { AuthProvider, useAuth } from "./shared/contexts/AuthContext";
 
 const App = () => {
-  const auth = useAuth();
-  const isLoggedIn = auth?.activeUser;
+  const isLoggedIn = useAuth()?.activeUser;
+  const defaultRoute = isLoggedIn ? "/auctions" : "/login";
 
   return (
     <AuthProvider>
       <Router>
         <Routes>
+          <Route exact path="/" element={<Navigate to={defaultRoute} />} />
           <Route path="/" element={<AuthOutlet />}>
-            <Route exact path="/" element={<Navigate to="/login" />} />
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
             <Route path="password-reset" element={<Forgot />} />
           </Route>
           <Route path="/" element={<MainOutlet />}>
-            <Route exact path="/auctions" element={<Auctions />} />
+            <Route path="/auctions" element={<Auctions />} />
           </Route>
-          <Route
-            path="*"
-            element={<Navigate to={isLoggedIn ? "/auctions" : "/login"} />}
-          />
+          <Route path="*" element={<Navigate to={defaultRoute} />} />
         </Routes>
       </Router>
     </AuthProvider>
