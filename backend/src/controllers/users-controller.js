@@ -3,16 +3,32 @@ const { validationResult } = require("express-validator");
 const User = require("../models/data/user");
 const ErrorWithCode = require("../models/error-with-code");
 
-const getUsers = async (req, res, next) => {
+const getUsers = async (_req, res, next) => {
   let users;
   try {
     users = await User.find();
   } catch (err) {
     return next(
-      new ErrorWithCode("Could not generate user list. Please try again.")
+      new ErrorWithCode("Could not generate user list. Please try again.", 422)
     );
   }
   res.json({ users: users.map((u) => u.toObject({ getters: true })) });
+};
+
+const getUserByAuthId = async (req, res, next) => {
+  const authId = req.params.authID;
+
+  let user;
+  try {
+    user = await User.findOne({ authId });
+  } catch (err) {
+    return next(new ErrorWithCode("Could not retreive user from source", 422));
+  }
+
+  if (!user) {
+    return next(new ErrorWithCode("Could not find user with this ID.", 422));
+  }
+  res.json({ user: user.toObject({ getters: true }) });
 };
 
 const createUser = async (req, res, next) => {
@@ -56,4 +72,5 @@ const createUser = async (req, res, next) => {
 };
 
 exports.getUsers = getUsers;
+exports.getUserByAuthId = getUserByAuthId;
 exports.createUser = createUser;

@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      await Axios.post("http://localhost:5000/api/users/signup", {
+      await Axios.post(`${process.env.REACT_APP_RUN_BACK_END_HOST}/api/users/signup`, {
         name: displayName,
         email,
         authId: userCredentials.user.uid,
