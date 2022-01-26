@@ -6,12 +6,12 @@ import {
   Navigate,
 } from "react-router-dom";
 
-import AuthOutlet from "./shared/components/AuthOutlet";
-import MainOutlet from "./shared/components/MainOutlet";
-import Login from "./authentication/pages/login";
-import Register from "./authentication/pages/register";
-import Forgot from "./authentication/pages/forgot";
-import Auctions from "./auctions/Pages/auctions";
+import AuthOutlet from "./shared/outlets/AuthOutlet";
+import MainOutlet from "./shared/outlets/MainOutlet";
+import Login from "./authentication/pages/Login";
+import Register from "./authentication/pages/Register";
+import Forgot from "./authentication/pages/Forgot";
+import Auctions from "./auctions/Pages/Auctions";
 import { AuthProvider, useAuth } from "./shared/contexts/AuthContext";
 
 const App = () => {

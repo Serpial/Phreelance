@@ -14,7 +14,9 @@ const MainOutlet = () => {
   return (
     <>
       <MainNavigation />
-      <Outlet />
+      <main>
+        <Outlet />
+      </main>
     </>
   );
 };

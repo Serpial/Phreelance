@@ -1,0 +1,19 @@
+.side-drawer_nav-item {
+  padding: 0.1em 0;
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.main-navigation_menu-button > svg {
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+@media only screen and (min-width: 768px) {
+  .main-navigation_menu-button {
+    display: none;
+  }
+}
