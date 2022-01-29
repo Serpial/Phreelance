@@ -11,7 +11,7 @@ import MainOutlet from "./shared/outlets/MainOutlet";
 import Login from "./authentication/pages/Login";
 import Register from "./authentication/pages/Register";
 import Forgot from "./authentication/pages/Forgot";
-import Auctions from "./auctions/Pages/Auctions";
+import Auctions from "./auctions/pages/Auctions";
 import { AuthProvider, useAuth } from "./shared/contexts/AuthContext";
 
 const App = () => {

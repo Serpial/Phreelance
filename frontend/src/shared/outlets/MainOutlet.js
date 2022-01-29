@@ -4,6 +4,8 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import MainNavigation from "../Navigation/MainNavigation";
 
+import "./MainOutlet.css";
+
 const MainOutlet = () => {
   const auth = useAuth();
   const isLoggedIn = auth?.activeUser;
@@ -14,7 +16,7 @@ const MainOutlet = () => {
   return (
     <>
       <MainNavigation />
-      <main>
+      <main className="main-container">
         <Outlet />
       </main>
     </>

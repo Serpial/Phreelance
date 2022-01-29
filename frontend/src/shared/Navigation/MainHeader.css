@@ -10,7 +10,7 @@
   background-color: whitesmoke;
 }
 
-@media only screen and (min-width: 770px) {
+@media only screen and (min-width: 768px) {
   .main-header {
     justify-content: space-between;
   }
