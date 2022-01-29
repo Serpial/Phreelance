@@ -5,20 +5,24 @@ import Row from "react-bootstrap/row";
 
 import FilterCard from "../components/FilterCard";
 import BasicCard from "../../shared/components/BasicCard";
-import { useAuth } from "../../shared/contexts/AuthContext";
+
+import "./Auction.css";
 
 const Auctions = () => {
-  const { activeUser } = useAuth();
   return (
     <Container fluid="sm">
-      <Col>
-        <FilterCard />
-      </Col>
-      <Col>
-        <Row>
-          <BasicCard>asdf</BasicCard>
-        </Row>
-      </Col>
+      <Row xs={1} md={2} >
+        <Col md={4}>
+          <Row>
+            <FilterCard />
+          </Row>
+        </Col>
+        <Col md={7} lg={8}>
+          <Row>
+            <BasicCard>asdf</BasicCard>
+          </Row>
+        </Col>
+      </Row>
     </Container>
   );
 };

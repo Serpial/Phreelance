@@ -1,0 +1,22 @@
+.filter-card_options {
+  position: absolute;
+  height: auto;
+}
+
+.filter-card_options-container {
+  width: auto;
+  height: 0;
+  animation-name: show;
+  animation-duration: 100ms;
+}
+
+.filter-card_title-arrow-container {
+  display: inline-block;
+  padding-right: 4%;
+}
+
+@media only screen and (min-width: 768px) {
+  .filter-card_title-arrow-container {
+    display: none;
+  }
+}

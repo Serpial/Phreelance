@@ -90,6 +90,27 @@
   background-color: rgb(195, 204, 221);
 }
 
+.expand-right-enter {
+  transform: translateX(-100%);
+}
+
+.expand-right-enter-active {
+  transform: translateX(0);
+  transition: all 225ms;
+  opacity: 1;
+}
+
+.expand-right-exit {
+  transform: translateX(0%);
+  opacity: 1;
+}
+
+.expand-right-exit-active {
+  transform: translateX(-100%);
+  transition: all 225ms;
+  opacity: 0;
+}
+
 @media only screen and (min-width: 768px) {
   .side-drawer {
     display: none;
