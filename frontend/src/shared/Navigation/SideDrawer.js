@@ -2,14 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ReactDom from "react-dom";
 import Axios from "axios";
-
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import { CSSTransition } from "react-transition-group";
 
 import { useAuth } from "../contexts/AuthContext";
 
 import "./SideDrawer.css";
+import NavItem from "../components/NavItem";
 
 const SideDrawer = (props) => {
   const [displayName, setDisplayName] = useState("");
@@ -72,13 +71,9 @@ const SideDrawer = (props) => {
         <legend className="side-drawer_nav">{props.children}</legend>
         <hr className="side-drawer_separator" />
         <footer className="side-drawer_footer">
-          <span
-            className="side-drawer_item side-drawer_footer-item"
-            onClick={handleLogout}
-          >
-            <FontAwesomeIcon icon={faSignOutAlt} />{" "}
-            <span className="side-drawer_item-content">Sign out</span>
-          </span>
+          <NavItem onClick={handleLogout} icon={faSignOutAlt}>
+            Sign out
+          </NavItem>
         </footer>
       </aside>
     </CSSTransition>

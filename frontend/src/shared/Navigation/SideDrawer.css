@@ -73,23 +73,6 @@
   font-size: 0.9em;
 }
 
-.side-drawer_item-content {
-  padding-left: 0.5em;
-}
-
-.side-drawer_item {
-  cursor: pointer;
-  width: auto;
-  padding: 5px;
-}
-
-.side-drawer_item:active {
-  border-radius: 16px;
-  color: rgb(40, 56, 85);
-  border: 1px solid rgb(195, 204, 221);
-  background-color: rgb(195, 204, 221);
-}
-
 .expand-right-enter {
   transform: translateX(-100%);
 }
