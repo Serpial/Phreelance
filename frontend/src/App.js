@@ -8,9 +8,9 @@ import {
 
 import AuthOutlet from "./shared/outlets/AuthOutlet";
 import MainOutlet from "./shared/outlets/MainOutlet";
-import Login from "./authentication/pages/Login";
-import Register from "./authentication/pages/Register";
-import Forgot from "./authentication/pages/Forgot";
+import Login from "./auth/pages/Login";
+import Register from "./auth/pages/Register";
+import Forgot from "./auth/pages/Forgot";
 import Auctions from "./auctions/pages/Auctions";
 import { AuthProvider, useAuth } from "./shared/contexts/AuthContext";
 
