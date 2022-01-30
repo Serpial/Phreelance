@@ -90,7 +90,9 @@ const getBidsByUser = async (req, res, next) => {
   let bids;
   try {
     bids = await Bid.find({ creator: userId });
-  } catch (err) {}
+  } catch (_err) {
+    return next(new ErrorWithCode("Could not retreive bids. Try again.", 422));
+  }
 
   if (!bids | (bids.length <= 0)) {
     return next(new ErrorWithCode("Could not find bids for auction.", 422));
@@ -105,7 +107,9 @@ const getBidsByAuction = async (req, res, next) => {
   let bids;
   try {
     bids = await Bid.find({ auction: auctionId });
-  } catch (err) {}
+  } catch (_err) {
+    return next(new ErrorWithCode("Could not retreive bids. Try again.", 422));
+  }
 
   if (!bids | (bids.length <= 0)) {
     return next(new ErrorWithCode("Could not find bids for auction.", 422));
