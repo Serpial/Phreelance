@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Axios } from "axios";
 import Card from "react-bootstrap/Card";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -14,21 +15,43 @@ const AuctionCard = (props) => {
   const [active, setIsActive] = useState(true);
   const [timeRemaining, setTimeRemaining] = useState("");
   const [started, setStarted] = useState(false);
+  const [isUser, setIsUser] = useState(false);
+  const [maxBid, setMaxBid] = useState("");
 
   if (false) {
     setIsActive(false);
   }
-  const isUser = true;
 
   const auctionDescription = props.description;
   const description =
     auctionDescription.length < 120
       ? auctionDescription
-      : auctionDescription.trim().slice(0, 120) + "...";
+      : auctionDescription.slice(0, 120).trim() + "...";
 
   const startTime = props.startTime;
   const closeTime = props.closeTime;
-  
+
+  useEffect(async () => {
+    let cancel = false;
+
+    const response  = await Axios.get(
+      process.env.REACT_APP_RUN_BACK_END_HOST + "/api/bids/auction/" + props.id
+    ).then(() => {
+
+    if (cancel || response.status !== 200) return;
+      const bids = response.data.bids;
+
+      if (bids.length > 0) return;
+
+      const topBid = Math.max(bids.map((b) => b.value));
+      const userBid = bids.find(b => b.creator === props.user.id);
+
+      if (userBid.value === topBid)
+    });
+
+    return () => (cancel = true);
+  });
+
   useEffect(() => {
     const start = Date.parse(startTime);
     const close = Date.parse(closeTime);
@@ -113,25 +136,23 @@ const timeBetween = (timeA, timeB) => {
     return Math.floor(difference_in_months) + " months";
   }
 
-  const difference_in_days = difference_in_months / 31;
+  const difference_in_days = difference_in_months * 31;
   if (difference_in_days > 1) {
     return Math.floor(difference_in_days) + " days";
   }
 
-  const difference_in_hours = difference_in_days / 24;
+  const difference_in_hours = difference_in_days * 24;
   if (difference_in_hours > 1) {
     return Math.floor(difference_in_hours) + " hours";
   }
 
-  const difference_in_minutes = difference_in_hours / 60;
+  const difference_in_minutes = difference_in_hours * 60;
   if (difference_in_minutes > 1) {
     return Math.floor(difference_in_minutes) + " minutes";
   }
 
-  const difference_in_seconds = difference_in_minutes / 60;
-  if (difference_in_seconds > 1) {
-    return Math.floor(difference_in_seconds) + " seconds";
-  }
+  const difference_in_seconds = difference_in_minutes * 60;
+  return Math.floor(difference_in_seconds) + " seconds";
 };
 
 export default AuctionCard;

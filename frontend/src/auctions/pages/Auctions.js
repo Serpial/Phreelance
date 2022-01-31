@@ -4,6 +4,7 @@ import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/row";
 
+import { useAuth } from "../../shared/contexts/AuthContext";
 import FilterCard from "../components/FilterCard";
 import AuctionList from "../components/AuctionList";
 
@@ -11,9 +12,26 @@ import "./Auctions.css";
 
 const Auctions = () => {
   const [auctionList, setAuctionList] = useState([]);
+  const [currentUser, setCurrentUser] = useState();
 
   const queryParams = new URLSearchParams(window.location.search);
   const currentListPage = queryParams.get("pageNumber");
+
+  useEffect(() => {
+    let cancel = false;
+
+    const { activeUser } = useAuth;
+    Axios.get(
+      process.env.REACT_APP_RUN_BACK_END_HOST +
+        "/api/users/auth/" +
+        activeUser.uid
+    ).then((response) => {
+      if (cancel || response.status !== 200) return;
+      currentUser = response.data;
+    });
+
+    return () => (cancel = true);
+  }, []);
 
   useEffect(() => {
     let cancel = false;
@@ -37,7 +55,11 @@ const Auctions = () => {
           <FilterCard />
         </Col>
         <Col md={7} lg={8}>
-          <AuctionList pageNumber={currentListPage} items={auctionList} />
+          <AuctionList
+            pageNumber={currentListPage}
+            items={auctionList.filter((a) => a.creator !== currentUser.id)}
+            user={currentUser}
+          />
         </Col>
       </Row>
     </Container>
