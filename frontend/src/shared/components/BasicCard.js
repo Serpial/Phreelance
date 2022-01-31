@@ -5,7 +5,10 @@ import "./BasicCard.css";
 
 const BasicCard = (props) => {
   return (
-    <Card className={`${props.className || ""} page-card`}>
+    <Card
+      className={`${props.className || ""} page-card`}
+      onClick={props.onClick}
+    >
       {props.children}
     </Card>
   );

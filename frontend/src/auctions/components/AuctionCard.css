@@ -1,0 +1,16 @@
+.auction-card_status {
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-weight: bold;
+  padding: 5px;
+}
+
+.auction-card_status-active {
+  background-color: rgb(113, 199, 113);
+  color: rgb(34, 61, 34);
+}
+
+.auction-card_status-closed {
+  background-color: rgb(179, 87, 92);
+  color: rgb(255, 255, 255);
+}
