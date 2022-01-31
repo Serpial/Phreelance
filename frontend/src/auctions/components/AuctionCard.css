@@ -1,6 +1,7 @@
 .auction-card_status {
   border: 1px solid transparent;
   border-radius: 8px;
+  font-size: medium;
   font-weight: bold;
   padding: 5px;
 }

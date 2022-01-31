@@ -7,7 +7,7 @@ import Row from "react-bootstrap/row";
 import FilterCard from "../components/FilterCard";
 import AuctionList from "../components/AuctionList";
 
-import "./Auction.css";
+import "./Auctions.css";
 
 const Auctions = () => {
   const [auctionList, setAuctionList] = useState([]);
