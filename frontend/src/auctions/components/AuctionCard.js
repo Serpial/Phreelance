@@ -107,7 +107,7 @@ const AuctionCard = (props) => {
 
 const timeBetween = (timeA, timeB) => {
   const difference = timeA - timeB;
-  const difference_in_months = difference / (1000 * 3600 * 24 * 31 * 12);
+  const difference_in_months = difference / (1000 * 3600 * 24 * 31);
 
   if (difference_in_months > 1) {
     return Math.floor(difference_in_months) + " months";
