@@ -35,7 +35,8 @@ const SideDrawer = (props) => {
   });
 
   const navigate = useNavigate();
-  const handleLogout = async () => {
+  const handleLogout = async (event) => {
+    event.preventDefault();
     try {
       await logout();
       navigate("/login");

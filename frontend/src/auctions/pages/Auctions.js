@@ -34,9 +34,7 @@ const Auctions = () => {
     <Container fluid="sm">
       <Row xs={1} md={2}>
         <Col md={4}>
-          <Row>
-            <FilterCard />
-          </Row>
+          <FilterCard />
         </Col>
         <Col md={7} lg={8}>
           <AuctionList pageNumber={currentListPage} items={auctionList} />

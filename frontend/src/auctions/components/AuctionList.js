@@ -7,23 +7,27 @@ import "./AuctionList.css";
 const AuctionList = (props) => {
   const navigate = useNavigate();
 
-  const pageNumber = props.pageNumber;
-  // const pageItems = props.items.slice(0, );
   const pageItems = props.items;
   if (pageItems.length === 0) {
     return <span>Could not find any auctions with these filters</span>;
   }
+
+  const onAuctionClick = (event, auctionId) => {
+    event.preventDefault();
+    navigate(`/auctions/${auctionId}`);
+  };
+
   return (
     <ul className="auction-list">
       {props.items.map((auction) => (
-        <li>
+        <li key={auction.id}>
           <AuctionCard
             id={auction.id}
             title={auction.title}
-            onClick={() => navigate(`/auctions/${auction.id}`)}
+            onClick={(e) => onAuctionClick(e, auction.id)}
             description={auction.description}
-            startTime={auction.start}
-            closeTime={auction.end}
+            startTime={auction.starting}
+            closeTime={auction.finishing}
           />
         </li>
       ))}
