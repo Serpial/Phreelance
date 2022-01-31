@@ -159,8 +159,8 @@ const updateAuction = async (req, res, next) => {
     return next(new ErrorWithCode("Could not find auction with ID.", 422));
   }
 
-  const startTime = new Date(starting);
-  const finishTime = new Date(finishing);
+  const startTime = Date.parse(starting);
+  const finishTime = Date.parse(finishing);
   if (!dateIsWithinOfRange(Date.now(), startTime, finishTime)) {
     return next(new ErrorWithCode("Time contraint is not within range.", 422));
   }
@@ -179,7 +179,7 @@ const updateAuction = async (req, res, next) => {
       new ErrorWithCode("Could not update auction. Please try again.", 500)
     );
   }
-  res.json({ place: place.toObject({ getters: true }) });
+  res.json({ auction: auction.toObject({ getters: true }) });
 };
 
 const deleteAuction = async (req, res, next) => {
