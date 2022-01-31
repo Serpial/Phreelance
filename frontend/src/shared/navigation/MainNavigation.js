@@ -15,9 +15,7 @@ const MainNavigation = () => {
   return (
     <>
       {showSideDrawer && <Backdrop onClick={() => setShowSideDrawer(false)} />}
-      <SideDrawer
-        show={showSideDrawer}
-      >
+      <SideDrawer show={showSideDrawer}>
         <NavItem>asdf</NavItem>
         <NavItem>asdf</NavItem>
         <NavItem>asdf</NavItem>
@@ -28,7 +26,7 @@ const MainNavigation = () => {
           className="main-navigation_menu-button"
           onClick={() => setShowSideDrawer(true)}
         >
-          <FontAwesomeIcon icon={faBars} size="2x"/>
+          <FontAwesomeIcon icon={faBars} size="2x" />
         </span>
       </MainHeader>
     </>

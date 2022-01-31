@@ -28,7 +28,7 @@ const Auctions = () => {
       });
 
     return () => (cancel = true);
-  });
+  }, []);
 
   return (
     <Container fluid="sm">
