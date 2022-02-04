@@ -1,6 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
-import { useNavigate } from "react-router-dom";
 import Axios from "axios";
 import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
@@ -69,16 +68,6 @@ const Auctions = () => {
     return () => (cancel = true);
   }, [currentUserId, queryParams, pageNumber, auctionsPerPage]);
 
-  const handlePageChange = useRef();
-  const navigate = useNavigate();
-  useEffect(() => {
-    handlePageChange.current = ({ selected }) => {
-      const newPage = selected + 1;
-      setPageNumber(newPage);
-      navigate("/auctions?page=" + newPage);
-    };
-  }, [handlePageChange, navigate]);
-
   return (
     <Container fluid="sm">
       <Row xs={1} md={2}>
@@ -92,7 +81,7 @@ const Auctions = () => {
             breakLabel="..."
             nextLabel="Next"
             previousLabel="Previous"
-            onPageChange={handlePageChange.current}
+            onPageChange={({ selected }) => setPageNumber(selected + 1)}
             pageRangeDisplayed={pageCount > 5 ? 5 : pageCount}
             pageCount={pageCount}
           />

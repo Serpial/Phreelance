@@ -1,10 +1,12 @@
 .auctions-pagination {
   height: auto;
-  margin: auto;
+  margin: 0 auto;
   padding: 0;
   list-style: none;
 }
 
+.auctions-pagination > .previous,
+.auctions-pagination > .next,
 .auctions-pagination > li {
   display: inline;
   padding: 0.5em 1em;
@@ -18,10 +20,8 @@
   background-color: rgb(210, 210, 210);
 }
 
-.auctions-pagination > .selected,
-.auctions-pagination > .previous,
-.auctions-pagination > .next {
-  font-weight: bold;
+.auctions-pagination > .disabled,
+.auctions-pagination > .selected {
   color: grey;
   background-color: rgb(196, 196, 196);
 }
@@ -29,4 +29,8 @@
 .auctions-pagination > li > a {
   color: black;
   text-decoration: none;
+}
+
+.auctions-pagination > .disabled > a {
+  color: grey;
 }

@@ -7,6 +7,16 @@
   padding-right: 4%;
 }
 
+.filter-card_divider {
+  width: 90%;
+  color: grey;
+  margin: 0 auto;
+}
+
+.filter-card_options-control {
+  margin: 0.8em 0;
+}
+
 @media only screen and (min-width: 768px) {
   .filter-card_title-arrow-container {
     display: none;
