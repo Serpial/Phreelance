@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Axios } from "axios";
+import Axios from "axios";
 import Card from "react-bootstrap/Card";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -12,50 +12,57 @@ import BasicCard from "../../shared/components/BasicCard";
 import "./AuctionCard.css";
 
 const AuctionCard = (props) => {
-  const [active, setIsActive] = useState(true);
   const [timeRemaining, setTimeRemaining] = useState("");
   const [started, setStarted] = useState(false);
-  const [isUser, setIsUser] = useState(false);
-  const [maxBid, setMaxBid] = useState("");
+  const [elapsed, setElapsed] = useState(false);
+  const [topBidIsUser, setBidTopIsUser] = useState(false);
+  const [maxBid, setMaxBid] = useState();
+  const [userBid, setUserBid] = useState();
 
-  if (false) {
-    setIsActive(false);
-  }
+  const { description, startTime, closeTime, auctionId, userId } = props;
 
-  const auctionDescription = props.description;
-  const description =
-    auctionDescription.length < 120
-      ? auctionDescription
-      : auctionDescription.slice(0, 120).trim() + "...";
+  const auctionDescription =
+    description.length < 120
+      ? description
+      : description.slice(0, 120).trim() + "...";
 
-  const startTime = props.startTime;
-  const closeTime = props.closeTime;
-
-  useEffect(async () => {
+  useEffect(() => {
     let cancel = false;
 
-    const response  = await Axios.get(
-      process.env.REACT_APP_RUN_BACK_END_HOST + "/api/bids/auction/" + props.id
-    ).then(() => {
+    Axios.get(
+      process.env.REACT_APP_RUN_BACK_END_HOST + "/api/bids/auction/" + auctionId
+    )
+      .then((response) => {
+        if (cancel) return;
 
-    if (cancel || response.status !== 200) return;
-      const bids = response.data.bids;
+        const bids = response.data.bids;
+        if (bids.length > 0) return;
 
-      if (bids.length > 0) return;
+        const maxBidValue = Math.max(bids.map((b) => b.value));
+        if (!maxBidValue) return;
 
-      const topBid = Math.max(bids.map((b) => b.value));
-      const userBid = bids.find(b => b.creator === props.user.id);
-
-      if (userBid.value === topBid)
-    });
+        setMaxBid(parseBid(maxBidValue));
+        const usersBid = bids.find((b) => b.creator === userId);
+        if (usersBid) {
+          setUserBid(parseBid(usersBid));
+          if (userBid.value === maxBid) {
+            setBidTopIsUser(true);
+          }
+        }
+      })
+      .catch((err) => console.log(err));
 
     return () => (cancel = true);
-  });
+  }, [userBid, maxBid, auctionId, userId]);
 
   useEffect(() => {
     const start = Date.parse(startTime);
     const close = Date.parse(closeTime);
     const now = Date.now();
+
+    if (!elapsed && now > close) {
+      setElapsed(true);
+    }
 
     if (!started && now > start) {
       setStarted(true);
@@ -66,7 +73,7 @@ const AuctionCard = (props) => {
       timeBefore = timeBetween(start, now);
     }
     setTimeRemaining(timeBefore);
-  }, [started, startTime, closeTime]);
+  }, [started, elapsed, startTime, closeTime]);
 
   return (
     <BasicCard className="auction-card">
@@ -75,38 +82,45 @@ const AuctionCard = (props) => {
         onClick={props.onClick}
       >
         <span className="auction-card_title">{props.title}</span>
-        {started &&
-          (active ? (
-            <span className="auction-card_status auction-card_status-active">
-              Active
-            </span>
-          ) : (
-            <span className="auction-card_status auction-card_status-closed">
-              Closed
-            </span>
-          ))}
+        {!elapsed && started && (
+           <span className="auction-card_status auction-card_status-active">
+           Active
+         </span>
+        )}
+        {elapsed && (
+          <span className="auction-card_status auction-card_status-closed">
+          Closed
+        </span>
+        )}
+        {!started && (
+          <span className="auction-card_status auction-card_status-pending">
+            Pending
+          </span>
+        )}
       </Card.Title>
       <Card.Body className="auction-card_body-container">
-        {started &&
-          (active ? (
-            <span className="auction-card_timing">
-              Time remaining on this auction: {timeRemaining}
-            </span>
-          ) : (
-            <span className="auction-card_timing">
-              Time on auction has elapsed.
-            </span>
-          ))}
+        {!elapsed && started && (
+          <span className="auction-card_timing">
+            Time remaining on this auction: {timeRemaining}
+          </span>
+        )}
+        {elapsed && (
+          <span className="auction-card_timing">
+            Time on auction has elapsed.
+          </span>
+        )}
         {!started && (
           <span className="auction-card_timing">
             Starting in: {timeRemaining}
           </span>
         )}
-        <div className="auction-card_description">{description}</div>
+        <div className="auction-card_description">{auctionDescription}</div>
         <div className="auction-card_bid-container">
-          <div className="auction-card_top-bid"></div>
+          <div className="auction-card_top-bid">
+            {maxBid && `Winning bid: ${maxBid} `}
+          </div>
           <div className="auction-card_notification">
-            {isUser ? (
+            {started && topBidIsUser && (
               <>
                 <FontAwesomeIcon
                   className="auction-card_icon"
@@ -114,24 +128,36 @@ const AuctionCard = (props) => {
                 />
                 You
               </>
-            ) : (
+            )}
+            {userBid && !elapsed && !topBidIsUser && (
               <FontAwesomeIcon
                 className="auction-card_icon auction-card_warning-icon"
                 icon={faExclamationCircle}
               />
             )}
           </div>
-          <div className="auction-card_my-bid"></div>
+          {userBid && !topBidIsUser && (
+            <div className="auction-card_my-bid">Your bid: {userBid}</div>
+          )}
         </div>
       </Card.Body>
     </BasicCard>
   );
 };
 
+const parseBid = (valueNumber) => {
+  // source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat
+  const numberFormat = new Intl("en-GB", {
+    style: "currency",
+    currency: "GBP",
+  });
+
+  return Intl.NumberFormat(numberFormat.format(valueNumber));
+};
+
 const timeBetween = (timeA, timeB) => {
   const difference = timeA - timeB;
   const difference_in_months = difference / (1000 * 3600 * 24 * 31);
-
   if (difference_in_months > 1) {
     return Math.floor(difference_in_months) + " months";
   }

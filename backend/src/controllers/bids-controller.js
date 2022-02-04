@@ -94,11 +94,11 @@ const getBidsByUser = async (req, res, next) => {
     return next(new ErrorWithCode("Could not retreive bids. Try again.", 422));
   }
 
-  if (!bids | (bids.length <= 0)) {
+  if (!bids || (bids.length <= 0)) {
     return next(new ErrorWithCode("Could not find bids for auction.", 422));
   }
 
-  res.json({ bids: bids.toObject({ getters: true }) });
+  res.json({ bids: bids.map((a) => a.toObject({ getters: true })) });
 };
 
 const getBidsByAuction = async (req, res, next) => {
@@ -110,12 +110,8 @@ const getBidsByAuction = async (req, res, next) => {
   } catch (_err) {
     return next(new ErrorWithCode("Could not retreive bids. Try again.", 422));
   }
-
-  if (!bids | (bids.length <= 0)) {
-    return next(new ErrorWithCode("Could not find bids for auction.", 422));
-  }
-
-  res.json({ bids: bids.toObject({ getters: true }) });
+  
+  res.json({ bids: bids.map((a) => a.toObject({ getters: true })) });
 };
 
 const getBid = async (req, res, next) => {

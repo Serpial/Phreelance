@@ -3,6 +3,11 @@
   height: auto;
 }
 
+.auction-card_title-container {
+  display: inline;
+  width: 70%;
+}
+
 .auction-card_status {
   display: inline;
   position: absolute;
@@ -13,11 +18,7 @@
   font-size: 0.7em;
   font-weight: bold;
   padding: 5px;
-}
-
-.auction-card_title-container {
-  display: inline;
-  width: 70%;
+  color: white;
 }
 
 .auction-card_title {
@@ -31,12 +32,14 @@
 
 .auction-card_status-active {
   background-color: rgb(113, 199, 113);
-  color: white;
 }
 
 .auction-card_status-closed {
-  background-color: rgb(179, 87, 92);
-  color: white;
+  background-color: rgb(224, 71, 79);
+}
+
+.auction-card_status-pending {
+  background-color: rgb(219, 145, 8);
 }
 
 .auction-card_timing {

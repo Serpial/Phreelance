@@ -1,0 +1,32 @@
+.auctions-pagination {
+  height: auto;
+  margin: auto;
+  padding: 0;
+  list-style: none;
+}
+
+.auctions-pagination > li {
+  display: inline;
+  padding: 0.5em 1em;
+  margin: 0.2em 0.2em;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background-color: rgb(241, 241, 241);
+}
+
+.auctions-pagination > li:active {
+  background-color: rgb(210, 210, 210);
+}
+
+.auctions-pagination > .selected,
+.auctions-pagination > .previous,
+.auctions-pagination > .next {
+  font-weight: bold;
+  color: grey;
+  background-color: rgb(196, 196, 196);
+}
+
+.auctions-pagination > li > a {
+  color: black;
+  text-decoration: none;
+}
