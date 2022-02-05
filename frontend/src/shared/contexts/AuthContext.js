@@ -25,6 +25,18 @@ export const useAuth = () => {
   return useContext(AuthContext);
 };
 
+/**
+ * Auth provder aims to provide auth information for
+ * the rest of the application. Right now it is configured
+ * for Firebase, but this could be traded for other authentication
+ * methods.
+ *
+ * @param {JSX.Element} children
+ * Its that require information about the user
+ * while logged in.
+ *
+ * @returns Valid auth set up
+ */
 export const AuthProvider = ({ children }) => {
   const [activeUser, setActiveUser] = useState();
   const [isLoading, setIsLoading] = useState(true);
@@ -46,11 +58,14 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      await Axios.post("http://localhost:5000/api/users/signup", {
-        name: displayName,
-        email,
-        authId: userCredentials.user.uid,
-      });
+      await Axios.post(
+        `${process.env.REACT_APP_RUN_BACK_END_HOST}/api/users/signup`,
+        {
+          name: displayName,
+          email,
+          authId: userCredentials.user.uid,
+        }
+      );
     } catch (err) {
       deleteUser(userCredentials.user);
       throw new Error("Could not validate user information.");
@@ -69,15 +84,8 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    const auth = getAppAuth();
-    return signOut(auth);
-  };
-
-  const resetPassword = (email) => {
-    const auth = getAppAuth();
-    return sendPasswordResetEmail(auth, email);
-  };
+  const logout = () => signOut(getAppAuth());
+  const resetPassword = (email) => sendPasswordResetEmail(getAppAuth(), email);
 
   useEffect(() => {
     const auth = getAppAuth();
@@ -88,15 +96,16 @@ export const AuthProvider = ({ children }) => {
     return unsubscribe;
   }, []);
 
-  const value = {
+  const properties = {
     activeUser,
     register,
     login,
     logout,
     resetPassword,
   };
+
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={properties}>
       {!isLoading && children}
     </AuthContext.Provider>
   );

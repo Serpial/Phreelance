@@ -8,6 +8,12 @@ import Alert from "react-bootstrap/Alert";
 import { useAuth } from "../../shared/contexts/AuthContext";
 import LoginCard from "../components/LoginCard";
 
+/**
+ * Components set up to allow the user to reset
+ * their password.
+ *
+ * @returns Forgot page
+ */
 const Forgot = () => {
   const email = useRef();
   const [isLoading, setIsLoading] = useState(false);
@@ -17,22 +23,24 @@ const Forgot = () => {
   const navigate = useNavigate();
 
   const { resetPassword } = useAuth();
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
 
-    try {
-      setError("");
-      setMessage("");
-      setIsLoading(true);
-      await resetPassword(email.current.value);
-      setIsLoading(false);
-      setMessage(
-        "Check your inbox for instructions on updating your password."
-      );
-    } catch (err) {
-      setIsLoading(false);
-      setError("Issue found resetting password.");
-    }
+    setError("");
+    setMessage("");
+    setIsLoading(true);
+
+    resetPassword(email.current.value)
+      .then((_res) => {
+        setIsLoading(false);
+        setMessage(
+          "Check your inbox for instructions on updating your password."
+        );
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        setError("Issue found resetting password.");
+      });
   };
 
   return (

@@ -6,21 +6,57 @@ const Auction = require("../models/data/auction");
 const User = require("../models/data/user");
 const Bid = require("../models/data/bid");
 
-const getAuctions = async (_req, res, next) => {
-  let publicAuctions;
+const getAuctions = async (req, res, next) => {
+  const {
+    sortOldest,
+    sortNewest,
+    searchString,
+    showPending,
+    showStarted,
+    showClosed,
+  } = req.query;
+  
   try {
-    publicAuctions = await Auction.find({ isPublic: true });
-  } catch (err) {
+    publicAuctions = await Auction.find({ isPublic: true }).sort({
+      starting: sortOldest === "true" && sortNewest === "false" ? 1 : -1,
+    });
+  } catch (_err) {
     return next(new ErrorWithCode("Could not retrieve auctions", 404));
   }
 
-  if (!publicAuctions || publicAuctions.length == 0) {
+  if (!publicAuctions || publicAuctions.length === 0) {
     return next(
       new ErrorWithCode("There are no public auctions at this time", 200)
     );
   }
 
-  res.json({
+  if (searchString && searchString !== "") {
+    const regex = new RegExp(searchString, "gi");
+    publicAuctions = publicAuctions.filter(
+      (a) => regex.test(a.title) || regex.test(a.description)
+    );
+  }
+
+  publicAuctions = publicAuctions.filter((a) => {
+    const start = Date.parse(a.starting);
+    const close = Date.parse(a.finishing);
+    const now = Date.now();
+
+    if (showPending === "false" && now < start) {
+      return false;
+    }
+
+    if (showStarted === "false" && now > start && now < close) {
+      return false;
+    }
+
+    if (showClosed === "false" && now > close) {
+      return false;
+    }
+    return true;
+  });
+
+  return res.json({
     auctions: publicAuctions.map((a) => a.toObject({ getters: true })),
   });
 };
@@ -159,8 +195,8 @@ const updateAuction = async (req, res, next) => {
     return next(new ErrorWithCode("Could not find auction with ID.", 422));
   }
 
-  const startTime = new Date(starting);
-  const finishTime = new Date(finishing);
+  const startTime = Date.parse(starting);
+  const finishTime = Date.parse(finishing);
   if (!dateIsWithinOfRange(Date.now(), startTime, finishTime)) {
     return next(new ErrorWithCode("Time contraint is not within range.", 422));
   }
@@ -179,7 +215,7 @@ const updateAuction = async (req, res, next) => {
       new ErrorWithCode("Could not update auction. Please try again.", 500)
     );
   }
-  res.json({ place: place.toObject({ getters: true }) });
+  res.json({ auction: auction.toObject({ getters: true }) });
 };
 
 const deleteAuction = async (req, res, next) => {

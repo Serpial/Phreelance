@@ -1,0 +1,8 @@
+.basic-card {
+  padding: 4%;
+  margin: 0.5em 0;
+}
+
+.basic-card > .card-body {
+  padding: 0;
+}

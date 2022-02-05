@@ -1,0 +1,87 @@
+.side-drawer {
+  position: fixed;
+  background-color: rgb(236, 236, 236);
+  width: 80%;
+  max-width: 500px;
+  height: 100%;
+  box-sizing: border-box;
+  -webkit-box-shadow: 9px 0px 15px 0px rgba(0, 0, 0, 0.27);
+  box-shadow: 9px 0px 15px 0px rgba(0, 0, 0, 0.27);
+  display: flex;
+  flex-direction: column;
+  font-family: "Roboto", sans-serif;
+}
+
+.side-drawer_item {
+  font-size: 1.25em;
+  display: block;
+  margin: 0;
+}
+
+.side-drawer_header {
+  display: flex;
+  background-color: rgb(230, 230, 230);
+  height: auto;
+  background-image: url("./layered-peaks-haikei.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.side-drawer_header-profile-photo > img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+.side-drawer_header-profile-photo {
+  padding: 1.5em 0 1em 0;
+  width: 100%;
+  height: 100%;
+}
+
+.side-drawer_nav {
+  box-sizing: border-box;
+  margin-bottom: auto;
+  height: auto;
+  overflow: auto;
+}
+
+.side-drawer_nav-item,
+.side-drawer_footer-item {
+  padding: 1em 0;
+}
+
+.side-drawer_footer {
+  background-color: rgb(230, 230, 230);
+  box-sizing: border-box;
+  height: 15vh;
+}
+
+.side-drawer_header-profile-photo > img,
+.side-drawer_header-info-container,
+.side-drawer_nav,
+.side-drawer_footer {
+  padding: 0 2em;
+}
+
+.side-drawer_separator {
+  margin: 0 auto;
+  width: 80%;
+  border-color: rgb(248, 248, 248);
+}
+
+.side-drawer_header-primary {
+  font-size: 1.6em;
+}
+
+.side-drawer_header-info-container {
+  padding-bottom: 1.5em;
+}
+
+@media only screen and (min-width: 768px) {
+  .side-drawer {
+    display: none;
+  }
+}

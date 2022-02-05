@@ -1,0 +1,28 @@
+.nav-item_container {
+  display: block;
+  padding: 0.4em 0;
+}
+
+.nav-item {
+  padding: 0.25em 0.5em;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  width: auto;
+  user-select: none;
+}
+
+.nav-item:active {
+  color: rgb(73, 92, 126);
+  border-color: rgb(195, 204, 221);
+  background-color: rgb(195, 204, 221);
+}
+
+.nav-item_icon {
+  padding-right: 5px;
+}
+
+.nav-item_content {
+  font-size: large;
+  padding-left: 5px;
+}

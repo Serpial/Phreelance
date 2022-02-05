@@ -20,10 +20,10 @@ router.post(
       check("auctionType").equals("dut"),
     ]),
     oneOf([
-      check("starting").custom((input, meta) => dateTimeValidator(input)),
+      check("starting").custom((input, _meta) => dateTimeValidator(input)),
       check("starting").isEmpty(),
     ]),
-    check("finishing").custom((input, meta) => dateTimeValidator(input)),
+    check("finishing").custom((input, _meta) => dateTimeValidator(input)),
   ],
   auctionsController.createAuction
 );
@@ -33,13 +33,13 @@ router.patch(
   [
     check("title").notEmpty(),
     check("description").isLength({ min: 10 }),
-    check("finishing").custom((input, meta) => dateTimeValidator(input)),
+    check("finishing").custom((input, _meta) => dateTimeValidator(input)),
     oneOf([
       check("auctionType").equals("eng"),
       check("auctionType").equals("dut"),
     ]),
     oneOf([
-      check("starting").custom((input, meta) => dateTimeValidator(input)),
+      check("starting").custom((input, _meta) => dateTimeValidator(input)),
       check("starting").isEmpty(),
     ]),
   ],

@@ -1,0 +1,49 @@
+.filter-card_options-container {
+  width: auto;
+}
+
+.filter-card_title-arrow-container {
+  display: inline-block;
+  padding: 0.2em 0.5em;
+  margin-right: 4%;
+  transform: rotate(0deg);
+  transition: transform 100ms linear;
+}
+
+.filter-card_title-arrow-container--closed {
+  transform: rotate(-90deg);
+  transition: transform 100ms linear;
+}
+
+.filter-card_divider {
+  width: 90%;
+  color: grey;
+  margin: 0 auto;
+}
+
+.filter-card_options-control {
+  margin: 0.8em 0;
+}
+
+.filter-card_control {
+  margin: 1em 0
+}
+
+.filter_card-submit {
+  width: 100%;
+}
+
+.filter-card_options-container--hidden {
+  display: none;
+}
+
+@media only screen and (min-width: 768px) {
+
+  .filter-card_options-container--hidden {
+    display: block;
+  }
+
+  .filter-card_title-arrow-container {
+    display: none;
+  }
+}

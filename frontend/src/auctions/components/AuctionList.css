@@ -1,0 +1,20 @@
+.auction-list {
+  list-style: none;
+  padding: 0;
+}
+
+.auction-list_empty-list {
+  width: 100%;
+  text-align: center;
+  color: grey;
+}
+
+@media only screen and (min-width: 768) {
+  .auction-list_empty-list {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: auto;
+    width: 50%;
+  }
+}

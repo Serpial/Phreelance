@@ -12,9 +12,12 @@ const usersRoutes = require("./routes/users-routes");
 
 const app = express();
 
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", config.FrontEndHost); // update to match the domain you will make the request from
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+app.use((_req, res, next) => {
+  res.header("Access-Control-Allow-Origin", config.FrontEndHost);
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
   next();
 });
 
