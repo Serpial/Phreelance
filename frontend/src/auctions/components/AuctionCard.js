@@ -11,6 +11,33 @@ import BasicCard from "../../shared/components/BasicCard";
 
 import "./AuctionCard.css";
 
+/**
+ * Individual auction card that displays surface
+ * information about an auction. This will include
+ * its current top price, description, and time
+ * remaining before it starts or finishes.
+ * 
+ * @param {String} description
+ * Short description of the auction displayed
+ * to the user
+ * 
+ * @param {String} startTime
+ * Start time of the auction used to calculate
+ * the remaining time.
+ * 
+ * @param {String} closeTime
+ * Close time of the auction used to calculate
+ * the remaining time.
+ * 
+ * @param {String} auctionId
+ * ID associated with this auction.
+ * 
+ * @param {String} userId 
+ * Used to determine whether the user is currently
+ * the top bid.
+ * 
+ * @returns Card displaying individual auction information.
+ */
 const AuctionCard = (props) => {
   const [timeRemaining, setTimeRemaining] = useState("");
   const [started, setStarted] = useState(false);

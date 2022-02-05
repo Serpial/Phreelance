@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Card from "react-bootstrap/Card";
+import Form from "react-bootstrap/Form";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
@@ -7,10 +8,46 @@ import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import BasicCard from "../../shared/components/BasicCard";
 
 import "./FilterCard.css";
-import { Form } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 
-const FilterCard = (props) => {
+/**
+ * Filter menu that contains options for the user to
+ * refine their criteria.
+ *
+ * @param {Object} filterValues
+ * List of values currently being used by the components.
+ *
+ * @param {Function} onSubmit
+ * Callback functions that will take the new list of search terms.
+ *
+ * @returns Filter card component
+ */
+const FilterCard = ({ filterValues, onSubmit }) => {
   const [showOptions, setShowOptions] = useState(false);
+  const searchString = useRef({ value: filterValues.searchString });
+  const showPending = useRef({ checked: filterValues.showPending });
+  const showStarted = useRef({ checked: filterValues.showStarted });
+  const showClosed = useRef({ checked: filterValues.showClosed });
+  const sortNewest = useRef({ checked: filterValues.sortNewest });
+  const sortOldest = useRef({ checked: filterValues.sortOldest });
+
+  const submitHandler = (event) => {
+    event.preventDefault();
+    if (!onSubmit) {
+      console.log("updateResults function not defined.");
+      return;
+    }
+
+    const filterTerms = {
+      searchString: searchString.current.value,
+      showPending: showPending.current.checked,
+      showStarted: showStarted.current.checked,
+      showClosed: showClosed.current.checked,
+      sortNewest: sortNewest.current.checked,
+      sortOldest: sortOldest.current.checked,
+    };
+    onSubmit(filterTerms);
+  };
 
   return (
     <BasicCard className="filter-card">
@@ -25,28 +62,66 @@ const FilterCard = (props) => {
         Filter
       </Card.Title>
       <Card.Body className="filter-card_options-container">
-        <Form className="filter-card_options">
+        <Form className="filter-card_options" onSubmit={submitHandler}>
           <hr className="filter-card_divider" />
           <div className="filter-card_options-control filter-card_options-key-word-search">
-            <Form.Control type="text" placeholder="Search" />
+            <Form.Control
+              type="text"
+              placeholder="Search"
+              defaultValue={searchString.current.value}
+              ref={searchString}
+            />
           </div>
           <hr className="filter-card_divider" />
           <div className="filter-card_options-control filter-card_options-availability">
             <Form.Check
+              className="filter-card_control"
               type="switch"
-              id="show-pending"
-              checked={true}
-              label="Show pending"
+              defaultChecked={showPending.current.checked}
+              ref={showPending}
+              label="Show pending auctions"
             />
-            <Form.Check type="switch" id="show-started" label="Show started" />
-            <Form.Check type="switch" id="show-closed" label="Show closed" />
+            <Form.Check
+              className="filter-card_control"
+              type="switch"
+              defaultChecked={showStarted.current.checked}
+              ref={showStarted}
+              label="Show started auctions"
+            />
+            <Form.Check
+              className="filter-card_control"
+              type="switch"
+              defaultChecked={showClosed.current.checked}
+              ref={showClosed}
+              label="Show closed auctions"
+            />
           </div>
           <hr className="filter-card_divider" />
           <div className="filter-card_options-control filter-card_options-sort">
-          <Form.Check type="radio" id="sort-ascending" label="Sort by ascending price" />
-          <Form.Check type="radio" id="show-closed" label="Sort by descending price" />
+            <Form.Check
+              className="filter-card_control"
+              type="radio"
+              name="sort"
+              defaultChecked={sortNewest.current.checked}
+              ref={sortNewest}
+              label="Sort by upcoming auctions"
+            />
+            <Form.Check
+              className="filter-card_control"
+              type="radio"
+              name="sort"
+              defaultChecked={sortOldest.current.checked}
+              ref={sortOldest}
+              label="Sort by oldest auctions"
+            />
           </div>
-          <Form.Control as="input" type="submit" varient="primary" value="Update"/>
+          <Button
+            className="filter_card-submit"
+            as="input"
+            type="submit"
+            varient="primary"
+            value="Update"
+          />
         </Form>
       </Card.Body>
     </BasicCard>

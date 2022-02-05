@@ -7,11 +7,19 @@ import logo from "../../shared/res/logo.svg";
 
 import "./AuthOutlet.css";
 
+/**
+ * This is a container of the outer styles of
+ * the login information allowing the smaller
+ * individual components to maange page specific
+ * information.
+ *
+ * @returns outlet for authorisation pages
+ */
 const AuthOutlet = () => {
   const auth = useAuth();
   const isLoggedIn = auth?.activeUser;
   if (isLoggedIn) {
-    return <Navigate to={"/auctions"}/>;
+    return <Navigate to={"/auctions"} />;
   }
 
   return (

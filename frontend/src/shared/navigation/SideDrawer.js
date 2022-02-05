@@ -10,7 +10,17 @@ import { useAuth } from "../contexts/AuthContext";
 
 import "./SideDrawer.css";
 
-const SideDrawer = (props) => {
+/**
+ * This side drawer aims to provide navigation to
+ * the user.
+ *
+ * @param {Boolean} show
+ * Boolean representation of whether the side drawer
+ * should be shown.
+ *
+ * @returns Side drawer component
+ */
+const SideDrawer = ({ show, children }) => {
   const [displayName, setDisplayName] = useState("");
   const [emailAddress, setEmailAddress] = useState("");
 
@@ -45,7 +55,7 @@ const SideDrawer = (props) => {
 
   const content = (
     <CSSTransition
-      in={props.show}
+      in={show}
       classNames="expand-right"
       mountOnEnter
       unmountOnExit
@@ -67,7 +77,7 @@ const SideDrawer = (props) => {
           </div>
         </header>
         <hr className="side-drawer_separator" />
-        <legend className="side-drawer_nav">{props.children}</legend>
+        <legend className="side-drawer_nav">{children}</legend>
         <hr className="side-drawer_separator" />
         <footer className="side-drawer_footer">
           <NavItem onClick={handleLogout} icon={faSignOutAlt}>

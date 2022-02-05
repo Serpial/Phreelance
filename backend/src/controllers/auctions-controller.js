@@ -7,15 +7,24 @@ const User = require("../models/data/user");
 const Bid = require("../models/data/bid");
 
 const getAuctions = async (req, res, next) => {
-  const { sortOldest, searchString, showPending, showStarted, showClosed } =
-    req.query;
+  const {
+    sortOldest,
+    sortNewest,
+    searchString,
+    showPending,
+    showStarted,
+    showClosed,
+  } = req.query;
+  
   try {
-    publicAuctions = await Auction.find({ isPublic: true });
+    publicAuctions = await Auction.find({ isPublic: true }).sort({
+      starting: sortOldest === "true" && sortNewest === "false" ? 1 : -1,
+    });
   } catch (_err) {
     return next(new ErrorWithCode("Could not retrieve auctions", 404));
   }
 
-  if (!publicAuctions || publicAuctions.length == 0) {
+  if (!publicAuctions || publicAuctions.length === 0) {
     return next(
       new ErrorWithCode("There are no public auctions at this time", 200)
     );
@@ -47,12 +56,8 @@ const getAuctions = async (req, res, next) => {
     return true;
   });
 
-  const auctions = publicAuctions.sort(
-    sortOldest === "true" ? ascendComparitor : descendComparitor
-  );
-
   return res.json({
-    auctions: auctions.map((a) => a.toObject({ getters: true })),
+    auctions: publicAuctions.map((a) => a.toObject({ getters: true })),
   });
 };
 
@@ -245,24 +250,6 @@ const deleteAuction = async (req, res, next) => {
   }
 
   res.json({ message: "Auction deleted!" });
-};
-
-const ascendComparitor = (a, b) => {
-  const firstStart = Date.parse(a.starting);
-  const secondStart = Date.parse(b.starting);
-
-  if (firstStart < secondStart) return -1;
-  if (firstStart > secondStart) return 1;
-  return 0;
-};
-
-const descendComparitor = (a, b) => {
-  const firstStart = Date.parse(a.starting);
-  const secondStart = Date.parse(b.starting);
-
-  if (firstStart > secondStart) return -1;
-  if (firstStart < secondStart) return 1;
-  return 0;
 };
 
 const dateIsWithinOfRange = (creation, start, finish) => {

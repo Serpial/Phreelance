@@ -10,6 +10,12 @@ import Popover from "react-bootstrap/Popover";
 import { useAuth } from "../../shared/contexts/AuthContext";
 import LoginCard from "../components/LoginCard";
 
+/**
+ * Allows the user to register while logging
+ * them in.
+ *
+ * @returns Register page
+ */
 const Register = () => {
   const name = useRef();
   const email = useRef();
@@ -29,7 +35,7 @@ const Register = () => {
   const { register } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
 
     if (password.current.value !== passwordConfirm.current.value) {
@@ -37,20 +43,21 @@ const Register = () => {
       return;
     }
 
-    try {
-      setError("");
-      setIsLoading(true);
-      await register(
-        name.current.value.trim(),
-        email.current.value,
-        password.current.value
-      );
-      setIsLoading(false);
-      navigate("/auctions");
-    } catch (err) {
-      setIsLoading(false);
-      setError(err.message);
-    }
+    setError("");
+    setIsLoading(true);
+    
+    register(
+      name.current.value.trim(),
+      email.current.value,
+      password.current.value
+    )
+      .then((_res) => {
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        setError(err.message);
+      });
   };
 
   return (

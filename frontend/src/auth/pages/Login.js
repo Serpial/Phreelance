@@ -8,6 +8,12 @@ import Form from "react-bootstrap/Form";
 import LoginCard from "../components/LoginCard";
 import { useAuth } from "../../shared/contexts/AuthContext";
 
+/**
+ * Page that allows the user to login to the
+ * application.
+ *
+ * @returns Login page
+ */
 const Login = () => {
   const email = useRef();
   const password = useRef();
@@ -17,22 +23,20 @@ const Login = () => {
 
   const { login } = useAuth();
   const navigate = useNavigate();
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
 
     setError("");
     setIsLoading(true);
 
-    try {
-      setError("");
-      setIsLoading(true);
-      await login(email.current.value, password.current.value);
-      setIsLoading(false);
-      navigate("/auctions");
-    } catch (err) {
-      setIsLoading(false);
-      setError(err.message);
-    }
+    login(email.current.value, password.current.value)
+      .then((_res) => {
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        setError(err.message);
+      });
   };
 
   return (

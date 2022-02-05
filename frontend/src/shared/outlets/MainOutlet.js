@@ -6,6 +6,12 @@ import MainNavigation from "../navigation/MainNavigation";
 
 import "./MainOutlet.css";
 
+/**
+ * Container for autherised locations within the
+ * application.
+ * 
+ * @returns outlet for main pages
+ */
 const MainOutlet = () => {
   const auth = useAuth();
   const isLoggedIn = auth?.activeUser;

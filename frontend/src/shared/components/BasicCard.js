@@ -3,13 +3,24 @@ import Card from "react-bootstrap/Card";
 
 import "./BasicCard.css";
 
-const BasicCard = (props) => {
+/**
+ * A Basic card with consistent styling throughout
+ * the application.
+ * 
+ * @param {String} className
+ * Name of the card to allow the user to extend
+ * the CSS of the basic card.
+ * 
+ * @param {Function} onClick
+ * Add a callback function for when the card is
+ * clicked.
+ * 
+ * @returns Basic card component.
+ */
+const BasicCard = ({ className, onClick, children }) => {
   return (
-    <Card
-      className={`${props.className || ""} basic-card`}
-      onClick={props.onClick}
-    >
-      {props.children}
+    <Card className={`${className || ""} basic-card`} onClick={onClick}>
+      {children}
     </Card>
   );
 };

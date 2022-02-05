@@ -9,6 +9,12 @@ import NavItem from "../components/NavItem";
 
 import "./MainNavigation.css";
 
+/**
+ * This component manages the sidebar and the 
+ * header bar used for navigation.
+ * 
+ * @returns container for navigation components
+ */
 const MainNavigation = () => {
   const [showSideDrawer, setShowSideDrawer] = useState(false);
 

@@ -5,10 +5,22 @@ import AuctionCard from "./AuctionCard";
 
 import "./AuctionList.css";
 
-const AuctionList = (props) => {
+/**
+ * Takes a list of auctions objects and generates
+ * auctions cards to be displayed to the user.
+ *
+ * @param {String} userId
+ * This refers to the user in the backend to retreive
+ * bids.
+ *
+ * @param {Array} auctions
+ * Array of auction objects to be turned into cards.
+ *
+ * @returns list of auctions to be displayed.
+ */
+const AuctionList = ({ userId, auctions }) => {
   const navigate = useNavigate();
 
-  const { userId, auctions } = props;
   if (auctions === 0) {
     return (
       <span className="auction-list_empty-list">
@@ -25,19 +37,19 @@ const AuctionList = (props) => {
   return (
     <ul className="auction-list">
       {auctions.map((auction) => (
-          <li key={auction.id}>
-            <AuctionCard
-              auctionId={auction.id}
-              title={auction.title}
-              onClick={(e) => onAuctionClick(e, auction.id)}
-              description={auction.description}
-              isPublic={auction.isPublic}
-              startTime={auction.starting}
-              closeTime={auction.finishing}
-              userId={userId}
-            />
-          </li>
-        ))}
+        <li key={auction.id}>
+          <AuctionCard
+            auctionId={auction.id}
+            title={auction.title}
+            onClick={(e) => onAuctionClick(e, auction.id)}
+            description={auction.description}
+            isPublic={auction.isPublic}
+            startTime={auction.starting}
+            closeTime={auction.finishing}
+            userId={userId}
+          />
+        </li>
+      ))}
     </ul>
   );
 };
