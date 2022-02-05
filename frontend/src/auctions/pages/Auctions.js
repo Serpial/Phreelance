@@ -36,7 +36,7 @@ const Auctions = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [currentUserId, setCurrentUserId] = useState();
   const [filterValues, setFilterValues] = useState(
-    mergedValues(FILTER_DEFAULTS)
+    buildFilterValues(FILTER_DEFAULTS)
   );
 
   const auctionsPerPage = 5;
@@ -53,12 +53,9 @@ const Auctions = () => {
       setFilterValues(filterTerms);
       const params = new URLSearchParams(location.search);
 
-      // Tidy get parameters
-      for (const pair of params.entries()) {
-        params.delete(pair[0]);
-      }
-
+      // Tidy then set new params
       for (const key in FILTER_DEFAULTS) {
+        params.delete(key);
         if (filterTerms[key] !== FILTER_DEFAULTS[key]) {
           params.set(key, filterTerms[key]);
         }
@@ -138,10 +135,10 @@ const Auctions = () => {
   );
 };
 
-const mergedValues = (defaults) => {
+const buildFilterValues = (defaults) => {
   const queryParams = new URLSearchParams(window.location.search);
   let values = { ...defaults };
-  for (let key in defaults) {
+  for (const key in defaults) {
     if (queryParams.has(key)) {
       const valueString = queryParams.get(key);
 
