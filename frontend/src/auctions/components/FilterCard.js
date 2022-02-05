@@ -52,7 +52,11 @@ const FilterCard = ({ filterValues, onSubmit }) => {
   return (
     <BasicCard className="filter-card">
       <Card.Title>
-        <div className="filter-card_title-arrow-container">
+        <div
+          className={`filter-card_title-arrow-container ${
+            showOptions ? "" : "filter-card_title-arrow-container--closed"
+          }`}
+        >
           <FontAwesomeIcon
             icon={faChevronDown}
             className="filter-card_title-arrow"
@@ -61,14 +65,18 @@ const FilterCard = ({ filterValues, onSubmit }) => {
         </div>
         Filter
       </Card.Title>
-      <Card.Body className="filter-card_options-container">
+      <Card.Body
+        className={`filter-card_options-container ${
+          showOptions ? "" : "filter-card_options-container--hidden"
+        }`}
+      >
         <Form className="filter-card_options" onSubmit={submitHandler}>
           <hr className="filter-card_divider" />
           <div className="filter-card_options-control filter-card_options-key-word-search">
             <Form.Control
               type="text"
               placeholder="Search"
-              defaultValue={searchString.current.value}
+              defaultValue={searchString.current?.value ?? ""}
               ref={searchString}
             />
           </div>
@@ -77,21 +85,21 @@ const FilterCard = ({ filterValues, onSubmit }) => {
             <Form.Check
               className="filter-card_control"
               type="switch"
-              defaultChecked={showPending.current.checked}
+              defaultChecked={showPending.current?.checked ?? false}
               ref={showPending}
               label="Show pending auctions"
             />
             <Form.Check
               className="filter-card_control"
               type="switch"
-              defaultChecked={showStarted.current.checked}
+              defaultChecked={showStarted.current?.checked ?? false}
               ref={showStarted}
               label="Show started auctions"
             />
             <Form.Check
               className="filter-card_control"
               type="switch"
-              defaultChecked={showClosed.current.checked}
+              defaultChecked={showClosed.current?.checked ?? false}
               ref={showClosed}
               label="Show closed auctions"
             />
@@ -102,7 +110,7 @@ const FilterCard = ({ filterValues, onSubmit }) => {
               className="filter-card_control"
               type="radio"
               name="sort"
-              defaultChecked={sortNewest.current.checked}
+              defaultChecked={sortNewest.current?.checked ?? false}
               ref={sortNewest}
               label="Sort by upcoming auctions"
             />
@@ -110,7 +118,7 @@ const FilterCard = ({ filterValues, onSubmit }) => {
               className="filter-card_control"
               type="radio"
               name="sort"
-              defaultChecked={sortOldest.current.checked}
+              defaultChecked={sortOldest.current?.checked ?? false}
               ref={sortOldest}
               label="Sort by oldest auctions"
             />

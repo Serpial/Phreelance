@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faGavel } from "@fortawesome/free-solid-svg-icons";
 
 import SideDrawer from "./SideDrawer";
 import MainHeader from "./MainHeader";
@@ -8,6 +8,7 @@ import Backdrop from "../components/Backdrop";
 import NavItem from "../components/NavItem";
 
 import "./MainNavigation.css";
+import { useNavigate } from "react-router-dom";
 
 /**
  * This component manages the sidebar and the 
@@ -18,11 +19,13 @@ import "./MainNavigation.css";
 const MainNavigation = () => {
   const [showSideDrawer, setShowSideDrawer] = useState(false);
 
+  const navigate = useNavigate();
+
   return (
     <>
       {showSideDrawer && <Backdrop onClick={() => setShowSideDrawer(false)} />}
       <SideDrawer show={showSideDrawer}>
-        <NavItem>asdf</NavItem>
+        <NavItem icon={faGavel} onClick={() => navigate("/auctions")}>Auctions</NavItem>
         <NavItem>asdf</NavItem>
         <NavItem>asdf</NavItem>
         <NavItem>asdf</NavItem>

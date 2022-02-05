@@ -4,7 +4,15 @@
 
 .filter-card_title-arrow-container {
   display: inline-block;
-  padding-right: 4%;
+  padding: 0.2em 0.5em;
+  margin-right: 4%;
+  transform: rotate(0deg);
+  transition: transform 100ms linear;
+}
+
+.filter-card_title-arrow-container--closed {
+  transform: rotate(-90deg);
+  transition: transform 100ms linear;
 }
 
 .filter-card_divider {
@@ -25,7 +33,16 @@
   width: 100%;
 }
 
+.filter-card_options-container--hidden {
+  display: none;
+}
+
 @media only screen and (min-width: 768px) {
+
+  .filter-card_options-container--hidden {
+    display: block;
+  }
+
   .filter-card_title-arrow-container {
     display: none;
   }

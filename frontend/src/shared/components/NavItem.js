@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLink } from "@fortawesome/free-solid-svg-icons";
 
 import "./NavItem.css";
-import { Container } from "react-bootstrap";
 
 /**
  * Component for sidebar navigation.
@@ -27,12 +26,12 @@ const NavItem = ({ icon, className, onClick, children }) => {
   const selectedIcon = icon || faLink;
 
   return (
-    <Container className="nav-item_container">
+    <div className="nav-item_container">
       <span className={(className || "") + " nav-item"} onClick={onClick}>
-        <FontAwesomeIcon className="nav-item_icon" icon={selectedIcon} />
+        <FontAwesomeIcon className="nav-item_icon" icon={selectedIcon} size="md"/>
         <span className="nav-item_content">{children}</span>
       </span>
-    </Container>
+    </div>
   );
 };
 
