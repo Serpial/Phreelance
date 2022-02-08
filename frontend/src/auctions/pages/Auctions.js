@@ -80,8 +80,8 @@ const Auctions = () => {
 
     Axios.get(BACKEND_HOST + "/api/users/auth/" + userAuthId)
       .then((res) => {
-        if (cancel || res.status !== 200) return;
-        const user = res.data;
+        if (cancel) return;
+        const user = res.data.user;
         setUserAppId(user.id);
       })
       .catch((err) => {

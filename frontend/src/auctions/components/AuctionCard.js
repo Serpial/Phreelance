@@ -70,8 +70,10 @@ const AuctionCard = (props) => {
 
         const usersBidValue = bids.find((b) => b.creator === userAppId)?.value;
         if (!usersBidValue) return;
+        
         const bidAsString = parseBid(usersBidValue);
         setUserBid(bidAsString);
+
         if (usersBidValue === minBidValue) {
           setBidTopIsUser(true);
         }
