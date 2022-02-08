@@ -12,6 +12,7 @@ import Login from "./auth/pages/Login";
 import Register from "./auth/pages/Register";
 import Forgot from "./auth/pages/Forgot";
 import Auctions from "./auctions/pages/Auctions";
+import MyAuctions from "./auctions/pages/MyAuctions";
 import { AuthProvider, useAuth } from "./shared/contexts/AuthContext";
 
 const App = () => {
@@ -30,6 +31,7 @@ const App = () => {
           </Route>
           <Route path="/" element={<MainOutlet />}>
             <Route path="/auctions" element={<Auctions />} />
+            <Route path="/my-auctions" element={<MyAuctions />} />
           </Route>
           <Route path="*" element={<Navigate to={defaultRoute} />} />
         </Routes>

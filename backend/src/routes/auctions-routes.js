@@ -9,6 +9,7 @@ const router = express.Router();
 router.get("/", auctionsController.getAuctions);
 router.get("/:auctionID", auctionsController.getAuctionById);
 router.get("/creator/:userID", auctionsController.getUserCreatedAuctions);
+router.get("/bidder/:userID", auctionsController.getParticipatingAuctions);
 
 router.post(
   "/:userID",

@@ -15,7 +15,7 @@ const getAuctions = async (req, res, next) => {
     showStarted,
     showClosed,
   } = req.query;
-  
+
   try {
     publicAuctions = await Auction.find({ isPublic: true }).sort({
       starting: sortOldest === "true" && sortNewest === "false" ? 1 : -1,
@@ -61,6 +61,23 @@ const getAuctions = async (req, res, next) => {
   });
 };
 
+const getParticipatingAuctions = async (req, res, next) => {
+  const userId = req.params.userID;
+
+  let bids;
+  try {
+    bids = await Bid.find({ creator: userId }).populate("auction");
+  } catch (err) {
+    return next(new ErrorWithCode("Could not retrieve bids. Try again later."));
+  }
+
+  const auctions = bids.map((b) => b.auction);
+
+  return res.json({
+    auctions: auctions.map((a) => a.toObject({ getters: true })),
+  });
+};
+
 const getAuctionById = async (req, res, next) => {
   const auctionId = req.params.auctionID;
 
@@ -90,7 +107,7 @@ const getUserCreatedAuctions = async (req, res, next) => {
     return next(new ErrorWithCode("Could not retrieve auctions", 404));
   }
 
-  if (!auctions || auctions.length === 0) {
+  if (!auctions) {
     return next(
       new ErrorWithCode("Could not find any auctions by this user.", 422)
     );
@@ -272,6 +289,7 @@ const dateIsWithinOfRange = (creation, start, finish) => {
 
 exports.getAuctions = getAuctions;
 exports.getAuctionById = getAuctionById;
+exports.getParticipatingAuctions = getParticipatingAuctions;
 exports.getUserCreatedAuctions = getUserCreatedAuctions;
 exports.createAuction = createAuction;
 exports.updateAuction = updateAuction;

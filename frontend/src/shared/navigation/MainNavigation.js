@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faGavel } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faGavel, faList } from "@fortawesome/free-solid-svg-icons";
 
 import SideDrawer from "./SideDrawer";
 import MainHeader from "./MainHeader";
@@ -11,9 +11,9 @@ import "./MainNavigation.css";
 import { useNavigate } from "react-router-dom";
 
 /**
- * This component manages the sidebar and the 
+ * This component manages the sidebar and the
  * header bar used for navigation.
- * 
+ *
  * @returns container for navigation components
  */
 const MainNavigation = () => {
@@ -25,10 +25,12 @@ const MainNavigation = () => {
     <>
       {showSideDrawer && <Backdrop onClick={() => setShowSideDrawer(false)} />}
       <SideDrawer show={showSideDrawer}>
-        <NavItem icon={faGavel} onClick={() => navigate("/auctions")}>Auctions</NavItem>
-        <NavItem>asdf</NavItem>
-        <NavItem>asdf</NavItem>
-        <NavItem>asdf</NavItem>
+        <NavItem icon={faGavel} onClick={() => navigate("/auctions")}>
+          Auctions
+        </NavItem>
+        <NavItem icon={faList} onClick={() => navigate("/my-auctions")}>
+          My Auctions
+        </NavItem>
       </SideDrawer>
       <MainHeader>
         <span

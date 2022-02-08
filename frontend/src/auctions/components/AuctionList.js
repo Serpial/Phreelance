@@ -15,24 +15,23 @@ import "./AuctionList.css";
  *
  * @param {Array} auctions
  * Array of auction objects to be turned into cards.
+ * 
+ * @param {String} emptyMessage
+ * Sttring that you wish to be displayed when the list
+ * is empty
  *
  * @returns list of auctions to be displayed.
  */
-const AuctionList = ({ userId, auctions }) => {
+const AuctionList = ({ userAppId, auctions, emptyMessage }) => {
   const navigate = useNavigate();
 
-  if (auctions === 0) {
+  if (auctions.length === 0) {
     return (
       <span className="auction-list_empty-list">
-        Could not find any auctions with these filters
+        {emptyMessage || "Could not find any auctions."}
       </span>
     );
   }
-
-  const onAuctionClick = (event, auctionId) => {
-    event.preventDefault();
-    navigate(`/auctions/${auctionId}`);
-  };
 
   return (
     <ul className="auction-list">
@@ -41,12 +40,12 @@ const AuctionList = ({ userId, auctions }) => {
           <AuctionCard
             auctionId={auction.id}
             title={auction.title}
-            onClick={(e) => onAuctionClick(e, auction.id)}
+            onClick={() => navigate(`/auctions/${auction.id}`)}
             description={auction.description}
             isPublic={auction.isPublic}
             startTime={auction.starting}
             closeTime={auction.finishing}
-            userId={userId}
+            userAppId={userAppId}
           />
         </li>
       ))}

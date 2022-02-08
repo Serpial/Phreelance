@@ -28,7 +28,7 @@ const NavItem = ({ icon, className, onClick, children }) => {
   return (
     <div className="nav-item_container">
       <span className={(className || "") + " nav-item"} onClick={onClick}>
-        <FontAwesomeIcon className="nav-item_icon" icon={selectedIcon} size="md"/>
+        <FontAwesomeIcon className="nav-item_icon" icon={selectedIcon} />
         <span className="nav-item_content">{children}</span>
       </span>
     </div>

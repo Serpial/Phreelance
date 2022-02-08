@@ -16,26 +16,26 @@ import "./AuctionCard.css";
  * information about an auction. This will include
  * its current top price, description, and time
  * remaining before it starts or finishes.
- * 
+ *
  * @param {String} description
  * Short description of the auction displayed
  * to the user
- * 
+ *
  * @param {String} startTime
  * Start time of the auction used to calculate
  * the remaining time.
- * 
+ *
  * @param {String} closeTime
  * Close time of the auction used to calculate
  * the remaining time.
- * 
+ *
  * @param {String} auctionId
  * ID associated with this auction.
- * 
- * @param {String} userId 
+ *
+ * @param {String} userId
  * Used to determine whether the user is currently
  * the top bid.
- * 
+ *
  * @returns Card displaying individual auction information.
  */
 const AuctionCard = (props) => {
@@ -43,10 +43,10 @@ const AuctionCard = (props) => {
   const [started, setStarted] = useState(false);
   const [elapsed, setElapsed] = useState(false);
   const [topBidIsUser, setBidTopIsUser] = useState(false);
-  const [maxBid, setMaxBid] = useState();
+  const [minBid, setMinBid] = useState();
   const [userBid, setUserBid] = useState();
 
-  const { description, startTime, closeTime, auctionId, userId } = props;
+  const { description, startTime, closeTime, auctionId, userAppId } = props;
 
   const auctionDescription =
     description.length < 120
@@ -63,24 +63,23 @@ const AuctionCard = (props) => {
         if (cancel) return;
 
         const bids = response.data.bids;
-        if (bids.length > 0) return;
+        if (bids.length < 1) return;
+        const minBidValue = Math.min(...bids.map((b) => b.value));
+        if (!minBidValue) return;
+        setMinBid(parseBid(minBidValue));
 
-        const maxBidValue = Math.max(bids.map((b) => b.value));
-        if (!maxBidValue) return;
-
-        setMaxBid(parseBid(maxBidValue));
-        const usersBid = bids.find((b) => b.creator === userId);
-        if (usersBid) {
-          setUserBid(parseBid(usersBid));
-          if (userBid.value === maxBid) {
-            setBidTopIsUser(true);
-          }
+        const usersBidValue = bids.find((b) => b.creator === userAppId)?.value;
+        if (!usersBidValue) return;
+        const bidAsString = parseBid(usersBidValue);
+        setUserBid(bidAsString);
+        if (usersBidValue === minBidValue) {
+          setBidTopIsUser(true);
         }
       })
       .catch((err) => console.log(err));
 
     return () => (cancel = true);
-  }, [userBid, maxBid, auctionId, userId]);
+  }, [userBid, minBid, auctionId, userAppId]);
 
   useEffect(() => {
     const start = Date.parse(startTime);
@@ -110,14 +109,14 @@ const AuctionCard = (props) => {
       >
         <span className="auction-card_title">{props.title}</span>
         {!elapsed && started && (
-           <span className="auction-card_status auction-card_status-active">
-           Active
-         </span>
+          <span className="auction-card_status auction-card_status-active">
+            Active
+          </span>
         )}
         {elapsed && (
           <span className="auction-card_status auction-card_status-closed">
-          Closed
-        </span>
+            Closed
+          </span>
         )}
         {!started && (
           <span className="auction-card_status auction-card_status-pending">
@@ -142,31 +141,43 @@ const AuctionCard = (props) => {
           </span>
         )}
         <div className="auction-card_description">{auctionDescription}</div>
-        <div className="auction-card_bid-container">
-          <div className="auction-card_top-bid">
-            {maxBid && `Winning bid: ${maxBid} `}
-          </div>
-          <div className="auction-card_notification">
-            {started && topBidIsUser && (
-              <>
-                <FontAwesomeIcon
-                  className="auction-card_icon"
-                  icon={faUserCircle}
-                />
-                You
-              </>
-            )}
-            {userBid && !elapsed && !topBidIsUser && (
-              <FontAwesomeIcon
-                className="auction-card_icon auction-card_warning-icon"
-                icon={faExclamationCircle}
-              />
-            )}
-          </div>
-          {userBid && !topBidIsUser && (
-            <div className="auction-card_my-bid">Your bid: {userBid}</div>
-          )}
-        </div>
+        {minBid && (
+          <>
+            <hr />
+            <div className="auction-card_bid-container">
+              <span className="auction-card_bid-label">Winning bid: </span>
+              <span className="auction-card_value-container">
+                {minBid}
+                <span className="auction-card_notification">
+                  {started && topBidIsUser && (
+                    <FontAwesomeIcon
+                      className="auction-card_icon"
+                      icon={faUserCircle}
+                      fixedWidth
+                      size="lg"
+                    />
+                  )}
+                  {userBid && !elapsed && !topBidIsUser && (
+                    <FontAwesomeIcon
+                      className="auction-card_icon auction-card_warning-icon"
+                      icon={faExclamationCircle}
+                      fixedWidth
+                      size="lg"
+                    />
+                  )}
+                </span>
+              </span>
+            </div>
+          </>
+        )}
+        {userBid && !topBidIsUser && (
+          <>
+            <div className="auction-card_bid-container">
+              <span className="auction-card_bid-label">My bid: </span>
+              <span className="auction-card_value-container">{userBid}</span>
+            </div>
+          </>
+        )}
       </Card.Body>
     </BasicCard>
   );
@@ -174,12 +185,12 @@ const AuctionCard = (props) => {
 
 const parseBid = (valueNumber) => {
   // source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat
-  const numberFormat = new Intl("en-GB", {
+  const numberFormat = new Intl.NumberFormat("en-GB", {
     style: "currency",
     currency: "GBP",
   });
 
-  return Intl.NumberFormat(numberFormat.format(valueNumber));
+  return numberFormat.format(valueNumber);
 };
 
 const timeBetween = (timeA, timeB) => {

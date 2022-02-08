@@ -94,10 +94,6 @@ const getBidsByUser = async (req, res, next) => {
     return next(new ErrorWithCode("Could not retreive bids. Try again.", 422));
   }
 
-  if (!bids || (bids.length <= 0)) {
-    return next(new ErrorWithCode("Could not find bids for auction.", 422));
-  }
-
   res.json({ bids: bids.map((a) => a.toObject({ getters: true })) });
 };
 

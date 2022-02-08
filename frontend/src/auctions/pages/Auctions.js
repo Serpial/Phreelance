@@ -31,20 +31,28 @@ const FILTER_DEFAULTS = {
  * @returns Auction page component
  */
 const Auctions = () => {
-  const [auctionList, setAuctionList] = useState([]);
-  const [auctionsOnPage, setAuctionsOnPage] = useState([]);
-  const [pageNumber, setPageNumber] = useState(1);
-  const [currentUserId, setCurrentUserId] = useState();
+  const buildFilterValues = (defaults) => {
+    const queryParams = new URLSearchParams(window.location.search);
+    let values = { ...defaults };
+    for (const key in defaults) {
+      if (queryParams.has(key)) {
+        const valueString = queryParams.get(key);
+
+        let booleanValue;
+        if (valueString === "true" || valueString === "false") {
+          booleanValue = valueString === "true";
+        }
+
+        values[key] =
+          booleanValue === undefined ? queryParams.get(key) : booleanValue;
+      }
+    }
+    return values;
+  };
+
   const [filterValues, setFilterValues] = useState(
     buildFilterValues(FILTER_DEFAULTS)
   );
-
-  const auctionsPerPage = 5;
-  const pageCount = Math.ceil(auctionList.length / auctionsPerPage);
-
-  const { activeUser } = useAuth();
-  const userAuthId = activeUser.uid;
-
   const location = useLocation();
   const navigate = useNavigate();
   const handleFilterSubmit = useRef();
@@ -64,6 +72,9 @@ const Auctions = () => {
     };
   }, [location, navigate]);
 
+  const [userAppId, setUserAppId] = useState();
+  const { activeUser } = useAuth();
+  const userAuthId = activeUser.uid;
   useEffect(() => {
     let cancel = false;
 
@@ -71,7 +82,7 @@ const Auctions = () => {
       .then((res) => {
         if (cancel || res.status !== 200) return;
         const user = res.data;
-        setCurrentUserId(user.id);
+        setUserAppId(user.id);
       })
       .catch((err) => {
         console.log(err.request.status);
@@ -80,6 +91,10 @@ const Auctions = () => {
     return () => (cancel = true);
   }, [userAuthId]);
 
+  const [pageNumber, setPageNumber] = useState(1);
+  const [auctionList, setAuctionList] = useState([]);
+  const [auctionsOnPage, setAuctionsOnPage] = useState([]);
+  const auctionsPerPage = 5;
   useEffect(() => {
     let cancel = false;
 
@@ -89,7 +104,7 @@ const Auctions = () => {
       .then((res) => {
         if (cancel || res.status !== 200) return;
         const auctions = res.data.auctions.filter(
-          (a) => a.creator !== currentUserId
+          (a) => a.creator !== userAppId
         );
         setAuctionList(auctions);
         setAuctionsOnPage(
@@ -104,8 +119,9 @@ const Auctions = () => {
       });
 
     return () => (cancel = true);
-  }, [currentUserId, pageNumber, filterValues, auctionsPerPage]);
+  }, [userAppId, pageNumber, filterValues, auctionsPerPage]);
 
+  const pageCount = Math.ceil(auctionList.length / auctionsPerPage);
   return (
     <Container fluid="sm">
       <Row xs={1} md={2}>
@@ -116,7 +132,11 @@ const Auctions = () => {
           />
         </Col>
         <Col md={7} lg={8}>
-          <AuctionList userId={currentUserId} auctions={auctionsOnPage} />
+          <AuctionList
+            userAppId={userAppId}
+            auctions={auctionsOnPage}
+            emptyMessage="Could not find any auctions with these filters."
+          />
           <ReactPaginate
             className="auctions-pagination"
             breakLabel="..."
@@ -133,25 +153,6 @@ const Auctions = () => {
       </Row>
     </Container>
   );
-};
-
-const buildFilterValues = (defaults) => {
-  const queryParams = new URLSearchParams(window.location.search);
-  let values = { ...defaults };
-  for (const key in defaults) {
-    if (queryParams.has(key)) {
-      const valueString = queryParams.get(key);
-
-      let booleanValue;
-      if (valueString === "true" || valueString === "false") {
-        booleanValue = valueString === "true";
-      }
-
-      values[key] =
-        booleanValue === undefined ? queryParams.get(key) : booleanValue;
-    }
-  }
-  return values;
 };
 
 export default Auctions;
