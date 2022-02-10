@@ -145,9 +145,7 @@ const Auctions = () => {
             onPageChange={({ selected }) => setPageNumber(selected + 1)}
             pageRangeDisplayed={pageCount > 5 ? 5 : pageCount}
             pageCount={pageCount}
-            renderOnZeroPageCount={() => {
-              return <p>Could not find any auctions with these search terms</p>;
-            }}
+            renderOnZeroPageCount={null}
           />
         </Col>
       </Row>

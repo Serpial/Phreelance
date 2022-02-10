@@ -8,7 +8,6 @@ import Backdrop from "../components/Backdrop";
 import NavItem from "../components/NavItem";
 
 import "./MainNavigation.css";
-import { useNavigate } from "react-router-dom";
 
 /**
  * This component manages the sidebar and the
@@ -19,16 +18,14 @@ import { useNavigate } from "react-router-dom";
 const MainNavigation = () => {
   const [showSideDrawer, setShowSideDrawer] = useState(false);
 
-  const navigate = useNavigate();
-
   return (
     <>
       {showSideDrawer && <Backdrop onClick={() => setShowSideDrawer(false)} />}
       <SideDrawer show={showSideDrawer}>
-        <NavItem icon={faGavel} onClick={() => navigate("/auctions")}>
+        <NavItem icon={faGavel} location="/auctions">
           Auctions
         </NavItem>
-        <NavItem icon={faList} onClick={() => navigate("/my-auctions")}>
+        <NavItem icon={faList} location="/my-auctions">
           My Auctions
         </NavItem>
       </SideDrawer>
