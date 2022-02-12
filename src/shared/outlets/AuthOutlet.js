@@ -19,7 +19,7 @@ const AuthOutlet = () => {
   const auth = useAuth();
   const isLoggedIn = auth?.activeUser;
   if (isLoggedIn) {
-    return <Navigate to={"/auctions"} />;
+    return <Navigate to={"/find-auctions"} />;
   }
 
   return (

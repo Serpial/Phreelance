@@ -22,7 +22,7 @@ const MainNavigation = () => {
     <>
       {showSideDrawer && <Backdrop onClick={() => setShowSideDrawer(false)} />}
       <SideDrawer show={showSideDrawer}>
-        <NavItem icon={faGavel} location="/auctions">
+        <NavItem icon={faGavel} location="/find-auctions">
           Auctions
         </NavItem>
         <NavItem icon={faList} location="/my-auctions">

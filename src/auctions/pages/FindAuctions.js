@@ -10,7 +10,7 @@ import { useAuth } from "../../shared/contexts/AuthContext";
 import FilterCard from "../components/FilterCard";
 import AuctionList from "../components/AuctionList";
 
-import "./Auctions.css";
+import "./FindAuctions.css";
 
 const BACKEND_HOST = process.env.REACT_APP_RUN_BACK_END_HOST;
 const FILTER_DEFAULTS = {
@@ -68,7 +68,7 @@ const Auctions = () => {
           params.set(key, filterTerms[key]);
         }
       }
-      navigate("/auctions?" + params.toString());
+      navigate("/find-auctions?" + params.toString());
     };
   }, [location, navigate]);
 

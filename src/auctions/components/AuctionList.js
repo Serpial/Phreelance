@@ -36,11 +36,11 @@ const AuctionList = ({ userAppId, auctions, emptyMessage }) => {
   return (
     <ul className="auction-list">
       {auctions.map((auction) => (
-        <li key={auction.id}>
+        <li key={auction.meaningfulId}>
           <AuctionCard
-            auctionId={auction.id}
+            auctionId={auction.meaningfulId}
             title={auction.title}
-            onClick={() => navigate(`/auctions/${auction.id}`)}
+            onClick={() => navigate(`/auction/${auction.meaningfulId}`)}
             description={auction.description}
             isPublic={auction.isPublic}
             startTime={auction.starting}

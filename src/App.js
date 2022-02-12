@@ -11,13 +11,14 @@ import MainOutlet from "./shared/outlets/MainOutlet";
 import Login from "./auth/pages/Login";
 import Register from "./auth/pages/Register";
 import Forgot from "./auth/pages/Forgot";
-import Auctions from "./auctions/pages/Auctions";
+import FindAuctions from "./auctions/pages/FindAuctions";
 import MyAuctions from "./auctions/pages/MyAuctions";
 import { AuthProvider, useAuth } from "./shared/contexts/AuthContext";
+import Auction from "./auctions/pages/Auction";
 
 const App = () => {
   const isLoggedIn = useAuth()?.activeUser;
-  const defaultRoute = isLoggedIn ? "/auctions" : "/login";
+  const defaultRoute = isLoggedIn ? "/auctions-list" : "/login";
 
   return (
     <AuthProvider>
@@ -30,8 +31,9 @@ const App = () => {
             <Route path="password-reset" element={<Forgot />} />
           </Route>
           <Route path="/" element={<MainOutlet />}>
-            <Route path="/auctions" element={<Auctions />} />
+            <Route path="/find-auctions" element={<FindAuctions />} />
             <Route path="/my-auctions" element={<MyAuctions />} />
+            <Route path="/auction/:auctionID" element={<Auction />} />
           </Route>
           <Route path="*" element={<Navigate to={defaultRoute} />} />
         </Routes>
