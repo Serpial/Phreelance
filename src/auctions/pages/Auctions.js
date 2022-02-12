@@ -31,14 +31,6 @@ const FILTER_DEFAULTS = {
  * @returns Auction page component
  */
 const Auctions = () => {
-  const [doResultRefresh, setDoResultRefresh] = useState(false);
-  setInterval(() => {
-    if (!doResultRefresh) {
-      console.log("beep boop");
-      setDoResultRefresh(true);
-    }
-  }, 10000);
-
   const buildFilterValues = (defaults) => {
     const queryParams = new URLSearchParams(window.location.search);
     let values = { ...defaults };
@@ -93,7 +85,7 @@ const Auctions = () => {
         setUserAppId(user.id);
       })
       .catch((err) => {
-        console.log(err.request.status);
+        console.log(err.response);
       });
 
     return () => (cancel = true);
@@ -123,11 +115,10 @@ const Auctions = () => {
         );
       })
       .catch((err) => {
-        console.log(err.request.status);
+        console.log(err.response);
       });
-    setDoResultRefresh(false);
     return () => (cancel = true);
-  }, [userAppId, pageNumber, filterValues, auctionsPerPage, doResultRefresh]);
+  }, [userAppId, pageNumber, filterValues, auctionsPerPage]);
 
   const pageCount = Math.ceil(auctionList.length / auctionsPerPage);
   return (

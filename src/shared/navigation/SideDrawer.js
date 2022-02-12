@@ -37,7 +37,7 @@ const SideDrawer = ({ show, children }) => {
         setDisplayName(user.name);
         setEmailAddress(user.email);
       })
-      .catch((err) => console.log(JSON.parse(err.request.response)));
+      .catch((err) => console.log(err.response));
 
     return () => (cancel = true);
   });

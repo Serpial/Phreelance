@@ -39,21 +39,25 @@ import "./AuctionCard.css";
  * @returns Card displaying individual auction information.
  */
 const AuctionCard = (props) => {
-  const [timeRemaining, setTimeRemaining] = useState("");
-  const [started, setStarted] = useState(false);
-  const [elapsed, setElapsed] = useState(false);
-  const [topBidIsUser, setBidTopIsUser] = useState(false);
-  const [minBid, setMinBid] = useState();
-  const [userBid, setUserBid] = useState();
-
   const { description, startTime, closeTime, auctionId, userAppId } = props;
 
-  const auctionDescription =
-    description.length < 120
-      ? description
-      : description.slice(0, 120).trim() + "...";
-
+  const [doBidRefresh, setDoBidRefresh] = useState(true);
+  const [doTimeRefresh, setDoTimeRefresh] = useState(true);
   useEffect(() => {
+    const interval = setInterval(() => {
+      setDoBidRefresh(true);
+      setDoTimeRefresh(true);
+    }, 950);
+
+    return () => clearInterval(interval)
+  }, []);
+
+  const [minBid, setMinBid] = useState();
+  const [userBid, setUserBid] = useState();
+  const [topBidIsUser, setBidTopIsUser] = useState(false);
+  useEffect(() => {
+    if (!doBidRefresh) return;
+
     let cancel = false;
 
     Axios.get(
@@ -70,38 +74,48 @@ const AuctionCard = (props) => {
 
         const usersBidValue = bids.find((b) => b.creator === userAppId)?.value;
         if (!usersBidValue) return;
-        
+
         const bidAsString = parseBid(usersBidValue);
         setUserBid(bidAsString);
 
         if (usersBidValue === minBidValue) {
           setBidTopIsUser(true);
         }
+        setDoBidRefresh(false);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log("Issue updating auctions :", err));
 
     return () => (cancel = true);
-  }, [userBid, minBid, auctionId, userAppId]);
+  }, [userBid, minBid, auctionId, userAppId, doBidRefresh]);
 
+  const [timeRemaining, setTimeRemaining] = useState("");
+  const [started, setStarted] = useState(false);
+  const [elapsed, setElapsed] = useState(false);
   useEffect(() => {
-    const start = Date.parse(startTime);
-    const close = Date.parse(closeTime);
-    const now = Date.now();
+    if (!doTimeRefresh) return;
 
-    if (!elapsed && now > close) {
-      setElapsed(true);
-    }
+    const now = new Date(Date.now());
+    const startDateTime = new Date(Date.parse(startTime));
+    const closeDateTime = new Date(Date.parse(closeTime));
 
-    if (!started && now > start) {
-      setStarted(true);
-    }
+    const hasStarted = now > startDateTime;
+    setStarted(hasStarted);
+    const hasElapsed = now >= closeDateTime;
+    setElapsed(hasElapsed);
 
-    let timeBefore = timeBetween(close, start);
-    if (!started) {
-      timeBefore = timeBetween(start, now);
+    if (!hasElapsed) {
+      const timeBefore = hasStarted
+        ? findTimeBetween(now, closeDateTime)
+        : findTimeBetween(now, startDateTime);
+      setTimeRemaining(timeBefore);
     }
-    setTimeRemaining(timeBefore);
-  }, [started, elapsed, startTime, closeTime]);
+    setDoTimeRefresh(false);
+  }, [startTime, closeTime, doTimeRefresh]);
+
+  const auctionDescription =
+    description.length < 120
+      ? description
+      : description.slice(0, 120).trim() + "...";
 
   return (
     <BasicCard className="auction-card">
@@ -195,8 +209,8 @@ const parseBid = (valueNumber) => {
   return numberFormat.format(valueNumber);
 };
 
-const timeBetween = (timeA, timeB) => {
-  const difference = timeA - timeB;
+const findTimeBetween = (before, after) => {
+  const difference = after - before;
   const difference_in_months = difference / (1000 * 3600 * 24 * 31);
   if (difference_in_months > 1) {
     return Math.floor(difference_in_months) + " months";
