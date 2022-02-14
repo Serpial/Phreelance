@@ -8,14 +8,14 @@ import "./NavItem.css";
 /**
  * Component for sidebar navigation.
  *
+ * @param {JSX.Element} name
+ * Name of the link
+ *
  * @param {FontAwesomeIcon} icon
  * Insert a fontawesome icon object.
  *
  * @param {String} className
  * Insert className for custom styling
- *
- * @param {JSX.Element} children
- * Collection of JSX elements to be contained.
  *
  * @param {String} location
  * Location in which this nav item is associated with
@@ -25,7 +25,7 @@ import "./NavItem.css";
  *
  * @returns
  */
-const NavItem = ({ icon, className, children, location, onClick }) => {
+const NavItem = ({ name, icon, className, location, onClick }) => {
   const selectedIcon = icon || faLink;
 
   const { pathname } = useLocation();
@@ -50,7 +50,7 @@ const NavItem = ({ icon, className, children, location, onClick }) => {
         onClick={onClick}
       >
         <FontAwesomeIcon className="nav-item_icon" icon={selectedIcon} />
-        <span className="nav-item_content">{children}</span>
+        <span className="nav-item_content">{name}</span>
       </span>
     </div>
   );

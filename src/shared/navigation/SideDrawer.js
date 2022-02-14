@@ -80,9 +80,7 @@ const SideDrawer = ({ show, children }) => {
         <legend className="side-drawer_nav">{children}</legend>
         <hr className="side-drawer_separator" />
         <footer className="side-drawer_footer">
-          <NavItem onClick={handleLogout} icon={faSignOutAlt}>
-            Sign out
-          </NavItem>
+          <NavItem name="Sign out" onClick={handleLogout} icon={faSignOutAlt} />
         </footer>
       </aside>
     </CSSTransition>

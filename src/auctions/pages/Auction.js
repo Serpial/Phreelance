@@ -8,12 +8,14 @@ const Auction = () => {
   const { auctionID } = useParams();
 
   const [auction, setAuction] = useState();
+  console.log(auction);
   useEffect(() => {
     let cancel = false;
 
     Axios.get(`${BACKEND_HOST}/api/auctions/${auctionID}`)
       .then((res) => {
         if (cancel) return;
+        console.log(res.data.auction)
         setAuction(res.data.auction);
       })
       .catch((err) => console.log(err.response));

@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faGavel, faList } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBars,
+  faGavel,
+  faList,
+  faCalendarPlus,
+} from "@fortawesome/free-solid-svg-icons";
 
 import SideDrawer from "./SideDrawer";
 import MainHeader from "./MainHeader";
@@ -22,12 +27,9 @@ const MainNavigation = () => {
     <>
       {showSideDrawer && <Backdrop onClick={() => setShowSideDrawer(false)} />}
       <SideDrawer show={showSideDrawer}>
-        <NavItem icon={faGavel} location="/find-auctions">
-          Auctions
-        </NavItem>
-        <NavItem icon={faList} location="/my-auctions">
-          My Auctions
-        </NavItem>
+        <NavItem name="Auctions" icon={faGavel} location="/find-auctions" />
+        <NavItem name="My Auctions" icon={faList} location="/my-auctions" />
+        <NavItem name="New Listing" icon={faCalendarPlus} location="/create-listing" />
       </SideDrawer>
       <MainHeader>
         <span

@@ -13,8 +13,9 @@ import Register from "./auth/pages/Register";
 import Forgot from "./auth/pages/Forgot";
 import FindAuctions from "./auctions/pages/FindAuctions";
 import MyAuctions from "./auctions/pages/MyAuctions";
-import { AuthProvider, useAuth } from "./shared/contexts/AuthContext";
 import Auction from "./auctions/pages/Auction";
+import CreateListing from "./auctions/pages/CreateListing";
+import { AuthProvider, useAuth } from "./shared/contexts/AuthContext";
 
 const App = () => {
   const isLoggedIn = useAuth()?.activeUser;
@@ -33,6 +34,7 @@ const App = () => {
           <Route path="/" element={<MainOutlet />}>
             <Route path="/find-auctions" element={<FindAuctions />} />
             <Route path="/my-auctions" element={<MyAuctions />} />
+            <Route path="/create-listing" element={<CreateListing />} />
             <Route path="/auction/:auctionID" element={<Auction />} />
           </Route>
           <Route path="*" element={<Navigate to={defaultRoute} />} />
