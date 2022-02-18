@@ -12,7 +12,7 @@ import { useAuth } from "../../shared/contexts/AuthContext";
 import "./CreateListing.css";
 
 const AUCTION_DESCRIPTIONS = {
-  "Scottish auction": "Scottish",
+  "English auction": "English",
   "Dutch auction": "Dutch",
 };
 
@@ -61,27 +61,29 @@ const CreateListing = () => {
             <Form.Group>
               <h2>About</h2>
               <Form.Label>Title</Form.Label>
-              <Form.Control type="text" placeholder="My new work job..." />
+              <Form.Control
+                type="text"
+                ref={title}
+                placeholder="My new work job..."
+              />
               <Form.Label>Description</Form.Label>
               <Form.Control
                 as="textarea"
                 rows={3}
+                ref={description}
                 placeholder="Please describe the product..."
               />
               <Form.Label>Start time</Form.Label>
-              <DateTimeInput
-                handleDateTime={getStartDateTime}
-              />
+              <DateTimeInput handleDateTime={getStartDateTime} />
               <Form.Label>Finish time</Form.Label>
-              <DateTimeInput
-                handleDateTime={getFinishDateTime}
-              />
+              <DateTimeInput handleDateTime={getFinishDateTime} />
             </Form.Group>
             <Form.Group>
               <h2>Pricing</h2>
               <Form.Label>Reserve Price</Form.Label>
               <CurrencyInput
                 className="form-control"
+                ref={reservePrice}
                 prefix="£"
                 decimalsLimit={2}
                 placeholder="£30.99"
