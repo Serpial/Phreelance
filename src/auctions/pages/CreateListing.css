@@ -1,3 +1,11 @@
-.create-listing_alert{
+.create-listing_alert {
   margin: 1em 0;
+}
+
+.create-listing_submit-group {
+  width: 100%;
+}
+
+.create-listing_submit-button {
+  width: 50%;
 }

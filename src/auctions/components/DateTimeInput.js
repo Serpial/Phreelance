@@ -15,43 +15,50 @@ import TimePicker from "react-bootstrap-time-picker";
  * @param {Number} defaultTime
  * Time in seconds (not miliseconds)
  *
- * @param {Function} handleDateTime
+ * @param {Function} onChange
  * Callback function to pass back the newly acquired Date object (Not in UTC)
+ *
+ * @param {Boolean} disabled
+ * Default disabled state of item
  *
  * @returns {JSX.Element} DateTimeInput
  */
-const DateTimeInput = ({ defaultDate, defaultTime, handleDateTime }) => {
-  const [time, setTime] = useState(defaultTime || 0);
-  const [date, setDate] = useState(defaultDate || "2025-08-12");
+const DateTimeInput = ({ defaultDate, defaultTime, onChange, disabled }) => {
+  const [timeValue, setTimeValue] = useState(defaultTime || 43200);
+  const [dateValue, setDateValue] = useState(defaultDate || "2025-08-12");
+  const onChangeMethod = useRef(onChange);
   useEffect(() => {
-    if (!date) return;
+    if (!dateValue) return;
 
-    const [year, month, day] = date.split("-");
+    const [year, month, day] = dateValue.split("-");
     const dateObject = new Date(
-      new Date(year, month - 1, day).getTime() + time * 1000
+      new Date(year, month - 1, day).getTime() + timeValue * 1000
     );
-    handleDateTime({ date: dateObject });
-  }, [time, date, handleDateTime]);
 
-  const dateRef = useRef();
+    if (!onChangeMethod.current) return;
+    onChangeMethod.current(dateObject);
+  }, [timeValue, dateValue, onChangeMethod]);
+
   return (
-    <>
-      <Container>
-        <Row>
-          <Col>
-            <Form.Control
-              type="date"
-              value={date}
-              ref={dateRef}
-              onChange={() => setDate(dateRef.current.value)}
-            />
-          </Col>
-          <Col>
-            <TimePicker value={time} onChange={setTime} />
-          </Col>
-        </Row>
-      </Container>
-    </>
+    <Container>
+      <Row>
+        <Col>
+          <Form.Control
+            disabled={disabled}
+            type="date"
+            defaultValue={dateValue}
+            onChange={(e) => setDateValue(e.value)}
+          />
+        </Col>
+        <Col>
+          <TimePicker
+            disabled={disabled}
+            initialValue={timeValue}
+            onChange={setTimeValue}
+          />
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

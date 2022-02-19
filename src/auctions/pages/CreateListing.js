@@ -1,9 +1,11 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Alert from "react-bootstrap/Alert";
+import Button from "react-bootstrap/Button";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
 import CurrencyInput from "react-currency-input-field";
 
 import DateTimeInput from "../components/DateTimeInput";
@@ -26,26 +28,26 @@ const CreateListing = () => {
   const reservePrice = useRef();
 
   const authId = useAuth()?.activeUser;
-  const [warning, setWarning] = useState(null);
-  useEffect(() => {});
-
-  const getStartDateTime = (date) => {
-    console.log(date);
-  };
-  const getFinishDateTime = (date) => {
-    console.log(date);
-  };
+  const [warning, setWarning] = useState();
 
   const defaultAuctionType = Object.keys(AUCTION_DESCRIPTIONS)[0];
   const [auctionType, setAuctionType] = useState(defaultAuctionType);
   const defaultAuctionDescription = AUCTION_DESCRIPTIONS[auctionType];
-  const [auctionTypeDescription, setAuctionTypeDescription] = useState(
+  const [auctionDescription, setAuctionDescription] = useState(
     defaultAuctionDescription
   );
   const handleDropdownChange = (event) => {
     const newAuctionType = event.target.value;
     setAuctionType(newAuctionType);
-    setAuctionTypeDescription(AUCTION_DESCRIPTIONS[newAuctionType]);
+    setAuctionDescription(AUCTION_DESCRIPTIONS[newAuctionType]);
+  };
+
+  const [startDate, setStartDate] = useState();
+  const [finishDate, setFinishDate] = useState();
+  const [useCustomStartTime, setUseCustomStartTime] = useState(false);
+  const handleSubmit = (event, options) => {
+    event.preventDefault();
+    const isPublic = options?.isDraft;
   };
 
   return (
@@ -64,19 +66,29 @@ const CreateListing = () => {
               <Form.Control
                 type="text"
                 ref={title}
-                placeholder="My new work job..."
+                placeholder="My new contract"
               />
               <Form.Label>Description</Form.Label>
               <Form.Control
                 as="textarea"
                 rows={3}
                 ref={description}
-                placeholder="Please describe the product..."
+                placeholder="Please describe the contract..."
               />
               <Form.Label>Start time</Form.Label>
-              <DateTimeInput handleDateTime={getStartDateTime} />
+              <Form.Check
+                checked={useCustomStartTime}
+                onChange={(e) => {
+                  setUseCustomStartTime(!useCustomStartTime);
+                }}
+                label="Delay the start-time of your auction"
+              />
+              <DateTimeInput
+                onChange={setStartDate}
+                disabled={!useCustomStartTime}
+              />
               <Form.Label>Finish time</Form.Label>
-              <DateTimeInput handleDateTime={getFinishDateTime} />
+              <DateTimeInput onChange={setFinishDate} />
             </Form.Group>
             <Form.Group>
               <h2>Pricing</h2>
@@ -95,9 +107,30 @@ const CreateListing = () => {
                 ))}
               </Form.Select>
               <Alert className="create-listing_alert" variant="dark">
-                {auctionTypeDescription}
+                {auctionDescription}
               </Alert>
             </Form.Group>
+            <ButtonGroup
+              className="create-listing_submit-group"
+              aria-label="Submit or save as draft"
+            >
+              <Button
+                className="create-listing_submit-button"
+                type="submit"
+                variant="secondary"
+                onClick={(e) => handleSubmit(e, { isDraft: true })}
+              >
+                Save as draft
+              </Button>
+              <Button
+                className="create-listing_submit-button"
+                type="submit"
+                variant="primary"
+                onClick={(e) => handleSubmit(e)}
+              >
+                Submit
+              </Button>
+            </ButtonGroup>
           </Form>
         </Col>
       </Row>
