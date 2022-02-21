@@ -12,9 +12,6 @@ import TimePicker from "react-bootstrap-time-picker";
  * @param {String} defaultDate
  * Date in the Format "[Year]-[Month]-[Date]". I.e, "11-04-2022"
  *
- * @param {Number} defaultTime
- * Time in seconds (not miliseconds)
- *
  * @param {Function} onChange
  * Callback function to pass back the newly acquired Date object (Not in UTC)
  *
@@ -23,9 +20,14 @@ import TimePicker from "react-bootstrap-time-picker";
  *
  * @returns {JSX.Element} DateTimeInput
  */
-const DateTimeInput = ({ defaultDate, defaultTime, onChange, disabled }) => {
-  const [timeValue, setTimeValue] = useState(defaultTime || 43200);
-  const [dateValue, setDateValue] = useState(defaultDate || "2025-08-12");
+const DateTimeInput = ({ defaultDate, onChange, disabled }) => {
+  const [dateValue, setDateValue] = useState(
+    dateToString(defaultDate) || "2025-08-12"
+  );
+  const [timeValue, setTimeValue] = useState(
+    dateToTimeValue(defaultDate) || 43200
+  );
+
   const onChangeMethod = useRef(onChange);
   useEffect(() => {
     if (!dateValue) return;
@@ -34,6 +36,7 @@ const DateTimeInput = ({ defaultDate, defaultTime, onChange, disabled }) => {
     const dateObject = new Date(
       new Date(year, month - 1, day).getTime() + timeValue * 1000
     );
+
 
     if (!onChangeMethod.current) return;
     onChangeMethod.current(dateObject);
@@ -47,7 +50,7 @@ const DateTimeInput = ({ defaultDate, defaultTime, onChange, disabled }) => {
             disabled={disabled}
             type="date"
             defaultValue={dateValue}
-            onChange={(e) => setDateValue(e.value)}
+            onChange={(e) => setDateValue(e.currentTarget.value)}
           />
         </Col>
         <Col>
@@ -60,6 +63,20 @@ const DateTimeInput = ({ defaultDate, defaultTime, onChange, disabled }) => {
       </Row>
     </Container>
   );
+};
+
+const dateToTimeValue = (date) => {
+  const hours = date.getHours() * 60 * 60;
+  const minutes = date.getMinutes() / 30 > 1 ? 30 * 60 : 0;
+  return hours + minutes;
+};
+
+const dateToString = (date) => {
+  let month = date.getMonth() + 1 + "";
+  month = month < 10 ? "0" + month : month;
+
+  const dateString = date.getFullYear() + "-" + month + "-" + date.getDate();
+  return dateString;
 };
 
 export default DateTimeInput;

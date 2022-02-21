@@ -1,0 +1,24 @@
+.modal-card {
+  z-index: 15;
+  position: fixed;
+  top: 40vh;
+  width: auto;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+
+.modal-card > .card > .card-body > .btn {
+  width: 100%;
+  margin: 0.5em 0;
+}
+
+.modal-card__hide {
+  display: none;
+}
+
+@media only screen and (min-width: 576px) {
+  .modal-card > .card > .card-body > .btn {
+    width: 40%;
+    margin: 0 5%;
+  }
+}
