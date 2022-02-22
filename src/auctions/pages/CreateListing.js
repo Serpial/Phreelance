@@ -118,8 +118,6 @@ const CreateListing = () => {
       newAuction["isPublic"] = isPublic;
     }
 
-    console.log(newAuction);
-
     Axios.get(`${BACKEND_HOST}/api/users/auth/${authId}`)
       .then((res) => {
         const uri = `${BACKEND_HOST}/api/auctions/${res?.data?.user?.id}`;
@@ -140,7 +138,7 @@ const CreateListing = () => {
       <ModalCard
         show={showConfirmModal}
         title="Publishing... Are you sure?"
-        infoText="You will not be able to change the start time once you publish an auction."
+        infoText="You will not be able to change the some options after publishing an auction."
       >
         <Button variant="danger" onClick={() => publish({ isPublic: true })}>
           Confirm

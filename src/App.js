@@ -15,6 +15,7 @@ import FindAuctions from "./auctions/pages/FindAuctions";
 import MyAuctions from "./auctions/pages/MyAuctions";
 import Auction from "./auctions/pages/Auction";
 import CreateListing from "./auctions/pages/CreateListing";
+import UpdateListing from "./auctions/pages/UpdateListing";
 import { AuthProvider, useAuth } from "./shared/contexts/AuthContext";
 
 const App = () => {
@@ -35,6 +36,7 @@ const App = () => {
             <Route path="/find-auctions" element={<FindAuctions />} />
             <Route path="/my-auctions" element={<MyAuctions />} />
             <Route path="/create-listing" element={<CreateListing />} />
+            <Route exact path="/auction/:auctionID/edit" element={<UpdateListing />} />
             <Route path="/auction/:auctionID" element={<Auction />} />
           </Route>
           <Route path="*" element={<Navigate to={defaultRoute} />} />
