@@ -45,7 +45,7 @@ const NavItem = ({ name, icon, className, location, onClick }) => {
     <div className="nav-item_container">
       <span
         className={
-          (className || "") + " nav-item " + (isLocation && " selected")
+          "nav-item " + (className || "") + (isLocation && " selected")
         }
         onClick={onClick}
       >

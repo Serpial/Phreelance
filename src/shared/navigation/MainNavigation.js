@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Navbar from "react-bootstrap/Navbar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBars,
@@ -10,7 +11,7 @@ import {
 import SideDrawer from "./SideDrawer";
 import MainHeader from "./MainHeader";
 import Backdrop from "../components/Backdrop";
-import NavItem from "../components/NavItem";
+import MobileNavItem from "../components/MobileNavItem";
 
 import "./MainNavigation.css";
 
@@ -23,13 +24,26 @@ import "./MainNavigation.css";
 const MainNavigation = () => {
   const [showSideDrawer, setShowSideDrawer] = useState(false);
 
+  //https://react-bootstrap.github.io/components/navbar/
   return (
     <>
       {showSideDrawer && <Backdrop onClick={() => setShowSideDrawer(false)} />}
       <SideDrawer show={showSideDrawer}>
-        <NavItem name="Auctions" icon={faGavel} location="/find-auctions" />
-        <NavItem name="My Auctions" icon={faList} location="/my-auctions" />
-        <NavItem name="New Listing" icon={faCalendarPlus} location="/create-listing" />
+        <MobileNavItem
+          name="Auctions"
+          icon={faGavel}
+          location="/find-auctions"
+        />
+        <MobileNavItem
+          name="My Auctions"
+          icon={faList}
+          location="/my-auctions"
+        />
+        <MobileNavItem
+          name="New Listing"
+          icon={faCalendarPlus}
+          location="/create-listing"
+        />
       </SideDrawer>
       <MainHeader>
         <span
@@ -38,6 +52,7 @@ const MainNavigation = () => {
         >
           <FontAwesomeIcon icon={faBars} size="2x" />
         </span>
+        <Navbar></Navbar>
       </MainHeader>
     </>
   );
