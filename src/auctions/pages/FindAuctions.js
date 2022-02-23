@@ -4,7 +4,7 @@ import ReactPaginate from "react-paginate";
 import Axios from "axios";
 import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/row";
+import Row from "react-bootstrap/Row";
 
 import { useAuth } from "../../shared/contexts/AuthContext";
 import FilterCard from "../components/FilterCard";
