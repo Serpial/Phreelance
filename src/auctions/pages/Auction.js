@@ -7,6 +7,7 @@ const BACKEND_HOST = process.env.REACT_APP_RUN_BACK_END_HOST;
 const Auction = () => {
   const { auctionID } = useParams();
 
+  // eslint-disable-next-line
   const [auction, setAuction] = useState();
   useEffect(() => {
     let cancel = false;

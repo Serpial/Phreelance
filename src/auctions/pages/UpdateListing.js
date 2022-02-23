@@ -1,15 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Axios from "axios";
-import Container from "react-boostrap/Card";
-import Col from "react-boostrap/Col";
-import Row from "react-boostrap/Row";
+import Container from "react-bootstrap/Container";
+import Alert from "react-bootstrap/Alert";
+import Form from "react-bootstrap/Form";
+import Card from "react-bootstrap/Card";
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
 
 import { useAuth } from "../../shared/contexts/AuthContext";
+import BasicCard from "../../shared/components/BasicCard";
 
 const BACKEND_HOST = process.env.REACT_APP_RUN_BACK_END_HOST;
 
-const UpdateListing = (props) => {
+const UpdateListing = () => {
+  const description = useRef();
+
   const { auctionID } = useParams();
   const { activeUser } = useAuth();
 
@@ -29,11 +35,11 @@ const UpdateListing = (props) => {
       .then((res) => {
         if (cancel) return;
 
-        const auction = res.data?.auction;
-        if (userAppId !== auction.creator) {
-          navigate("/auction/" + auctionID);
+        const auctionResponse = res.data?.auction;
+        if (userAppId !== auctionResponse.creator) {
+          navigate("/auction/" + auctionID, { replace: false });
         }
-        setAuction(auction);
+        setAuction(auctionResponse);
         setLoading(false);
       })
       .catch((err) => {
@@ -41,7 +47,7 @@ const UpdateListing = (props) => {
       });
 
     return () => (cancel = true);
-  });
+  }, [activeUser, auctionID, navigate]);
 
   return (
     <>
@@ -50,8 +56,50 @@ const UpdateListing = (props) => {
       ) : (
         <Container>
           <Row>
-            <Col></Col>
-            <Col></Col>
+            <Col md={8}>
+              <BasicCard>
+                <Card.Title>About</Card.Title>
+                <Card.Body>
+                  <Form.Label>Title</Form.Label>
+                  <Form.Control type="text" value={auction.title} readOnly />
+                  <Form.Label>Description</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    minLength={10}
+                    required
+                    ref={description}
+                    value={auction.description}
+                    placeholder="Please describe the contract..."
+                  />
+                  {/* {dateWarnings && ( */}
+                  <Alert className="create-listing_alert" variant="danger">
+                    {/* {dateWarnings} */}
+                  </Alert>
+                  <Form.Label>Start time</Form.Label>
+                  {/* <DateTimeInput
+                    defaultDate={DEFAULT_START_DATE}
+                    onChange={(date) => {
+                      setStartDate(date);
+                      applyDateWarning({ newStartDate: date });
+                    }}
+                    disabled={!useCustomStartTime}
+                  /> */}
+                  <Form.Label>Finish time</Form.Label>
+                  {/* <DateTimeInput
+                    defaultDate={new Date(auction)}
+                    onChange={(date) => {
+                      setEndDate(date);
+                      applyDateWarning({ newEndDate: date });
+                    }}
+                  /> */}
+                </Card.Body>
+              </BasicCard>
+            </Col>
+            <Col md={4}>
+              <BasicCard></BasicCard>
+              <BasicCard></BasicCard>
+            </Col>
           </Row>
         </Container>
       )}
