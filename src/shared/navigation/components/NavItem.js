@@ -1,7 +1,6 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLink } from "@fortawesome/free-solid-svg-icons";
 
 import "./NavItem.css";
 
@@ -26,8 +25,6 @@ import "./NavItem.css";
  * @returns
  */
 const NavItem = ({ name, icon, className, location, onClick }) => {
-  const selectedIcon = icon || faLink;
-
   const { pathname } = useLocation();
   const isLocation = location === pathname;
 
@@ -42,16 +39,20 @@ const NavItem = ({ name, icon, className, location, onClick }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="nav-item_container">
-      <span
+    <div
+      className={
+        "nav-item_container " + (className ? className + "_container" : "")
+      }
+    >
+      <div
         className={
-          "nav-item " + (className || "") + (isLocation && " selected")
+          "nav-item " + (className || "") + (isLocation ? " selected" : "")
         }
         onClick={onClick}
       >
-        <FontAwesomeIcon className="nav-item_icon" icon={selectedIcon} />
+        {icon && <FontAwesomeIcon className="nav-item_icon" icon={icon} />}
         <span className="nav-item_content">{name}</span>
-      </span>
+      </div>
     </div>
   );
 };

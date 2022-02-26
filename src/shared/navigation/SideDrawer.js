@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ReactDom from "react-dom";
-import Axios from "axios";
 import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import { CSSTransition } from "react-transition-group";
+import ReactDom from "react-dom";
+import Axios from "axios";
 
-import NavItem from "../components/NavItem";
+import NavItem from "./components/NavItem";
 import { useAuth } from "../contexts/AuthContext";
 
 import "./SideDrawer.css";
+
+const BACKEND_HOST = process.env.REACT_APP_RUN_BACK_END_HOST;
 
 /**
  * This side drawer aims to provide navigation to
@@ -29,7 +31,7 @@ const SideDrawer = ({ show, children }) => {
     let cancel = false;
 
     Axios.get(
-      `${process.env.REACT_APP_RUN_BACK_END_HOST}/api/users/auth/${activeUser?.uid}`
+      `${BACKEND_HOST}/api/users/auth/${activeUser?.uid}`
     )
       .then((response) => {
         if (cancel) return;

@@ -13,6 +13,8 @@ import {
 
 const AuthContext = createContext();
 
+const BACKEND_HOST = process.env.REACT_APP_RUN_BACK_END_HOST;
+
 const ERROR_CODES = {
   "auth/email-already-in-use":
     "This email address is in use. Please select another.",
@@ -59,7 +61,7 @@ export const AuthProvider = ({ children }) => {
 
     try {
       await Axios.post(
-        `${process.env.REACT_APP_RUN_BACK_END_HOST}/api/users/signup`,
+        `${BACKEND_HOST}/api/users/signup`,
         {
           name: displayName,
           email,

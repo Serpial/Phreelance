@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Navbar from "react-bootstrap/Navbar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBars,
@@ -11,9 +10,29 @@ import {
 import SideDrawer from "./SideDrawer";
 import MainHeader from "./MainHeader";
 import Backdrop from "../components/Backdrop";
-import MobileNavItem from "../components/MobileNavItem";
+import MobileNavItem from "./components/MobileNavItem";
+import DesktopNavItem from "./components/DesktopNavItem";
+import ProfileDropdown from "./components/ProfileDropdown";
 
 import "./MainNavigation.css";
+
+const NAV_LOCATIONS = [
+  {
+    name: "Auctions",
+    location: "/find-auctions",
+    icon: faGavel,
+  },
+  {
+    name: "My Auctions",
+    location: "/my-auctions",
+    icon: faList,
+  },
+  {
+    name: "New Listing",
+    location: "/create-listing",
+    icon: faCalendarPlus,
+  },
+];
 
 /**
  * This component manages the sidebar and the
@@ -24,26 +43,13 @@ import "./MainNavigation.css";
 const MainNavigation = () => {
   const [showSideDrawer, setShowSideDrawer] = useState(false);
 
-  //https://react-bootstrap.github.io/components/navbar/
   return (
     <>
       {showSideDrawer && <Backdrop onClick={() => setShowSideDrawer(false)} />}
       <SideDrawer show={showSideDrawer}>
-        <MobileNavItem
-          name="Auctions"
-          icon={faGavel}
-          location="/find-auctions"
-        />
-        <MobileNavItem
-          name="My Auctions"
-          icon={faList}
-          location="/my-auctions"
-        />
-        <MobileNavItem
-          name="New Listing"
-          icon={faCalendarPlus}
-          location="/create-listing"
-        />
+        {NAV_LOCATIONS.map((nl) => (
+          <MobileNavItem {...nl} />
+        ))}
       </SideDrawer>
       <MainHeader>
         <span
@@ -52,7 +58,12 @@ const MainNavigation = () => {
         >
           <FontAwesomeIcon icon={faBars} size="2x" />
         </span>
-        <Navbar></Navbar>
+        <span className="main-navigation_location-list">
+          {NAV_LOCATIONS.map((nl) => (
+            <DesktopNavItem {...nl} />
+          ))}
+          {/* <ProfileDropdown /> */}
+        </span>
       </MainHeader>
     </>
   );

@@ -1,0 +1,14 @@
+.profile-dropdown_container {
+  display: inline-block;
+  width: 13em;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+.profile-dropdown_profile-photo > img {
+  width: auto;
+  height: 50px;
+  border-radius: 50%;
+}
