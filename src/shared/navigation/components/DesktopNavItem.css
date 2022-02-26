@@ -3,14 +3,22 @@
   padding: 0 1em;
   cursor: pointer;
 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
 }
 
+.desktop-nav-item > .nav-item_content {
+  font-size: medium;
+}
+
 .desktop-nav-item_container {
-  padding: 0 1em;
+  padding: 0;
   height: 100%;
 }
 

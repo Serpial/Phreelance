@@ -27,8 +27,8 @@ const ProfileDropdown = (props) => {
   }, [activeUser]);
 
   return (
-    <div className="profile-dropdown">
-      <div className="profile-dropdown_container">
+    <div className="profile-dropdown_container">
+      <div className="profile-dropdown">
         <span className="profile-dropdown_profile-photo">
           <img
             src="https://placekitten.com/50/50"

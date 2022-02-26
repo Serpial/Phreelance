@@ -62,7 +62,7 @@ const MainNavigation = () => {
           {NAV_LOCATIONS.map((nl) => (
             <DesktopNavItem {...nl} />
           ))}
-          {/* <ProfileDropdown /> */}
+          <ProfileDropdown />
         </span>
       </MainHeader>
     </>
