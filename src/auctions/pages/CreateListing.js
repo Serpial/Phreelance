@@ -8,7 +8,6 @@ import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
-import ButtonGroup from "react-bootstrap/ButtonGroup";
 import CurrencyInput from "react-currency-input-field";
 
 import ModalCard from "../../shared/components/ModalCard";
@@ -227,27 +226,22 @@ const CreateListing = () => {
               </Card.Body>
             </BasicCard>
             <BasicCard>
-              <ButtonGroup
-                className="create-listing_submit-group"
-                aria-label="Publish or save as draft"
-              >
-                <Button
-                  as="input"
-                  className="create-listing_submit-button"
-                  type="submit"
-                  value="Save as draft"
-                  name="draft"
-                  variant="secondary"
-                />
-                <Button
-                  as="input"
-                  className="create-listing_submit-button"
-                  type="submit"
-                  value="Publish"
-                  name="publish"
-                  variant="primary"
-                />
-              </ButtonGroup>
+              <Button
+                as="input"
+                className="create-listing_submit-button"
+                type="submit"
+                value="Save as draft"
+                name="draft"
+                variant="secondary"
+              />
+              <Button
+                as="input"
+                className="create-listing_submit-button"
+                type="submit"
+                value="Publish"
+                name="publish"
+                variant="primary"
+              />
             </BasicCard>
           </Col>
         </Row>

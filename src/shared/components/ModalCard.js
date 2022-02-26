@@ -30,7 +30,7 @@ const ModalCardOverlay = ({ title, infoText, children, show }) => {
       <Card.Title>{title}</Card.Title>
       <Card.Body>
         {infoText}
-        <hr />
+        <hr  />
         {children}
       </Card.Body>
     </BasicCard>

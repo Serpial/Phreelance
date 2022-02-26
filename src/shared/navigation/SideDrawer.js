@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import { CSSTransition } from "react-transition-group";
 import ReactDom from "react-dom";
 import Axios from "axios";
 
-import NavItem from "./components/NavItem";
 import { useAuth } from "../contexts/AuthContext";
 
 import "./SideDrawer.css";
@@ -19,20 +16,25 @@ const BACKEND_HOST = process.env.REACT_APP_RUN_BACK_END_HOST;
  * @param {Boolean} show
  * Boolean representation of whether the side drawer
  * should be shown.
+ * 
+ * @param {JSX.Element} children
+ * Main list of options presented to the user.
+ * 
+ * @param {JSX.Element} subChildren
+ * This refers to the items to be contained in the collection below the
+ * main list of options. 
  *
  * @returns Side drawer component
  */
-const SideDrawer = ({ show, children }) => {
+const SideDrawer = ({ show, children, subChildren }) => {
   const [displayName, setDisplayName] = useState("");
   const [emailAddress, setEmailAddress] = useState("");
 
-  const { activeUser, logout } = useAuth();
+  const { activeUser } = useAuth();
   useEffect(() => {
     let cancel = false;
 
-    Axios.get(
-      `${BACKEND_HOST}/api/users/auth/${activeUser?.uid}`
-    )
+    Axios.get(`${BACKEND_HOST}/api/users/auth/${activeUser?.uid}`)
       .then((response) => {
         if (cancel) return;
         const user = response.data.user;
@@ -43,17 +45,6 @@ const SideDrawer = ({ show, children }) => {
 
     return () => (cancel = true);
   });
-
-  const navigate = useNavigate();
-  const handleLogout = async (event) => {
-    event.preventDefault();
-    try {
-      await logout();
-      navigate("/login");
-    } catch (err) {
-      console.log("Logout not completed: ", err.message);
-    }
-  };
 
   const content = (
     <CSSTransition
@@ -81,9 +72,7 @@ const SideDrawer = ({ show, children }) => {
         <hr className="side-drawer_separator" />
         <legend className="side-drawer_nav">{children}</legend>
         <hr className="side-drawer_separator" />
-        <footer className="side-drawer_footer">
-          <NavItem name="Sign out" onClick={handleLogout} icon={faSignOutAlt} />
-        </footer>
+        <footer className="side-drawer_footer">{subChildren}</footer>
       </aside>
     </CSSTransition>
   );

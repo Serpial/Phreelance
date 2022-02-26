@@ -7,7 +7,16 @@ import "./ProfileDropdown.css";
 
 const BACKEND_HOST = process.env.REACT_APP_RUN_BACK_END_HOST;
 
-const ProfileDropdown = (props) => {
+/**
+ * Profile dropdown is available when the user hovers over their name
+ * when the website is being displayed in desktop mode.
+ * 
+ * @param {JSX.Element} children
+ * List of DropdownNavItem Elements
+ * 
+ * @returns 
+ */
+const ProfileDropdown = ({ children }) => {
   const { activeUser } = useAuth();
   const [displayName, setDisplayName] = useState("");
   const [emailAddress, setEmailAddress] = useState("");
@@ -37,6 +46,7 @@ const ProfileDropdown = (props) => {
         </span>
         <span className="profile-dropdown_display-name">{displayName}</span>
       </div>
+      <div className="profile-dropdown_content">{children}</div>
     </div>
   );
 };

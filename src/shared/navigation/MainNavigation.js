@@ -1,12 +1,15 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBars,
   faGavel,
   faList,
   faCalendarPlus,
+  faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
 
+import { useAuth } from "../contexts/AuthContext";
 import SideDrawer from "./SideDrawer";
 import MainHeader from "./MainHeader";
 import Backdrop from "../components/Backdrop";
@@ -15,20 +18,24 @@ import DesktopNavItem from "./components/DesktopNavItem";
 import ProfileDropdown from "./components/ProfileDropdown";
 
 import "./MainNavigation.css";
+import DropdownNavItem from "./components/DropdownNavItem";
 
 const NAV_LOCATIONS = [
   {
     name: "Auctions",
+    key: "auctions",
     location: "/find-auctions",
     icon: faGavel,
   },
   {
     name: "My Auctions",
+    key: "user-auctions",
     location: "/my-auctions",
     icon: faList,
   },
   {
     name: "New Listing",
+    key: "create-auction",
     location: "/create-listing",
     icon: faCalendarPlus,
   },
@@ -41,12 +48,32 @@ const NAV_LOCATIONS = [
  * @returns container for navigation components
  */
 const MainNavigation = () => {
+  const { logout } = useAuth();
   const [showSideDrawer, setShowSideDrawer] = useState(false);
+  const navigate = useNavigate();
+  const handleLogout = async (event) => {
+    event.preventDefault();
+    try {
+      await logout();
+      navigate("/login");
+    } catch (err) {
+      console.log("Logout not completed: ", err.message);
+    }
+  };
 
   return (
     <>
       {showSideDrawer && <Backdrop onClick={() => setShowSideDrawer(false)} />}
-      <SideDrawer show={showSideDrawer}>
+      <SideDrawer
+        show={showSideDrawer}
+        subChildren={[
+          <DropdownNavItem
+            name="Sign out"
+            onClick={handleLogout}
+            icon={faSignOutAlt}
+          />,
+        ]}
+      >
         {NAV_LOCATIONS.map((nl) => (
           <MobileNavItem {...nl} />
         ))}
@@ -62,7 +89,13 @@ const MainNavigation = () => {
           {NAV_LOCATIONS.map((nl) => (
             <DesktopNavItem {...nl} />
           ))}
-          <ProfileDropdown />
+          <ProfileDropdown>
+            <DropdownNavItem
+              name="Sign out"
+              onClick={handleLogout}
+              icon={faSignOutAlt}
+            />
+          </ProfileDropdown>
         </span>
       </MainHeader>
     </>

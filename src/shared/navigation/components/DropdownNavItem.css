@@ -1,0 +1,18 @@
+.dropdown-nav-item {
+  color: rgb(48, 48, 48);
+  cursor: pointer;
+  user-select: none;
+  width: 100%;
+  margin: 1vh 0;
+}
+
+.dropdown-nav-item:hover,
+.dropdown-nav-item:active {
+  cursor: default;
+  padding-left: 3%;
+  margin-left: -3%;
+  color: rgb(73, 92, 126);
+  border-radius: 5px;
+  border-color: rgb(195, 204, 221);
+  background-color: rgb(195, 204, 221);
+}
