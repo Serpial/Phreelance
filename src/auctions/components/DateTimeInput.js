@@ -75,7 +75,10 @@ const dateToString = (date) => {
   let month = date.getMonth() + 1 + "";
   month = month < 10 ? "0" + month : month;
 
-  const dateString = date.getFullYear() + "-" + month + "-" + date.getDate();
+  let day = date.getDate();
+  day = day < 10 ? "0" + day : day;
+
+  const dateString = date.getFullYear() + "-" + month + "-" + day;
   return dateString;
 };
 
