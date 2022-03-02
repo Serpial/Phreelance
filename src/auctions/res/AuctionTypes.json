@@ -1,0 +1,14 @@
+{
+  "types": [
+    {
+      "shortName": "ENG",
+      "fullName": "English auction",
+      "description": "English"
+    },
+    {
+      "shortName": "DUT",
+      "fullName": "Dutch auction",
+      "description": "Dutch"
+    }
+  ]
+}

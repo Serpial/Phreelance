@@ -19,7 +19,6 @@ const BACKEND_HOST = process.env.REACT_APP_RUN_BACK_END_HOST;
 const ProfileDropdown = ({ children }) => {
   const { activeUser } = useAuth();
   const [displayName, setDisplayName] = useState("");
-  const [emailAddress, setEmailAddress] = useState("");
   useEffect(() => {
     let cancel = false;
 
@@ -28,7 +27,6 @@ const ProfileDropdown = ({ children }) => {
         if (cancel) return;
         const user = response.data.user;
         setDisplayName(user.name);
-        setEmailAddress(user.email);
       })
       .catch((err) => console.log(err.response));
 

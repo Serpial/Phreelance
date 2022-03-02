@@ -14,7 +14,9 @@ import ModalCard from "../../shared/components/ModalCard";
 import BasicCard from "../../shared/components/BasicCard";
 import Backdrop from "../../shared/components/Backdrop";
 import DateTimeInput from "../components/DateTimeInput";
+import DateIsWithinRange from "../util/DateIsWithinRange";
 import { useAuth } from "../../shared/contexts/AuthContext";
+import AuctionTypes from "../res/AuctionTypes.json";
 
 import "./CreateListing.css";
 
@@ -28,10 +30,7 @@ const DEFAULT_END_DATE = new Date(
   new Date().getTime() + 3600000 + 86000000 * 2
 );
 
-const AUCTION_DESCRIPTIONS = {
-  "English auction": "English",
-  "Dutch auction": "Dutch",
-};
+const AUCTION_DEFINITIONS = AuctionTypes.types;
 
 /**
  * Create auction listing with various options
@@ -41,24 +40,27 @@ const CreateListing = () => {
   const title = useRef();
   const description = useRef();
   const reservePrice = useRef();
+  const startingPrice = useRef();
 
-  const defaultAuctionType = Object.keys(AUCTION_DESCRIPTIONS)[0];
+  const defaultAuctionType = AUCTION_DEFINITIONS[0];
   const [auctionType, setAuctionType] = useState(defaultAuctionType);
-  const defaultAuctionDescription = AUCTION_DESCRIPTIONS[auctionType];
+  const defaultAuctionDescription = AUCTION_DEFINITIONS[0].description;
   const [auctionDescription, setAuctionDescription] = useState(
     defaultAuctionDescription
   );
   const handleDropdownChange = (event) => {
-    const newAuctionType = event.target.value;
+    const newAuctionType = AUCTION_DEFINITIONS.find(
+      (a) => a.fullName === event.target.value
+    );
     setAuctionType(newAuctionType);
-    setAuctionDescription(AUCTION_DESCRIPTIONS[newAuctionType]);
+    setAuctionDescription(newAuctionType.description);
   };
 
   const [startDate, setStartDate] = useState(DEFAULT_START_DATE);
   const [endDate, setEndDate] = useState(DEFAULT_END_DATE);
   const [dateWarnings, setDateWarnings] = useState();
   const applyDateWarning = ({ newStartDate, newEndDate }) => {
-    const validateDate = dateIsWithinRange(
+    const validateDate = DateIsWithinRange(
       new Date(),
       newStartDate || startDate,
       newEndDate || endDate
@@ -80,11 +82,23 @@ const CreateListing = () => {
     setDateWarnings(warnings);
   };
 
+  const [showPriceWarning, setShowPriceWarning] = useState();
+  const applyPriceWarning = () => {
+    const sPrice = startingPrice.current?.value.slice(1);
+    const rPrice = reservePrice.current?.value.slice(1);
+
+    if (sPrice && rPrice && parseFloat(sPrice) <= parseFloat(rPrice)) {
+      setShowPriceWarning(true);
+      return;
+    }
+    setShowPriceWarning(false);
+  };
+
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [useCustomStartTime, setUseCustomStartTime] = useState(false);
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (dateWarnings && dateWarnings.length > 1) return;
+    if (dateWarnings && dateWarnings.length > 1 && showPriceWarning) return;
     const isPublic = event.nativeEvent.submitter.name === "publish";
 
     if (isPublic && !useCustomStartTime) {
@@ -105,7 +119,8 @@ const CreateListing = () => {
       title: title.current.value,
       description: description.current.value,
       reservePrice: reservePrice.current.value,
-      auctionType: auctionType.toLowerCase().slice(0, 3),
+      startingPrice: startingPrice.current?.value ?? "£0",
+      auctionType: auctionType.shortName,
       finishing: endDate.toUTCString(),
     };
 
@@ -211,13 +226,34 @@ const CreateListing = () => {
                   ref={reservePrice}
                   required
                   prefix="£"
+                  onChange={applyPriceWarning}
                   decimalsLimit={2}
                   placeholder="£30.99"
                 />
+                {auctionType.shortName ===  "DUT" && (
+                  <>
+                    <Form.Label>Starting Price</Form.Label>
+                    {showPriceWarning && (
+                      <Alert variant="danger">
+                        The starting price should be greater than the reserve
+                        price.
+                      </Alert>
+                    )}
+                    <CurrencyInput
+                      className="form-control"
+                      ref={startingPrice}
+                      required
+                      prefix="£"
+                      onChange={applyPriceWarning}
+                      decimalsLimit={2}
+                      placeholder="£30.99"
+                    />
+                  </>
+                )}
                 <Form.Label>Auction Type</Form.Label>
                 <Form.Select onChange={handleDropdownChange}>
-                  {Object.keys(AUCTION_DESCRIPTIONS).map((option) => (
-                    <option key={option.split(" ")[0]}>{option}</option>
+                  {AUCTION_DEFINITIONS.map((option) => (
+                    <option key={option.shortName}>{option.fullName}</option>
                   ))}
                 </Form.Select>
                 <Alert className="create-listing_alert" variant="dark">
@@ -248,41 +284,6 @@ const CreateListing = () => {
       </Container>
     </>
   );
-};
-
-const dateIsWithinRange = (creation, start, finish) => {
-  const day = 86400000;
-  const threeMonths = 8035200000;
-  const year = 31622400000;
-
-  const message = [];
-  const startIsWithinThreeMonths =
-    start.getTime() < creation.getTime() + threeMonths;
-  if (!startIsWithinThreeMonths) {
-    message.push("The start date should be within three months of today");
-  }
-
-  const startIsNotBeforeCreation = start.getTime() >= creation;
-  if (!startIsNotBeforeCreation) {
-    message.push("The start date should be after the current time.");
-  }
-
-  const auctionLengthIsAtLeastADay = start.getTime() + day < finish.getTime();
-  if (!auctionLengthIsAtLeastADay) {
-    message.push(
-      "You must make sure you auction is live for more than 24 hours to allow bidders to participate."
-    );
-  }
-
-  const finishTimeIsWithinAYear = finish.getTime() < start.getTime() + year;
-  if (!finishTimeIsWithinAYear) {
-    message.push("The auction should be over within a year.");
-  }
-
-  return {
-    isValid: message.length < 1,
-    message,
-  };
 };
 
 export default CreateListing;
