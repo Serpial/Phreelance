@@ -69,13 +69,14 @@ const MainNavigation = () => {
         subChildren={[
           <DropdownNavItem
             name="Sign out"
+            key="sign-out"
             onClick={handleLogout}
             icon={faSignOutAlt}
           />,
         ]}
       >
         {NAV_LOCATIONS.map((nl) => (
-          <MobileNavItem {...nl} />
+          <MobileNavItem key={nl.key} {...nl} />
         ))}
       </SideDrawer>
       <MainHeader>
