@@ -24,13 +24,13 @@ import "./ModalCard.css";
  *
  * @returns Modal
  */
-const ModalCardOverlay = ({ title, infoText, children, show }) => {
+const ModalCardOverlay = ({ title, infoText, children, show, className }) => {
   const content = (
-    <BasicCard className={show ? "modal-card" : "modal-card__hide"}>
+    <BasicCard className={show ? ("modal-card " + className) : "modal-card__hide"}>
       <Card.Title>{title}</Card.Title>
       <Card.Body>
         {infoText}
-        <hr  />
+        {infoText && <hr  />}
         {children}
       </Card.Body>
     </BasicCard>
