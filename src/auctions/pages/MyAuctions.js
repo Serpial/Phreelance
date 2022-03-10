@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 
 import AuctionList from "../components/AuctionList";
+import LoadingWheel from "../../shared/navigation/components/LoadingWheel";
 import { useAuth } from "../../shared/contexts/AuthContext";
 
 import "./MyAuctions.css";
-import { Col } from "react-bootstrap";
 
 const BACKEND_HOST = process.env.REACT_APP_RUN_BACK_END_HOST;
 
@@ -74,7 +75,9 @@ const MyAuctions = () => {
 
   return (
     <>
-      {!loadingBids && !loadingCreator && (
+      {loadingBids || loadingCreator ? (
+        <LoadingWheel />
+      ) : (
         <Container>
           <Row>
             <Col sm className="my-auctions_content-area">

@@ -18,6 +18,7 @@ import BasicCard from "../../shared/components/BasicCard";
 import ModalCard from "../../shared/components/ModalCard";
 import DateTimeInput from "../components/DateTimeInput";
 import AuctionTypes from "../res/AuctionTypes.json";
+import LoadingWheel from "../../shared/navigation/components/LoadingWheel";
 
 const BACKEND_HOST = process.env.REACT_APP_RUN_BACK_END_HOST;
 
@@ -186,7 +187,7 @@ const UpdateListing = () => {
         </Button>
       </ModalCard>
       {loading ? (
-        <h3>Please wait...</h3>
+        <LoadingWheel />
       ) : (
         <Container as="form" onSubmit={handleSubmit}>
           <Row>

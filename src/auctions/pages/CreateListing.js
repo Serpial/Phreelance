@@ -12,9 +12,9 @@ import CurrencyInput from "react-currency-input-field";
 
 import ModalCard from "../../shared/components/ModalCard";
 import BasicCard from "../../shared/components/BasicCard";
-import Backdrop from "../../shared/components/Backdrop";
 import DateTimeInput from "../components/DateTimeInput";
 import DateIsWithinRange from "../util/DateIsWithinRange";
+import LoadingWheel from "../../shared/navigation/components/LoadingWheel";
 import { useAuth } from "../../shared/contexts/AuthContext";
 import AuctionTypes from "../res/AuctionTypes.json";
 
@@ -148,7 +148,7 @@ const CreateListing = () => {
 
   return (
     <>
-      {loading && <Backdrop />}
+      {loading && <LoadingWheel />}
       <ModalCard
         show={showConfirmModal}
         title="Publishing... Are you sure?"
@@ -230,7 +230,7 @@ const CreateListing = () => {
                   decimalsLimit={2}
                   placeholder="£30.99"
                 />
-                {auctionType.shortName ===  "DUT" && (
+                {auctionType.shortName === "DUT" && (
                   <>
                     <Form.Label>Starting Price</Form.Label>
                     {showPriceWarning && (

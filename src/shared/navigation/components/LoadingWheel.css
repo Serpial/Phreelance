@@ -1,0 +1,26 @@
+.loading-wheel {
+  width: 100vw;
+  height: 50vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading-wheel_icon {
+  position: absolute;
+  color: rgba(5, 5, 5, 0.568);
+  animation-name: spin;
+  animation-duration: 2500ms;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
