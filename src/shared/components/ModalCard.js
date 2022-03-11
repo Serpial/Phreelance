@@ -10,6 +10,9 @@ import "./ModalCard.css";
 /**
  * A Modal to appear above the content and offer the user some options.
  *
+ * @param {String} className
+ * Additional custom classname
+ * 
  * @param {String} title
  * Header title of the modal.
  *
@@ -24,7 +27,7 @@ import "./ModalCard.css";
  *
  * @returns Modal
  */
-const ModalCardOverlay = ({ title, infoText, children, show, className }) => {
+const ModalCardOverlay = ({ className, title, infoText, children, show }) => {
   const content = (
     <BasicCard className={show ? ("modal-card " + className) : "modal-card__hide"}>
       <Card.Title>{title}</Card.Title>
