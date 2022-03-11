@@ -12,7 +12,6 @@ import AuctionList from "../components/AuctionList";
 
 import "./FindAuctions.css";
 
-const BACKEND_HOST = process.env.REACT_APP_RUN_BACK_END_HOST;
 const FILTER_DEFAULTS = {
   searchString: "",
   showPending: true,
@@ -78,7 +77,7 @@ const Auctions = () => {
   useEffect(() => {
     let cancel = false;
 
-    Axios.get(BACKEND_HOST + "/api/users/auth/" + userAuthId)
+    Axios.get(`/api/users/auth/${userAuthId}`)
       .then((res) => {
         if (cancel) return;
         const user = res.data.user;
@@ -98,7 +97,7 @@ const Auctions = () => {
   useEffect(() => {
     let cancel = false;
 
-    Axios.get(`${BACKEND_HOST}/api/auctions`, {
+    Axios.get("/api/auctions", {
       params: filterValues,
     })
       .then((res) => {

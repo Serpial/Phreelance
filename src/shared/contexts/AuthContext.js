@@ -13,8 +13,6 @@ import {
 
 const AuthContext = createContext();
 
-const BACKEND_HOST = process.env.REACT_APP_RUN_BACK_END_HOST;
-
 const ERROR_CODES = {
   "auth/email-already-in-use":
     "This email address is in use. Please select another.",
@@ -60,14 +58,11 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      await Axios.post(
-        `${BACKEND_HOST}/api/users/signup`,
-        {
-          name: displayName,
-          email,
-          authId: userCredentials.user.uid,
-        }
-      );
+      await Axios.post("/api/users/signup", {
+        name: displayName,
+        email,
+        authId: userCredentials.user.uid,
+      });
     } catch (err) {
       deleteUser(userCredentials.user);
       throw new Error("Could not validate user information.");

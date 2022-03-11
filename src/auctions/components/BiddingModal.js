@@ -11,8 +11,6 @@ import ModalCard from "../../shared/components/ModalCard";
 
 import "./BiddingModal.css";
 
-const BACKEND_HOST = process.env.REACT_APP_RUN_BACK_END_HOST;
-
 /**
  * Bidding modal that is sharing the reponsibility of creating and adjusting
  * the user's bid.
@@ -40,7 +38,7 @@ const BiddingModal = ({ currentUser, currentAuction, onCancel, ...props }) => {
     let cancel = false;
 
     if (!currentAuction) return;
-    Axios.get(`${BACKEND_HOST}/api/bids/auction/${currentAuction.meaningfulId}`)
+    Axios.get(`/api/bids/auction/${currentAuction.meaningfulId}`)
       .then((res) => {
         if (cancel) return;
         const bids = res.data.bids;

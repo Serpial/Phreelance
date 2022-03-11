@@ -14,8 +14,6 @@ import BasicCard from "../../shared/components/BasicCard";
 
 import "./AuctionCard.css";
 
-const BACKEND_HOST = process.env.REACT_APP_RUN_BACK_END_HOST;
-
 /**
  * Individual auction card that displays surface
  * information about an auction. This will include
@@ -65,7 +63,7 @@ const AuctionCard = (props) => {
 
     let cancel = false;
 
-    Axios.get(`${BACKEND_HOST}/api/bids/auction/${auctionId}`)
+    Axios.get(`/api/bids/auction/${auctionId}`)
       .then((response) => {
         if (cancel) return;
 

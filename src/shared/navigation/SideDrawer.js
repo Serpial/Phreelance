@@ -7,8 +7,6 @@ import { useAuth } from "../contexts/AuthContext";
 
 import "./SideDrawer.css";
 
-const BACKEND_HOST = process.env.REACT_APP_RUN_BACK_END_HOST;
-
 /**
  * This side drawer aims to provide navigation to
  * the user.
@@ -34,7 +32,7 @@ const SideDrawer = ({ show, children, subChildren }) => {
   useEffect(() => {
     let cancel = false;
 
-    Axios.get(`${BACKEND_HOST}/api/users/auth/${activeUser?.uid}`)
+    Axios.get(`/api/users/auth/${activeUser?.uid}`)
       .then((response) => {
         if (cancel) return;
         const user = response.data.user;

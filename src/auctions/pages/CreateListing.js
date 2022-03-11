@@ -20,8 +20,6 @@ import AuctionTypes from "../res/AuctionTypes.json";
 
 import "./CreateListing.css";
 
-const BACKEND_HOST = process.env.REACT_APP_RUN_BACK_END_HOST;
-
 // Starts tomorrow at 12pm
 const DEFAULT_START_DATE = new Date(new Date().getTime() + 86000000);
 
@@ -132,9 +130,9 @@ const CreateListing = () => {
       newAuction["isPublic"] = isPublic;
     }
 
-    Axios.get(`${BACKEND_HOST}/api/users/auth/${authId}`)
+    Axios.get(`/api/users/auth/${authId}`)
       .then((res) => {
-        const uri = `${BACKEND_HOST}/api/auctions/${res?.data?.user?.id}`;
+        const uri = `/api/auctions/${res?.data?.user?.id}`;
         return Axios.post(uri, newAuction);
       })
       .then((res) => {

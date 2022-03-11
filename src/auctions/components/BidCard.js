@@ -5,8 +5,6 @@ import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 
 import BasicCard from "../../shared/components/BasicCard";
 
-const BACKEND_HOST = process.env.REACT_APP_RUN_BACK_END_HOST;
-
 /**
  * Card to display a bid on the auction page.
  * 
@@ -23,7 +21,7 @@ const BidCard = ({ isAuctionCreator, bid }) => {
   useEffect(() => {
     let cancel = false;
 
-    Axios.get(`${BACKEND_HOST}/api/users/${bid.creator}`)
+    Axios.get(`/api/users/${bid.creator}`)
       .then((res) => {
         if (cancel) return;
         const userRes = res.data.user;

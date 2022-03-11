@@ -20,8 +20,6 @@ import DateTimeInput from "../components/DateTimeInput";
 import AuctionTypes from "../res/AuctionTypes.json";
 import LoadingWheel from "../../shared/navigation/components/LoadingWheel";
 
-const BACKEND_HOST = process.env.REACT_APP_RUN_BACK_END_HOST;
-
 const AUCTION_DEFINITIONS = AuctionTypes.types;
 
 const UpdateListing = () => {
@@ -42,11 +40,11 @@ const UpdateListing = () => {
     let cancel = false;
 
     let userAppId;
-    Axios.get(`${BACKEND_HOST}/api/users/auth/${activeUser.uid}`)
+    Axios.get(`/api/users/auth/${activeUser.uid}`)
       .then((res) => {
         if (cancel) return;
         userAppId = res.data?.user.id;
-        return Axios.get(`${BACKEND_HOST}/api/auctions/${auctionID}`);
+        return Axios.get(`/api/auctions/${auctionID}`);
       })
       .then((res) => {
         if (cancel) return;
@@ -148,7 +146,7 @@ const UpdateListing = () => {
       updatedAuction["isPublic"] = isPublic;
     }
 
-    Axios.patch(`${BACKEND_HOST}/api/auctions/${auctionID}`, updatedAuction)
+    Axios.patch(`/api/auctions/${auctionID}`, updatedAuction)
       .then((_res) => {
         navigate("/auction/" + auctionID);
       })

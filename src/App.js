@@ -1,3 +1,4 @@
+import Axios from "axios";
 import React from "react";
 import {
   BrowserRouter as Router,
@@ -21,6 +22,7 @@ import { AuthProvider, useAuth } from "./shared/contexts/AuthContext";
 const App = () => {
   const isLoggedIn = useAuth()?.activeUser;
   const defaultRoute = isLoggedIn ? "/auctions-list" : "/login";
+  Axios.defaults.baseURL = process.env.REACT_APP_RUN_BACK_END_HOST;
 
   return (
     <AuthProvider>

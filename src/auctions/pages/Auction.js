@@ -19,11 +19,9 @@ import LoadingWheel from "../../shared/navigation/components/LoadingWheel";
 
 import "./Auction.css";
 
-const BACKEND_HOST = process.env.REACT_APP_RUN_BACK_END_HOST;
-
 /**
- * 
- * @returns 
+ *
+ * @returns
  */
 const Auction = () => {
   const [doTimeRefresh, setDoTimeRefresh] = useState(true);
@@ -40,7 +38,7 @@ const Auction = () => {
   useEffect(() => {
     let cancel = false;
 
-    Axios.get(`${BACKEND_HOST}/api/users/auth/${activeUser.uid}`)
+    Axios.get(`/api/users/auth/${activeUser.uid}`)
       .then((res) => {
         if (cancel) return;
         setCurrentUser(res.data.user);
@@ -58,16 +56,14 @@ const Auction = () => {
   useEffect(() => {
     let cancel = false;
 
-    Axios.get(`${BACKEND_HOST}/api/auctions/${auctionID}`)
+    Axios.get(`/api/auctions/${auctionID}`)
       .then((res) => {
         if (cancel) return;
         const auctionRes = res.data.auction;
         setAuction(auctionRes);
         return Promise.all([
-          Axios.get(`${BACKEND_HOST}/api/users/${auctionRes.creator}`),
-          Axios.get(
-            `${BACKEND_HOST}/api/bids/auction/${auctionRes.meaningfulId}`
-          ),
+          Axios.get(`/api/users/${auctionRes.creator}`),
+          Axios.get(`/api/bids/auction/${auctionRes.meaningfulId}`),
         ]);
       })
       .then((res) => {

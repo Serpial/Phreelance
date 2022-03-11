@@ -10,8 +10,6 @@ import { useAuth } from "../../shared/contexts/AuthContext";
 
 import "./MyAuctions.css";
 
-const BACKEND_HOST = process.env.REACT_APP_RUN_BACK_END_HOST;
-
 /**
  * Page showing auctions that the user is interacting
  * with. This means: ones that they have created, and
@@ -26,7 +24,7 @@ const MyAuctions = () => {
   useEffect(() => {
     let cancel = false;
 
-    Axios.get(`${BACKEND_HOST}/api/users/auth/${userAuthId}`)
+    Axios.get(`/api/users/auth/${userAuthId}`)
       .then((res) => {
         if (cancel) return;
         const user = res.data.user;
@@ -45,7 +43,7 @@ const MyAuctions = () => {
     let cancel = false;
 
     if (!userAppId) return;
-    Axios.get(`${BACKEND_HOST}/api/auctions/creator/${userAppId}`)
+    Axios.get(`/api/auctions/creator/${userAppId}`)
       .then((res) => {
         if (cancel) return;
         setCreatedAuctionList(res.data.auctions);
@@ -62,7 +60,7 @@ const MyAuctions = () => {
     let cancel = false;
 
     if (!userAppId) return;
-    Axios.get(`${BACKEND_HOST}/api/auctions/bidder/${userAppId}`)
+    Axios.get(`/api/auctions/bidder/${userAppId}`)
       .then((res) => {
         if (cancel) return;
         setBidAuctionList(res.data.auctions);
