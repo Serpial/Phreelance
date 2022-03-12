@@ -20,8 +20,9 @@ import LoadingWheel from "../../shared/navigation/components/LoadingWheel";
 import "./Auction.css";
 
 /**
- *
- * @returns
+ * Auction page that contains information about an individual auction.
+ * This can be managed and viewed by participants.
+ * @returns Auction
  */
 const Auction = () => {
   const [doTimeRefresh, setDoTimeRefresh] = useState(true);
@@ -32,6 +33,12 @@ const Auction = () => {
 
     return () => clearInterval(interval);
   }, []);
+
+  const getStatus = (started, elapsed) => {
+    if (!elapsed && started) return "Active";
+    if (elapsed) return "Closed";
+    if (!started) return "Pending";
+  };
 
   const { activeUser } = useAuth();
   const [currentUser, setCurrentUser] = useState();
@@ -53,6 +60,7 @@ const Auction = () => {
   const [auction, setAuction] = useState();
   const [creator, setCreator] = useState();
   const [bids, setBids] = useState([]);
+  const [isBidder, setIsBidder] = useState([]);
   useEffect(() => {
     let cancel = false;
 
@@ -103,9 +111,15 @@ const Auction = () => {
     setDoTimeRefresh(false);
   }, [auction, doTimeRefresh]);
 
+  const navigate = useNavigate();
+  const onRemoveDraft = () => {
+    Axios.delete(`/api/auctions/${auction.meaningfulId}`).finally(() => {
+      navigate("/find-auctions");
+    });
+  };
+
   const [showBidding, setShowBidding] = useState(false);
   const status = getStatus(started, elapsed);
-  const navigate = useNavigate();
   return (
     <>
       <BiddingModal
@@ -191,7 +205,7 @@ const Auction = () => {
                 {auction?.creator === currentUser.id ? (
                   <>
                     <Button
-                      variant="secondary"
+                      variant="primary"
                       onClick={() =>
                         navigate("/auction/" + auctionID + "/edit")
                       }
@@ -201,12 +215,7 @@ const Auction = () => {
                         "auction"}
                     </Button>
                     {!auction?.isPublic && (
-                      <Button
-                        variant="danger"
-                        onClick={() =>
-                          navigate("/auction/" + auctionID + "/edit")
-                        }
-                      >
+                      <Button variant="danger" onClick={onRemoveDraft}>
                         Remove draft
                       </Button>
                     )}
@@ -215,7 +224,11 @@ const Auction = () => {
                   <>
                     <Button
                       variant="primary"
-                      onClick={() => setShowBidding(true)}
+                      onClick={() => {
+                        if (status === "Active") {
+                          setShowBidding(true);
+                        }
+                      }}
                     >
                       bid
                     </Button>
@@ -235,12 +248,6 @@ const Auction = () => {
       )}
     </>
   );
-};
-
-const getStatus = (started, elapsed) => {
-  if (!elapsed && started) return "Active";
-  if (elapsed) return "Closed";
-  if (!started) return "Pending";
 };
 
 export default Auction;

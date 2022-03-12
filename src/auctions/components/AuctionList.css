@@ -7,14 +7,5 @@
   width: 100%;
   text-align: center;
   color: grey;
-}
-
-@media only screen and (min-width: 768px) {
-  .auction-list_empty-list {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    margin: auto;
-    width: 50%;
-  }
+  margin: 1em 0;
 }

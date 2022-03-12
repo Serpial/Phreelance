@@ -31,7 +31,9 @@ import "./BiddingModal.css";
  */
 const BiddingModal = ({ currentUser, currentAuction, onCancel, ...props }) => {
   const bid = useRef();
-  const proposal = useRef();
+  const [proposal, setProposal] = useState("");
+  const [timeEstimate, setTimeEstimate] = useState(0);
+  const timeEstimateBase = useRef();
 
   const [currentBid, setCurrentBid] = useState();
   useEffect(() => {
@@ -42,7 +44,12 @@ const BiddingModal = ({ currentUser, currentAuction, onCancel, ...props }) => {
       .then((res) => {
         if (cancel) return;
         const bids = res.data.bids;
-        setCurrentBid(bids.find((b) => b.creator === currentUser));
+        const bidRes = bids.find((b) => b.creator === currentUser);
+
+        if (!bidRes) return;
+        setCurrentBid(bidRes);
+        setTimeEstimate(parseInt(bidRes?.timeEstimation.split(" ")[0]));
+        setProposal(bidRes.description);
       })
       .catch((err) => {
         console.log(err);
@@ -51,7 +58,25 @@ const BiddingModal = ({ currentUser, currentAuction, onCancel, ...props }) => {
     return () => (cancel = true);
   }, [currentUser, currentAuction]);
 
-  const onSubmit = () => {};
+  const onSubmit = (e) => {
+    e.preventDefault();
+
+    const newBid = {
+      description: proposal,
+      value: parseFloat(bid.current.value.slice(1)),
+      timeEstimation: timeEstimate + " " + timeEstimateBase.current.value,
+    };
+    if (currentBid) {
+      console.log("patch?");
+      Axios.patch(`/api/bids/${currentBid.id}`, newBid);
+    } else {
+      console.log("post?");
+      Axios.post(
+        `/api/bids/create/${currentAuction.meaningfulId}/${currentUser.id}`,
+        newBid
+      );
+    }
+  };
 
   return (
     <ModalCard
@@ -63,10 +88,10 @@ const BiddingModal = ({ currentUser, currentAuction, onCancel, ...props }) => {
         <Form.Label>Bid:</Form.Label>
         <CurrencyInput
           className="form-control"
-          ref={bid}
           required
           prefix="£"
-          onChange={() => {}}
+          ref={bid}
+          defaultValue={currentBid?.value}
           decimalsLimit={2}
           placeholder="£30.99"
         />
@@ -78,12 +103,14 @@ const BiddingModal = ({ currentUser, currentAuction, onCancel, ...props }) => {
                 required
                 as="input"
                 type="number"
+                defaultValue={timeEstimate}
+                onChange={(e) => setTimeEstimate(e.target.value)}
                 min={0}
                 max={300}
               />
             </Col>
             <Col>
-              <Form.Select ref={}>
+              <Form.Select ref={timeEstimateBase}>
                 <option value="days">Days</option>
                 <option value="months">Months</option>
               </Form.Select>
@@ -96,7 +123,8 @@ const BiddingModal = ({ currentUser, currentAuction, onCancel, ...props }) => {
           rows={3}
           minLength={10}
           required
-          ref={proposal}
+          defaultValue={proposal}
+          onChange={(e) => setProposal(e.target.value)}
           placeholder="Please describe your plan for the contract..."
         />
         <div className="bidding-modal_button-container">
