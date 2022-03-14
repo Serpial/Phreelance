@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import io from "socket.io-client";
 import Alert from "react-bootstrap/Alert";
-import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -15,10 +14,10 @@ import { useAuth } from "../../shared/contexts/AuthContext";
 import BasicCard from "../../shared/components/BasicCard";
 import BiddingModal from "../components/BiddingModal";
 import BidList from "../components/BidList";
-import FindTimeBetween from "../util/FindTimeBetween";
 import LoadingWheel from "../../shared/navigation/components/LoadingWheel";
 
 import "./Auction.css";
+import AuctionDisplayCard from "../components/AuctionDisplayCard";
 
 /**
  * Auction page that contains information about an individual auction.
@@ -26,23 +25,21 @@ import "./Auction.css";
  * @returns Auction
  */
 const Auction = () => {
-  const [doTimeRefresh, setDoTimeRefresh] = useState(true);
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setDoTimeRefresh(true);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const getStatus = (started, elapsed) => {
-    if (!elapsed && started) return "Active";
-    if (elapsed) return "Closed";
-    if (!started) return "Pending";
-  };
-
-  const { activeUser } = useAuth();
+  const [auction, setAuction] = useState();
+  const [auctionSocket, setAuctionSocket] = useState();
+  const [bids, setBids] = useState([]);
+  const [bidEmitted, setBidEmitted] = useState(false);
+  const [creator, setCreator] = useState();
   const [currentUser, setCurrentUser] = useState();
+  const [isLoading, setIsLoading] = useState(true);
+  const [showBidding, setShowBidding] = useState(false);
+  const [status, setStatus] = useState();
+  
+  const { activeUser } = useAuth();
+  const { auctionID } = useParams();
+  
+  const navigate = useNavigate();
+
   useEffect(() => {
     let cancel = false;
 
@@ -56,90 +53,60 @@ const Auction = () => {
     return () => (cancel = true);
   }, [activeUser]);
 
-  const [auctionSocket, setAuctionSocket] = useState();
   useEffect(() => {
-    const connectionHostString = process.env.REACT_APP_RUN_BACK_END_HOST;
-    const connection = io(connectionHostString + "/auction-routes");
-    connection.on("posted-bid", () => {
-      // https://www.tutorialspoint.com/socket.io/socket.io_rooms.htm
-      console.log("new bid posted to auction.");
-    });
-
-    setAuctionSocket(connection);
-    return () => connection.close();
-  }, []);
-
-  const { auctionID } = useParams();
-  const [isLoading, setIsLoading] = useState(true);
-  const [auction, setAuction] = useState();
-  const [creator, setCreator] = useState();
-  const [bids, setBids] = useState([]);
+    let cancel = false;
+    
+    Axios.get(`/api/auctions/${auctionID}`)
+    .then((res) => {
+      if (cancel) return;
+      const auctionRes = res.data.auction;
+      setAuction(auctionRes);
+      
+      return Axios.get(`/api/users/${auctionRes.creator}`);
+    })
+    .then((res) => {
+      if (cancel) return;
+      const creatorRes = res.data.user;
+      setCreator(creatorRes);
+      setIsLoading(false);
+    })
+    .catch((err) => console.log(err.response));
+    
+    return () => (cancel = true);
+  }, [auctionID]);
+  
   useEffect(() => {
     let cancel = false;
 
-    Axios.get(`/api/auctions/${auctionID}`)
-      .then((res) => {
-        if (cancel) return;
-        const auctionRes = res.data.auction;
-        setAuction(auctionRes);
-
-        if (auctionSocket && auctionSocket.connected) {
-          auctionSocket.emit("join-room", {
-            auctionId: auctionRes.meaningfulId,
-          });
-        }
-
-        return Promise.all([
-          Axios.get(`/api/users/${auctionRes.creator}`),
-          Axios.get(`/api/bids/auction/${auctionRes.meaningfulId}`),
-        ]);
-      })
-      .then((res) => {
-        if (cancel) return;
-        const creatorRes = res[0].data.user;
-        setCreator(creatorRes);
-        const bidsRes = res[1].data.bids;
-        setBids(bidsRes);
-        setIsLoading(false);
-      })
-      .catch((err) => console.log(err.response));
+    if (!auction) return;
+    Axios.get(`/api/bids/auction/${auction.meaningfulId}`).then((res) => {
+      if (cancel) return;
+      const bidsRes = res.data.bids;
+      setBids(bidsRes);
+      setBidEmitted(false);
+    });
 
     return () => (cancel = true);
-  }, [auctionID, currentUser, auctionSocket]);
+  }, [auction, bidEmitted]);
 
-  const [timeRemaining, setTimeRemaining] = useState("");
-  const [started, setStarted] = useState(false);
-  const [elapsed, setElapsed] = useState(false);
   useEffect(() => {
-    if (!doTimeRefresh || !auction) return;
+    if (!auction) return;
+    const connectionHostString = process.env.REACT_APP_RUN_BACK_END_HOST;
+    const connection = io(connectionHostString + "/auction-routes");
+    connection.emit("join-room", {
+      auctionId: auction.meaningfulId,
+    });
+    connection.on("posted-bid", () => setBidEmitted(true));
+    setAuctionSocket(connection);
+    return () => connection.close();
+  }, [auction]);
 
-    const now = new Date(Date.now());
-    const startDateTime = new Date(Date.parse(auction.starting));
-    const closeDateTime = new Date(Date.parse(auction.finishing));
-
-    const hasStarted = now > startDateTime;
-    setStarted(hasStarted);
-    const hasElapsed = now >= closeDateTime;
-    setElapsed(hasElapsed);
-
-    if (!hasElapsed) {
-      const timeBefore = hasStarted
-        ? FindTimeBetween(now, closeDateTime)
-        : FindTimeBetween(now, startDateTime);
-      setTimeRemaining(timeBefore);
-    }
-    setDoTimeRefresh(false);
-  }, [auction, doTimeRefresh]);
-
-  const navigate = useNavigate();
   const onRemoveDraft = () => {
     Axios.delete(`/api/auctions/${auction.meaningfulId}`).finally(() => {
       navigate("/find-auctions");
     });
   };
 
-  const [showBidding, setShowBidding] = useState(false);
-  const status = getStatus(started, elapsed);
   return (
     <>
       <BiddingModal
@@ -164,61 +131,11 @@ const Auction = () => {
                   <span>This auction has not been published yet!</span>
                 </Alert>
               )}
-              <div
-                className={
-                  "auction_main-card_container auction_main-card_container-" +
-                  status.toLowerCase()
-                }
-              >
-                <span className="auction_status">{status}</span>
-                <BasicCard>
-                  <Card.Title>{auction?.title}</Card.Title>
-                  <Card.Body>
-                    <div className="auction_description-container">
-                      {auction?.description}
-                    </div>
-                    <hr />
-                    <div>
-                      <div>
-                        <span className="auction_main-card_heading">
-                          Start:
-                        </span>
-                        <span>
-                          {new Date(auction.starting).toLocaleString()}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="auction_main-card_heading">
-                          Finish:
-                        </span>
-                        <span>
-                          {new Date(auction.finishing).toLocaleString()}
-                        </span>
-                      </div>
-                      <div className="auction_timing">
-                        {status === "Active" && (
-                          <>Time remaining on this auction: {timeRemaining}</>
-                        )}
-                        {status === "Closed" && (
-                          <>Time on auction has elapsed.</>
-                        )}
-                        {status === "Pending" && (
-                          <>Starting in: {timeRemaining}</>
-                        )}
-                      </div>
-                    </div>
-                    <hr />
-                    <div>
-                      <span className="auction_main-card_heading">
-                        Contract Vendor:
-                      </span>
-                      <span>
-                        {creator?.name} ({creator?.email})
-                      </span>
-                    </div>
-                  </Card.Body>
-                </BasicCard>
-              </div>
+              <AuctionDisplayCard
+                auction={auction}
+                creator={creator}
+                getCurrentStatus={setStatus}
+              />
             </Col>
             <Col md={4}>
               <BasicCard>

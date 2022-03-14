@@ -12,6 +12,8 @@ import AuctionList from "../components/AuctionList";
 
 import "./FindAuctions.css";
 
+const AUCTIONS_PER_PAGE = 5;
+
 const FILTER_DEFAULTS = {
   searchString: "",
   showPending: true,
@@ -30,6 +32,20 @@ const FILTER_DEFAULTS = {
  * @returns Auction page component
  */
 const Auctions = () => {
+  const [pageNumber, setPageNumber] = useState(1);
+  const [auctionList, setAuctionList] = useState([]);
+  const [auctionsOnPage, setAuctionsOnPage] = useState([]);
+  const [userAppId, setUserAppId] = useState();
+  const [filterValues, setFilterValues] = useState();
+
+  const handleFilterSubmit = useRef();
+
+  const { activeUser } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const pageCount = Math.ceil(auctionList.length / AUCTIONS_PER_PAGE);
+
   const buildFilterValues = (defaults) => {
     const queryParams = new URLSearchParams(window.location.search);
     let values = { ...defaults };
@@ -49,12 +65,6 @@ const Auctions = () => {
     return values;
   };
 
-  const [filterValues, setFilterValues] = useState(
-    buildFilterValues(FILTER_DEFAULTS)
-  );
-  const location = useLocation();
-  const navigate = useNavigate();
-  const handleFilterSubmit = useRef();
   useEffect(() => {
     handleFilterSubmit.current = (filterTerms) => {
       setFilterValues(filterTerms);
@@ -71,13 +81,10 @@ const Auctions = () => {
     };
   }, [location, navigate]);
 
-  const [userAppId, setUserAppId] = useState();
-  const { activeUser } = useAuth();
-  const userAuthId = activeUser.uid;
   useEffect(() => {
     let cancel = false;
 
-    Axios.get(`/api/users/auth/${userAuthId}`)
+    Axios.get(`/api/users/auth/${activeUser.uid}`)
       .then((res) => {
         if (cancel) return;
         const user = res.data.user;
@@ -88,17 +95,16 @@ const Auctions = () => {
       });
 
     return () => (cancel = true);
-  }, [userAuthId]);
+  }, [activeUser]);
 
-  const [pageNumber, setPageNumber] = useState(1);
-  const [auctionList, setAuctionList] = useState([]);
-  const [auctionsOnPage, setAuctionsOnPage] = useState([]);
-  const auctionsPerPage = 5;
   useEffect(() => {
     let cancel = false;
 
+    const tempFilterValues = buildFilterValues(FILTER_DEFAULTS);
+    setFilterValues(tempFilterValues);
+
     Axios.get("/api/auctions", {
-      params: filterValues,
+      params: tempFilterValues,
     })
       .then((res) => {
         if (cancel || res.status !== 200) return;
@@ -108,8 +114,8 @@ const Auctions = () => {
         setAuctionList(auctions);
         setAuctionsOnPage(
           auctions.slice(
-            (pageNumber - 1) * auctionsPerPage,
-            pageNumber * auctionsPerPage
+            (pageNumber - 1) * AUCTIONS_PER_PAGE,
+            pageNumber * AUCTIONS_PER_PAGE
           )
         );
       })
@@ -117,9 +123,8 @@ const Auctions = () => {
         console.log(err.response);
       });
     return () => (cancel = true);
-  }, [userAppId, pageNumber, filterValues, auctionsPerPage]);
+  }, [userAppId, pageNumber]);
 
-  const pageCount = Math.ceil(auctionList.length / auctionsPerPage);
   return (
     <Container fluid="sm">
       <Row xs={1} md={2}>

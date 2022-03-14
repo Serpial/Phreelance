@@ -19,12 +19,17 @@ import "./MyAuctions.css";
  */
 const MyAuctions = () => {
   const [userAppId, setUserAppId] = useState();
+  const [loadingCreator, setLoadingCreator] = useState(true);
+  const [createdAuctionList, setCreatedAuctionList] = useState([]);
+  const [loadingBids, setLoadingBids] = useState(true);
+  const [bidAuctionList, setBidAuctionList] = useState([]);
+
   const { activeUser } = useAuth();
-  const userAuthId = activeUser.uid;
+
   useEffect(() => {
     let cancel = false;
 
-    Axios.get(`/api/users/auth/${userAuthId}`)
+    Axios.get(`/api/users/auth/${activeUser.uid}`)
       .then((res) => {
         if (cancel) return;
         const user = res.data.user;
@@ -35,10 +40,8 @@ const MyAuctions = () => {
       });
 
     return () => (cancel = true);
-  }, [userAuthId]);
+  }, [activeUser]);
 
-  const [loadingCreator, setLoadingCreator] = useState(true);
-  const [createdAuctionList, setCreatedAuctionList] = useState([]);
   useEffect(() => {
     let cancel = false;
 
@@ -54,8 +57,6 @@ const MyAuctions = () => {
     return () => (cancel = true);
   }, [userAppId]);
 
-  const [loadingBids, setLoadingBids] = useState(true);
-  const [bidAuctionList, setBidAuctionList] = useState([]);
   useEffect(() => {
     let cancel = false;
 

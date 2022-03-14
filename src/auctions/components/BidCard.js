@@ -21,6 +21,7 @@ import "./BidCard.css";
 const BidCard = ({ isAuctionCreator, bid }) => {
   const [bidCreator, setBidCreator] = useState();
   const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     let cancel = false;
 

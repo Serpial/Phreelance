@@ -24,6 +24,7 @@ import { Button } from "react-bootstrap";
  */
 const FilterCard = ({ filterValues, onSubmit }) => {
   const [showOptions, setShowOptions] = useState(false);
+  
   const searchString = useRef({ value: filterValues.searchString });
   const showPending = useRef({ checked: filterValues.showPending });
   const showStarted = useRef({ checked: filterValues.showStarted });

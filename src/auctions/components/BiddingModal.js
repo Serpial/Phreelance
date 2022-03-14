@@ -47,8 +47,8 @@ const BiddingModal = ({
   const [proposal, setProposal] = useState();
   const [timeEstimate, setTimeEstimate] = useState();
   const [timeEstimateBase, setTimeEstimateBase] = useState();
-
   const [oldBid, setOldBid] = useState();
+
   useEffect(() => {
     let cancel = false;
 

@@ -46,6 +46,13 @@ const AuctionCard = (props) => {
 
   const [doBidRefresh, setDoBidRefresh] = useState(true);
   const [doTimeRefresh, setDoTimeRefresh] = useState(true);
+  const [minBid, setMinBid] = useState();
+  const [userBid, setUserBid] = useState();
+  const [topBidIsUser, setBidTopIsUser] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState("");
+  const [started, setStarted] = useState(false);
+  const [elapsed, setElapsed] = useState(false);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setDoBidRefresh(true);
@@ -55,9 +62,6 @@ const AuctionCard = (props) => {
     return () => clearInterval(interval);
   }, []);
 
-  const [minBid, setMinBid] = useState();
-  const [userBid, setUserBid] = useState();
-  const [topBidIsUser, setBidTopIsUser] = useState(false);
   useEffect(() => {
     if (!doBidRefresh) return;
 
@@ -89,9 +93,6 @@ const AuctionCard = (props) => {
     return () => (cancel = true);
   }, [userBid, minBid, auctionId, userAppId, doBidRefresh]);
 
-  const [timeRemaining, setTimeRemaining] = useState("");
-  const [started, setStarted] = useState(false);
-  const [elapsed, setElapsed] = useState(false);
   useEffect(() => {
     if (!doTimeRefresh) return;
 

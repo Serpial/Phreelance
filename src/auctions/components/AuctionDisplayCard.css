@@ -1,0 +1,40 @@
+.auction_description-container {
+  min-height: 4em;
+}
+
+.auction_main-card_container {
+  margin-top: 2%;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.auction_main-card_container-active {
+  background-color: rgb(113, 199, 113);
+}
+
+.auction_main-card_container-closed {
+  background-color: rgb(224, 71, 79);
+}
+
+.auction_main-card_container-pending {
+  background-color: rgb(219, 145, 8);
+}
+
+.auction_timing {
+  font-weight: bold;
+  color: rgb(119, 119, 119);
+}
+
+.auction_main-card_container > .basic-card > .card {
+  margin: 0;
+}
+
+.auction_main-card_heading {
+  font-size: small;
+  font-weight: bold;
+}
+
+.auction_status {
+  font-weight: bold;
+  color: white;
+}

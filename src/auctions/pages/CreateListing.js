@@ -35,17 +35,26 @@ const AUCTION_DEFINITIONS = AuctionTypes.types;
  * @returns CreateListing page
  */
 const CreateListing = () => {
+  const [startDate, setStartDate] = useState(DEFAULT_START_DATE);
+  const [endDate, setEndDate] = useState(DEFAULT_END_DATE);
+  const [dateWarnings, setDateWarnings] = useState();
+  const [showPriceWarning, setShowPriceWarning] = useState();
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [useCustomStartTime, setUseCustomStartTime] = useState(false);
+  const [auctionType, setAuctionType] = useState(AUCTION_DEFINITIONS[0]);
+  const [loading, setLoading] = useState(false);
+  const [auctionDescription, setAuctionDescription] = useState(
+    AUCTION_DEFINITIONS[0].description
+  );
+
   const title = useRef();
   const description = useRef();
   const reservePrice = useRef();
   const startingPrice = useRef();
 
-  const defaultAuctionType = AUCTION_DEFINITIONS[0];
-  const [auctionType, setAuctionType] = useState(defaultAuctionType);
-  const defaultAuctionDescription = AUCTION_DEFINITIONS[0].description;
-  const [auctionDescription, setAuctionDescription] = useState(
-    defaultAuctionDescription
-  );
+  const navigate = useNavigate();
+  const authId = useAuth()?.activeUser?.uid;
+
   const handleDropdownChange = (event) => {
     const newAuctionType = AUCTION_DEFINITIONS.find(
       (a) => a.fullName === event.target.value
@@ -54,9 +63,6 @@ const CreateListing = () => {
     setAuctionDescription(newAuctionType.description);
   };
 
-  const [startDate, setStartDate] = useState(DEFAULT_START_DATE);
-  const [endDate, setEndDate] = useState(DEFAULT_END_DATE);
-  const [dateWarnings, setDateWarnings] = useState();
   const applyDateWarning = ({ newStartDate, newEndDate }) => {
     const validateDate = DateIsWithinRange(
       new Date(),
@@ -80,7 +86,6 @@ const CreateListing = () => {
     setDateWarnings(warnings);
   };
 
-  const [showPriceWarning, setShowPriceWarning] = useState();
   const applyPriceWarning = () => {
     const sPrice = startingPrice.current?.value.slice(1);
     const rPrice = reservePrice.current?.value.slice(1);
@@ -92,8 +97,6 @@ const CreateListing = () => {
     setShowPriceWarning(false);
   };
 
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [useCustomStartTime, setUseCustomStartTime] = useState(false);
   const handleSubmit = (event) => {
     event.preventDefault();
     if (dateWarnings && dateWarnings.length > 1 && showPriceWarning) return;
@@ -107,9 +110,6 @@ const CreateListing = () => {
     publish({ isPublic });
   };
 
-  const authId = useAuth()?.activeUser?.uid;
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const publish = ({ isPublic }) => {
     setShowConfirmModal(false);
     setLoading(true);

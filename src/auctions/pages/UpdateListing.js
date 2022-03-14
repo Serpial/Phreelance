@@ -23,19 +23,23 @@ import LoadingWheel from "../../shared/navigation/components/LoadingWheel";
 const AUCTION_DEFINITIONS = AuctionTypes.types;
 
 const UpdateListing = () => {
-  const description = useRef();
-  const reservePrice = useRef();
-  const startingPrice = useRef();
-
-  const { auctionID } = useParams();
-  const { activeUser } = useAuth();
-
   const [auction, setAuction] = useState();
   const [loading, setLoading] = useState(true);
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
+  const [dateWarnings, setDateWarnings] = useState();
+  const [showPriceWarning, setShowPriceWarning] = useState();
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+  const description = useRef();
+  const reservePrice = useRef();
+  const startingPrice = useRef();
   const currentAuctionType = useRef();
+
+  const { auctionID } = useParams();
+  const { activeUser } = useAuth();
   const navigate = useNavigate();
+
   useEffect(() => {
     let cancel = false;
 
@@ -72,7 +76,6 @@ const UpdateListing = () => {
     return () => (cancel = true);
   }, [activeUser, auctionID, navigate]);
 
-  const [dateWarnings, setDateWarnings] = useState();
   const applyDateWarning = ({ newStartDate, newEndDate }) => {
     const validateDate = DateIsWithinRange(
       new Date(auction.created),
@@ -96,7 +99,6 @@ const UpdateListing = () => {
     setDateWarnings(warnings);
   };
 
-  const [showPriceWarning, setShowPriceWarning] = useState();
   const applyPriceWarning = () => {
     const sPrice = startingPrice.current?.value.slice(1);
     const rPrice = reservePrice.current?.value.slice(1);
@@ -108,7 +110,6 @@ const UpdateListing = () => {
     setShowPriceWarning(false);
   };
 
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const handleSubmit = (event) => {
     event.preventDefault();
     if (dateWarnings && dateWarnings.length > 1) return;

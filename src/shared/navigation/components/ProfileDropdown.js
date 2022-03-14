@@ -15,8 +15,10 @@ import "./ProfileDropdown.css";
  * @returns 
  */
 const ProfileDropdown = ({ children }) => {
-  const { activeUser } = useAuth();
   const [displayName, setDisplayName] = useState("");
+
+  const { activeUser } = useAuth();
+  
   useEffect(() => {
     let cancel = false;
 
