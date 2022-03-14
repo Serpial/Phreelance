@@ -20,9 +20,9 @@ import UpdateListing from "./auctions/pages/UpdateListing";
 import { AuthProvider, useAuth } from "./shared/contexts/AuthContext";
 
 const App = () => {
+  Axios.defaults.baseURL = process.env.REACT_APP_RUN_BACK_END_HOST;
   const isLoggedIn = useAuth()?.activeUser;
   const defaultRoute = isLoggedIn ? "/auctions-list" : "/login";
-  Axios.defaults.baseURL = process.env.REACT_APP_RUN_BACK_END_HOST;
 
   return (
     <AuthProvider>
@@ -38,7 +38,11 @@ const App = () => {
             <Route path="/find-auctions" element={<FindAuctions />} />
             <Route path="/my-auctions" element={<MyAuctions />} />
             <Route path="/create-listing" element={<CreateListing />} />
-            <Route exact path="/auction/:auctionID/edit" element={<UpdateListing />} />
+            <Route
+              exact
+              path="/auction/:auctionID/edit"
+              element={<UpdateListing />}
+            />
             <Route path="/auction/:auctionID" element={<Auction />} />
           </Route>
           <Route path="*" element={<Navigate to={defaultRoute} />} />

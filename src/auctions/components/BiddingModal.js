@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import Form from "react-bootstrap/Form";
 import CurrencyInput from "react-currency-input-field";
@@ -24,31 +24,47 @@ import "./BiddingModal.css";
  * @param {Function} onCancel
  * Callback method that allows us to close the modal.
  *
+ * @param {Bool} show
+ * Whether or not the modal is currently being displayed.
+ *
+ * @param {io} socket
+ * Socket for current auction
+ *
  * @param {Object} props
  * Some additional props are neccessary for the Modal Card.
  *
  * @returns BiddingModal
  */
-const BiddingModal = ({ currentUser, currentAuction, onCancel, ...props }) => {
-  const bid = useRef();
-  const [proposal, setProposal] = useState("");
-  const [timeEstimate, setTimeEstimate] = useState(0);
-  const timeEstimateBase = useRef();
+const BiddingModal = ({
+  currentUser,
+  currentAuction,
+  onCancel,
+  show,
+  socket,
+  ...props
+}) => {
+  const [bidValue, setBidValue] = useState();
+  const [proposal, setProposal] = useState();
+  const [timeEstimate, setTimeEstimate] = useState();
+  const [timeEstimateBase, setTimeEstimateBase] = useState();
 
-  const [currentBid, setCurrentBid] = useState();
+  const [oldBid, setOldBid] = useState();
   useEffect(() => {
     let cancel = false;
 
-    if (!currentAuction) return;
+    if (!currentAuction && !show) return;
     Axios.get(`/api/bids/auction/${currentAuction.meaningfulId}`)
       .then((res) => {
         if (cancel) return;
         const bids = res.data.bids;
-        const bidRes = bids.find((b) => b.creator === currentUser);
+        const bidRes = bids.find((b) => b.creator === currentUser.id);
 
         if (!bidRes) return;
-        setCurrentBid(bidRes);
-        setTimeEstimate(parseInt(bidRes?.timeEstimation.split(" ")[0]));
+        setOldBid(bidRes);
+
+        setBidValue(bidRes.value);
+        setTimeEstimate(parseInt(bidRes.timeEstimation.split(" ")[0]));
+        setTimeEstimateBase(bidRes.timeEstimation.split(" ")[1]);
         setProposal(bidRes.description);
       })
       .catch((err) => {
@@ -56,32 +72,33 @@ const BiddingModal = ({ currentUser, currentAuction, onCancel, ...props }) => {
       });
 
     return () => (cancel = true);
-  }, [currentUser, currentAuction]);
+  }, [currentUser, currentAuction, show]);
 
   const onSubmit = (e) => {
     e.preventDefault();
 
     const newBid = {
       description: proposal,
-      value: parseFloat(bid.current.value.slice(1)),
-      timeEstimation: timeEstimate + " " + timeEstimateBase.current.value,
+      value: bidValue,
+      timeEstimation: timeEstimate + " " + timeEstimateBase,
     };
-    if (currentBid) {
-      console.log("patch?");
-      Axios.patch(`/api/bids/${currentBid.id}`, newBid);
+
+    socket.emit("posting-bid", { auctionId: currentAuction.meaningfulId });
+    return;
+    if (oldBid) {
+      Axios.patch(`/api/bids/${oldBid.id}`, newBid);
     } else {
-      console.log("post?");
       Axios.post(
         `/api/bids/create/${currentAuction.meaningfulId}/${currentUser.id}`,
         newBid
       );
     }
   };
-
   return (
     <ModalCard
       className="bidding-modal"
-      title={`${currentBid ? "Adjust" : "Create"} bid`}
+      title={`${oldBid ? "Adjust" : "Create"} bid`}
+      show={show}
       {...props}
     >
       <Form onSubmit={onSubmit}>
@@ -90,8 +107,8 @@ const BiddingModal = ({ currentUser, currentAuction, onCancel, ...props }) => {
           className="form-control"
           required
           prefix="£"
-          ref={bid}
-          defaultValue={currentBid?.value}
+          onValueChange={(v) => setBidValue(v)}
+          value={bidValue}
           decimalsLimit={2}
           placeholder="£30.99"
         />
@@ -110,7 +127,7 @@ const BiddingModal = ({ currentUser, currentAuction, onCancel, ...props }) => {
               />
             </Col>
             <Col>
-              <Form.Select ref={timeEstimateBase}>
+              <Form.Select defaultValue={timeEstimateBase}>
                 <option value="days">Days</option>
                 <option value="months">Months</option>
               </Form.Select>

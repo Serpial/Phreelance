@@ -118,12 +118,12 @@ const AuctionCard = (props) => {
       ? description
       : description.slice(0, 120).trim() + "...";
 
-  const topBidderTooltip = (props) => (
-    <Tooltip {...props}>You are the top bidder!</Tooltip>
+  const topBidderTooltip = (propss) => (
+    <Tooltip {...propss}>You are the top bidder!</Tooltip>
   );
 
-  const notTopTooltip = (props) => (
-    <Tooltip {...props}>You are no longer top bidder!</Tooltip>
+  const notTopTooltip = (propss) => (
+    <Tooltip {...propss}>You are no longer top bidder!</Tooltip>
   );
 
   return (
@@ -171,39 +171,37 @@ const AuctionCard = (props) => {
             <hr />
             <div className="auction-card_bid-container">
               <span className="auction-card_bid-label">Winning bid: </span>
-              <span className="auction-card_value-container">
-                {minBid}
-                <span className="auction-card_notification">
-                  {started && topBidIsUser && (
-                    <OverlayTrigger
-                      placement="top"
-                      delay={{ show: 250, hide: 400 }}
-                      overlay={topBidderTooltip}
-                    >
+              <OverlayTrigger
+                placement="top"
+                delay={{ show: 250, hide: 400 }}
+                overlay={(p) => {
+                  if (started && topBidIsUser) return topBidderTooltip(p);
+                  if (userBid && !elapsed && !topBidIsUser)
+                    return notTopTooltip(p);
+                }}
+              >
+                <span className="auction-card_value-container">
+                  {minBid}
+                  <span className="auction-card_notification">
+                    {started && topBidIsUser && (
                       <FontAwesomeIcon
                         className="auction-card_icon"
                         icon={faUserCircle}
                         fixedWidth
                         size="lg"
                       />
-                    </OverlayTrigger>
-                  )}
-                  {userBid && !elapsed && !topBidIsUser && (
-                    <OverlayTrigger
-                      placement="top"
-                      delay={{ show: 250, hide: 400 }}
-                      overlay={notTopTooltip}
-                    >
+                    )}
+                    {userBid && !elapsed && !topBidIsUser && (
                       <FontAwesomeIcon
                         className="auction-card_icon auction-card_warning-icon"
                         icon={faExclamationCircle}
                         fixedWidth
                         size="lg"
                       />
-                    </OverlayTrigger>
-                  )}
+                    )}
+                  </span>
                 </span>
-              </span>
+              </OverlayTrigger>
             </div>
           </>
         )}

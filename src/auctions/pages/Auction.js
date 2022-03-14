@@ -1,6 +1,7 @@
 import Axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import io from "socket.io-client";
 import Alert from "react-bootstrap/Alert";
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
@@ -29,7 +30,7 @@ const Auction = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setDoTimeRefresh(true);
-    }, 950);
+    }, 1000);
 
     return () => clearInterval(interval);
   }, []);
@@ -55,12 +56,24 @@ const Auction = () => {
     return () => (cancel = true);
   }, [activeUser]);
 
+  const [auctionSocket, setAuctionSocket] = useState();
+  useEffect(() => {
+    const connectionHostString = process.env.REACT_APP_RUN_BACK_END_HOST;
+    const connection = io(connectionHostString + "/auction-routes");
+    connection.on("posted-bid", () => {
+      // https://www.tutorialspoint.com/socket.io/socket.io_rooms.htm
+      console.log("new bid posted to auction.");
+    });
+
+    setAuctionSocket(connection);
+    return () => connection.close();
+  }, []);
+
   const { auctionID } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [auction, setAuction] = useState();
   const [creator, setCreator] = useState();
   const [bids, setBids] = useState([]);
-  const [isBidder, setIsBidder] = useState([]);
   useEffect(() => {
     let cancel = false;
 
@@ -69,6 +82,13 @@ const Auction = () => {
         if (cancel) return;
         const auctionRes = res.data.auction;
         setAuction(auctionRes);
+
+        if (auctionSocket && auctionSocket.connected) {
+          auctionSocket.emit("join-room", {
+            auctionId: auctionRes.meaningfulId,
+          });
+        }
+
         return Promise.all([
           Axios.get(`/api/users/${auctionRes.creator}`),
           Axios.get(`/api/bids/auction/${auctionRes.meaningfulId}`),
@@ -85,7 +105,7 @@ const Auction = () => {
       .catch((err) => console.log(err.response));
 
     return () => (cancel = true);
-  }, [auctionID, currentUser]);
+  }, [auctionID, currentUser, auctionSocket]);
 
   const [timeRemaining, setTimeRemaining] = useState("");
   const [started, setStarted] = useState(false);
@@ -126,6 +146,7 @@ const Auction = () => {
         show={showBidding}
         currentAuction={auction}
         currentUser={currentUser}
+        socket={auctionSocket}
         onCancel={() => setShowBidding(false)}
       />
       {isLoading ? (
@@ -202,7 +223,7 @@ const Auction = () => {
             <Col md={4}>
               <BasicCard>
                 <hr />
-                {auction?.creator === currentUser.id ? (
+                {auction?.creator === currentUser?.id ? (
                   <>
                     <Button
                       variant="primary"
@@ -230,7 +251,7 @@ const Auction = () => {
                         }
                       }}
                     >
-                      bid
+                      {} bid
                     </Button>
                   </>
                 )}
@@ -239,7 +260,7 @@ const Auction = () => {
             <Col>
               <h3>Bids:</h3>
               <BidList
-                isAuctionCreator={auction?.creator === currentUser.id}
+                isAuctionCreator={auction?.creator === currentUser?.id}
                 bids={bids}
               />
             </Col>
