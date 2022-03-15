@@ -6,8 +6,10 @@ import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
+import Alert from "react-bootstrap/Alert";
 
 import ModalCard from "../../shared/components/ModalCard";
+import ToDisplayValue from "../util/ToDisplayValue";
 
 import "./BiddingModal.css";
 
@@ -21,14 +23,20 @@ import "./BiddingModal.css";
  * @param {Object} currentAuction
  * Current auction object that allows us to manage the correct bid.
  *
- * @param {Function} onCancel
+ * @param {Function} onClose
  * Callback method that allows us to close the modal.
+ *
+ * @param {Function} onBidSubmit
+ * Callback method for action to be taken when a bid is submitted.
  *
  * @param {Bool} show
  * Whether or not the modal is currently being displayed.
  *
  * @param {io} socket
  * Socket for current auction
+ *
+ * @param {Object} topBid
+ * Object containing the current top bid.
  *
  * @param {Object} props
  * Some additional props are neccessary for the Modal Card.
@@ -38,15 +46,18 @@ import "./BiddingModal.css";
 const BiddingModal = ({
   currentUser,
   currentAuction,
-  onCancel,
+  onClose,
+  onBidSubmit,
   show,
   socket,
+  topBid,
   ...props
 }) => {
+  const [alertDescription, setAlertDescription] = useState();
   const [bidValue, setBidValue] = useState();
   const [proposal, setProposal] = useState();
   const [timeEstimate, setTimeEstimate] = useState();
-  const [timeEstimateBase, setTimeEstimateBase] = useState();
+  const [timeEstimateBase, setTimeEstimateBase] = useState("days");
   const [oldBid, setOldBid] = useState();
 
   useEffect(() => {
@@ -77,21 +88,46 @@ const BiddingModal = ({
   const onSubmit = (e) => {
     e.preventDefault();
 
+    let tempAlertDescription;
+    if (topBid?.value && bidValue >= topBid?.value) {
+      tempAlertDescription = (
+        <span key="tooMuch">Your bid is higher than the current value.</span>
+      );
+    } else if (
+      !topBid &&
+      currentAuction.auctionType === "DUT" &&
+      bidValue >= currentAuction.startingPrice
+    ) {
+      tempAlertDescription = (
+        <span key="biggerStarting">
+          Your bid is higher than the starting price.
+        </span>
+      );
+    }
+
+    if (tempAlertDescription) {
+      setAlertDescription(tempAlertDescription);
+      return;
+    }
+
     const newBid = {
       description: proposal,
       value: bidValue,
       timeEstimation: timeEstimate + " " + timeEstimateBase,
     };
-
-    socket.emit("posting-bid", { auctionId: currentAuction.meaningfulId });
-    return;
     if (oldBid) {
-      Axios.patch(`/api/bids/${oldBid.id}`, newBid);
+      Axios.patch(`/api/bids/${oldBid.id}`, newBid).then(() => {
+        socket.emit("posting-bid", { auctionId: currentAuction.meaningfulId });
+        onBidSubmit();
+      });
     } else {
       Axios.post(
         `/api/bids/create/${currentAuction.meaningfulId}/${currentUser.id}`,
         newBid
-      );
+      ).then(() => {
+        socket.emit("posting-bid", { auctionId: currentAuction.meaningfulId });
+        onBidSubmit();
+      });
     }
   };
   return (
@@ -101,6 +137,17 @@ const BiddingModal = ({
       show={show}
       {...props}
     >
+      <div>
+        <span className="bidding-modal_current-price_afore">Winning bid: </span>
+        <span className="bidding-modal_current-price_value">
+          {topBid?.value ? ToDisplayValue(topBid.value) : "No bids"}
+        </span>
+      </div>
+      {alertDescription && (
+        <Alert className="bidding-modal_alerts" variant="danger">
+          {alertDescription}
+        </Alert>
+      )}
       <Form onSubmit={onSubmit}>
         <Form.Label>Bid:</Form.Label>
         <CurrencyInput
@@ -111,6 +158,7 @@ const BiddingModal = ({
           value={bidValue}
           decimalsLimit={2}
           placeholder="£30.99"
+          allowNegativeValue={false}
         />
         <Form.Label>Estimated completion time:</Form.Label>
         <Container>
@@ -122,12 +170,15 @@ const BiddingModal = ({
                 type="number"
                 defaultValue={timeEstimate}
                 onChange={(e) => setTimeEstimate(e.target.value)}
-                min={0}
+                min={1}
                 max={300}
               />
             </Col>
             <Col>
-              <Form.Select defaultValue={timeEstimateBase}>
+              <Form.Select
+                value={timeEstimateBase}
+                onChange={(e) => setTimeEstimateBase(e.target.value)}
+              >
                 <option value="days">Days</option>
                 <option value="months">Months</option>
               </Form.Select>
@@ -151,7 +202,7 @@ const BiddingModal = ({
             type="button"
             value="Cancel"
             variant="outline-primary"
-            onClick={() => onCancel()}
+            onClick={onClose}
           />
           <Button
             className="bidding-modal_button"

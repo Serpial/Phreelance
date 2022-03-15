@@ -7,3 +7,17 @@
   margin: 0 1em;
   top: 50%;
 }
+
+.auction_top-bid-preface {
+  font-size: large;
+  font-weight: bold;
+}
+
+.auction_top-bid-value {
+  font-size: xx-large;
+  font-weight: bold;
+}
+
+.auction_button {
+  margin: 0.5em 0;
+}

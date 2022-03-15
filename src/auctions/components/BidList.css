@@ -2,3 +2,11 @@
   list-style: none;
   padding: 0;
 }
+
+@media only screen and (min-width: 768px) {
+  .bid-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}

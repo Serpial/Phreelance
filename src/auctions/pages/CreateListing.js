@@ -14,7 +14,6 @@ import ModalCard from "../../shared/components/ModalCard";
 import BasicCard from "../../shared/components/BasicCard";
 import DateTimeInput from "../components/DateTimeInput";
 import DateIsWithinRange from "../util/DateIsWithinRange";
-import LoadingWheel from "../../shared/navigation/components/LoadingWheel";
 import { useAuth } from "../../shared/contexts/AuthContext";
 import AuctionTypes from "../res/AuctionTypes.json";
 
@@ -42,7 +41,6 @@ const CreateListing = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [useCustomStartTime, setUseCustomStartTime] = useState(false);
   const [auctionType, setAuctionType] = useState(AUCTION_DEFINITIONS[0]);
-  const [loading, setLoading] = useState(false);
   const [auctionDescription, setAuctionDescription] = useState(
     AUCTION_DEFINITIONS[0].description
   );
@@ -112,22 +110,26 @@ const CreateListing = () => {
 
   const publish = ({ isPublic }) => {
     setShowConfirmModal(false);
-    setLoading(true);
     const newAuction = {
       title: title.current.value,
       description: description.current.value,
-      reservePrice: reservePrice.current.value,
-      startingPrice: startingPrice.current?.value ?? "£0",
+      reservePrice: parseFloat(reservePrice.current.value.slice(1)),
+      startingPrice: 0,
       auctionType: auctionType.shortName,
       finishing: endDate.toUTCString(),
     };
 
+    if (startingPrice?.current?.value) {
+      const newStartPrice = parseFloat(startingPrice.current.value.slice(1));
+      newAuction.startingPrice = newStartPrice;
+    }
+
     if (useCustomStartTime) {
-      newAuction["starting"] = startDate.toUTCString();
+      newAuction.starting = startDate.toUTCString();
     }
 
     if (isPublic) {
-      newAuction["isPublic"] = isPublic;
+      newAuction.isPublic = isPublic;
     }
 
     Axios.get(`/api/users/auth/${authId}`)
@@ -136,17 +138,13 @@ const CreateListing = () => {
         return Axios.post(uri, newAuction);
       })
       .then((res) => {
-        const newAuctionId = res?.data?.auction?.meaningfulId;
+        const newAuctionId = res?.data?.auction.meaningfulId;
         navigate("/auction/" + newAuctionId);
-      })
-      .catch((_err) => {
-        navigate("/my-auctions");
       });
   };
 
   return (
     <>
-      {loading && <LoadingWheel />}
       <ModalCard
         show={showConfirmModal}
         title="Publishing... Are you sure?"

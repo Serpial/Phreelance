@@ -18,5 +18,6 @@
 @media only screen and (min-width: 768px) {
   .bid-card {
     width: 25vw;
+    margin: 1em;
   }
 }

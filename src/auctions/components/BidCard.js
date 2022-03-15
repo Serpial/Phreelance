@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 
 import BasicCard from "../../shared/components/BasicCard";
+import ToDisplayValue from "../util/ToDisplayValue";
 
 import "./BidCard.css";
 
@@ -37,21 +38,11 @@ const BidCard = ({ isAuctionCreator, bid }) => {
     return () => (cancel = true);
   }, [bid]);
 
-  const parseBid = (valueNumber) => {
-    // source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat
-    const numberFormat = new Intl.NumberFormat("en-GB", {
-      style: "currency",
-      currency: "GBP",
-    });
-
-    return numberFormat.format(valueNumber);
-  };
-
   return (
     <>
       {!isLoading && (
         <BasicCard className="bid-card">
-          <div className="bid-card_value">{parseBid(bid.value)}</div>
+          <div className="bid-card_value">{ToDisplayValue(bid.value)}</div>
           {isAuctionCreator && (
             <>
               <div>Proposal: {bid.description}</div>

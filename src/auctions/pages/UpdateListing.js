@@ -132,11 +132,15 @@ const UpdateListing = () => {
     };
 
     if (auction.auctionType === "DUT" && !auction.isPublic) {
-      updatedAuction["startingPrice"] = startingPrice.current.value;
+      updatedAuction["startingPrice"] = parseFloat(
+        startingPrice.current.value.slice(1)
+      );
     }
 
     if (!auction.isPublic) {
-      updatedAuction["reservePrice"] = reservePrice.current.value;
+      updatedAuction["reservePrice"] = parseFloat(
+        reservePrice.current.value.slice(1)
+      );
 
       if (startDate.getTime() > new Date().getTime()) {
         updatedAuction["starting"] = startDate.toUTCString();
@@ -151,9 +155,6 @@ const UpdateListing = () => {
       .then((_res) => {
         navigate("/auction/" + auctionID);
       })
-      .catch((err) => {
-        console.log(err);
-      });
   };
 
   const creationTooltip = (props) => (
@@ -259,7 +260,7 @@ const UpdateListing = () => {
                       readOnly={auction.isPublic}
                       onChange={applyPriceWarning}
                       prefix="£"
-                      defaultValue={parseFloat(auction.reservePrice.slice(1))}
+                      defaultValue={auction.reservePrice}
                       decimalsLimit={2}
                       placeholder="£30.99"
                     />
@@ -285,9 +286,7 @@ const UpdateListing = () => {
                           onChange={applyPriceWarning}
                           prefix="£"
                           decimalsLimit={2}
-                          defaultValue={parseFloat(
-                            auction.startingPrice.slice(1)
-                          )}
+                          defaultValue={auction.startingPrice}
                           placeholder="£30.99"
                         />
                       </OverlayTrigger>

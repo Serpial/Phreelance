@@ -11,6 +11,7 @@ import {
 
 import FindTimeBetween from "../util/FindTimeBetween";
 import BasicCard from "../../shared/components/BasicCard";
+import ToDisplayValue from "../util/ToDisplayValue";
 
 import "./AuctionCard.css";
 
@@ -75,12 +76,12 @@ const AuctionCard = (props) => {
         if (bids.length < 1) return;
         const minBidValue = Math.min(...bids.map((b) => b.value));
         if (!minBidValue) return;
-        setMinBid(parseBid(minBidValue));
+        setMinBid(ToDisplayValue(minBidValue));
 
         const usersBidValue = bids.find((b) => b.creator === userAppId)?.value;
         if (!usersBidValue) return;
 
-        const bidAsString = parseBid(usersBidValue);
+        const bidAsString = ToDisplayValue(usersBidValue);
         setUserBid(bidAsString);
 
         if (usersBidValue === minBidValue) {
@@ -217,16 +218,6 @@ const AuctionCard = (props) => {
       </Card.Body>
     </BasicCard>
   );
-};
-
-const parseBid = (valueNumber) => {
-  // source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat
-  const numberFormat = new Intl.NumberFormat("en-GB", {
-    style: "currency",
-    currency: "GBP",
-  });
-
-  return numberFormat.format(valueNumber);
 };
 
 export default AuctionCard;
