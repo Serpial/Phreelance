@@ -11,15 +11,16 @@ import "./BidCard.css";
 /**
  * Card to display a bid on the auction page.
  *
- * @param {Bool} isAuctionCreator
- * Vary options based on whether or not the user is the auction creator.
+ * @param {Bool} showAdditionalDetail
+ * Show additional detail if the user is the bid creator or the user is
+ * the auction creator.
  *
  * @param {Object} bid
  * The appropriate bid and information to display.
  *
  * @returns BidCard
  */
-const BidCard = ({ isAuctionCreator, bid }) => {
+const BidCard = ({ showAdditionalDetail, bid }) => {
   const [bidCreator, setBidCreator] = useState();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -42,8 +43,9 @@ const BidCard = ({ isAuctionCreator, bid }) => {
     <>
       {!isLoading && (
         <BasicCard className="bid-card">
+          <div></div>
           <div className="bid-card_value">{ToDisplayValue(bid.value)}</div>
-          {isAuctionCreator && (
+          {showAdditionalDetail && (
             <>
               <div>Proposal: {bid.description}</div>
               <div>Time estimate: {bid.timeEstimation}</div>

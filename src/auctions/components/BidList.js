@@ -26,7 +26,7 @@ const BidList = ({ isAuctionCreator, bids }) => {
     <ul className="bid-list">
       {bids.map((bid) => (
         <li key={bid.id}>
-          <BidCard isAuctionCreator={isAuctionCreator} bid={bid} />
+          <BidCard showAdditionalDetail={isAuctionCreator} bid={bid} />
         </li>
       ))}
     </ul>

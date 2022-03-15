@@ -15,11 +15,12 @@ import BasicCard from "../../shared/components/BasicCard";
 import BiddingModal from "../components/BiddingModal";
 import BidList from "../components/BidList";
 import LoadingWheel from "../../shared/navigation/components/LoadingWheel";
-
-import "./Auction.css";
 import AuctionDisplayCard from "../components/AuctionDisplayCard";
 import ToDisplayValue from "../util/ToDisplayValue";
 import ModalCard from "../../shared/components/ModalCard";
+import BidCard from "../components/BidCard";
+
+import "./Auction.css";
 
 /**
  * Auction page that contains information about an individual auction.
@@ -39,6 +40,7 @@ const Auction = () => {
   const [showRemoveWarning, setShowRemoveWarning] = useState(false);
   const [status, setStatus] = useState();
   const [topBid, setTopBid] = useState();
+  const [hasBid, setHasBid] = useState(false);
 
   const { activeUser } = useAuth();
   const { auctionID } = useParams();
@@ -99,6 +101,7 @@ const Auction = () => {
       setTopBid(bidsRes[0]);
       setBidEmitted(false);
       setBidsAreLoading(false);
+      setHasBid(bidsRes.find((b) => b.creator === currentUser.id));
     });
 
     return () => (cancel = true);
@@ -223,20 +226,26 @@ const Auction = () => {
                       }
                     }}
                   >
-                    {bids.find((b) => b.creator === currentUser.id)
-                      ? "Modify "
-                      : "Create "}
+                    {hasBid ? "Modify " : "Create "}
                     bid
                   </Button>
                 )}
               </BasicCard>
             </Col>
             <Col>
-              <h3>Bids:</h3>
-              <BidList
-                isAuctionCreator={auction?.creator === currentUser?.id}
-                bids={bids}
-              />
+              {hasBid && (
+                <Row className="auction_your-bid_container">
+                  <h3>Your bid:</h3>
+                  <BidCard bid={hasBid} showAdditionalDetail={true} />
+                </Row>
+              )}
+              <Row>
+                <h3>Bids:</h3>
+                <BidList
+                  isAuctionCreator={auction?.creator === currentUser?.id}
+                  bids={bids}
+                />
+              </Row>
             </Col>
           </Row>
         </Container>
