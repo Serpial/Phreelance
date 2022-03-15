@@ -24,12 +24,13 @@ import { Button } from "react-bootstrap";
  */
 const FilterCard = ({ filterValues, onSubmit }) => {
   const [showOptions, setShowOptions] = useState(false);
-  const searchString = useRef({ value: filterValues.searchString });
-  const showPending = useRef({ checked: filterValues.showPending });
-  const showStarted = useRef({ checked: filterValues.showStarted });
-  const showClosed = useRef({ checked: filterValues.showClosed });
-  const sortNewest = useRef({ checked: filterValues.sortNewest });
-  const sortOldest = useRef({ checked: filterValues.sortOldest });
+  
+  const searchString = useRef({ value: filterValues?.searchString });
+  const showPending = useRef({ checked: filterValues?.showPending });
+  const showStarted = useRef({ checked: filterValues?.showStarted });
+  const showClosed = useRef({ checked: filterValues?.showClosed });
+  const sortNewest = useRef({ checked: filterValues?.sortNewest });
+  const sortOldest = useRef({ checked: filterValues?.sortOldest });
 
   const submitHandler = (event) => {
     event.preventDefault();

@@ -16,9 +16,9 @@ import Backdrop from "../components/Backdrop";
 import MobileNavItem from "./components/MobileNavItem";
 import DesktopNavItem from "./components/DesktopNavItem";
 import ProfileDropdown from "./components/ProfileDropdown";
+import DropdownNavItem from "./components/DropdownNavItem";
 
 import "./MainNavigation.css";
-import DropdownNavItem from "./components/DropdownNavItem";
 
 const NAV_LOCATIONS = [
   {
@@ -48,9 +48,11 @@ const NAV_LOCATIONS = [
  * @returns container for navigation components
  */
 const MainNavigation = () => {
-  const { logout } = useAuth();
   const [showSideDrawer, setShowSideDrawer] = useState(false);
+  
+  const { logout } = useAuth();
   const navigate = useNavigate();
+  
   const handleLogout = async (event) => {
     event.preventDefault();
     try {

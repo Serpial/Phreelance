@@ -10,8 +10,6 @@ import { useAuth } from "../../shared/contexts/AuthContext";
 
 import "./MyAuctions.css";
 
-const BACKEND_HOST = process.env.REACT_APP_RUN_BACK_END_HOST;
-
 /**
  * Page showing auctions that the user is interacting
  * with. This means: ones that they have created, and
@@ -21,12 +19,17 @@ const BACKEND_HOST = process.env.REACT_APP_RUN_BACK_END_HOST;
  */
 const MyAuctions = () => {
   const [userAppId, setUserAppId] = useState();
+  const [loadingCreator, setLoadingCreator] = useState(true);
+  const [createdAuctionList, setCreatedAuctionList] = useState([]);
+  const [loadingBids, setLoadingBids] = useState(true);
+  const [bidAuctionList, setBidAuctionList] = useState([]);
+
   const { activeUser } = useAuth();
-  const userAuthId = activeUser.uid;
+
   useEffect(() => {
     let cancel = false;
 
-    Axios.get(`${BACKEND_HOST}/api/users/auth/${userAuthId}`)
+    Axios.get(`/api/users/auth/${activeUser.uid}`)
       .then((res) => {
         if (cancel) return;
         const user = res.data.user;
@@ -37,15 +40,13 @@ const MyAuctions = () => {
       });
 
     return () => (cancel = true);
-  }, [userAuthId]);
+  }, [activeUser]);
 
-  const [loadingCreator, setLoadingCreator] = useState(true);
-  const [createdAuctionList, setCreatedAuctionList] = useState([]);
   useEffect(() => {
     let cancel = false;
 
     if (!userAppId) return;
-    Axios.get(`${BACKEND_HOST}/api/auctions/creator/${userAppId}`)
+    Axios.get(`/api/auctions/creator/${userAppId}`)
       .then((res) => {
         if (cancel) return;
         setCreatedAuctionList(res.data.auctions);
@@ -56,13 +57,11 @@ const MyAuctions = () => {
     return () => (cancel = true);
   }, [userAppId]);
 
-  const [loadingBids, setLoadingBids] = useState(true);
-  const [bidAuctionList, setBidAuctionList] = useState([]);
   useEffect(() => {
     let cancel = false;
 
     if (!userAppId) return;
-    Axios.get(`${BACKEND_HOST}/api/auctions/bidder/${userAppId}`)
+    Axios.get(`/api/auctions/bidder/${userAppId}`)
       .then((res) => {
         if (cancel) return;
         setBidAuctionList(res.data.auctions);

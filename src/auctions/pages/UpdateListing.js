@@ -20,33 +20,35 @@ import DateTimeInput from "../components/DateTimeInput";
 import AuctionTypes from "../res/AuctionTypes.json";
 import LoadingWheel from "../../shared/navigation/components/LoadingWheel";
 
-const BACKEND_HOST = process.env.REACT_APP_RUN_BACK_END_HOST;
-
 const AUCTION_DEFINITIONS = AuctionTypes.types;
 
 const UpdateListing = () => {
-  const description = useRef();
-  const reservePrice = useRef();
-  const startingPrice = useRef();
-
-  const { auctionID } = useParams();
-  const { activeUser } = useAuth();
-
   const [auction, setAuction] = useState();
   const [loading, setLoading] = useState(true);
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
+  const [dateWarnings, setDateWarnings] = useState();
+  const [showPriceWarning, setShowPriceWarning] = useState();
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+  const description = useRef();
+  const reservePrice = useRef();
+  const startingPrice = useRef();
   const currentAuctionType = useRef();
+
+  const { auctionID } = useParams();
+  const { activeUser } = useAuth();
   const navigate = useNavigate();
+
   useEffect(() => {
     let cancel = false;
 
     let userAppId;
-    Axios.get(`${BACKEND_HOST}/api/users/auth/${activeUser.uid}`)
+    Axios.get(`/api/users/auth/${activeUser.uid}`)
       .then((res) => {
         if (cancel) return;
         userAppId = res.data?.user.id;
-        return Axios.get(`${BACKEND_HOST}/api/auctions/${auctionID}`);
+        return Axios.get(`/api/auctions/${auctionID}`);
       })
       .then((res) => {
         if (cancel) return;
@@ -74,7 +76,6 @@ const UpdateListing = () => {
     return () => (cancel = true);
   }, [activeUser, auctionID, navigate]);
 
-  const [dateWarnings, setDateWarnings] = useState();
   const applyDateWarning = ({ newStartDate, newEndDate }) => {
     const validateDate = DateIsWithinRange(
       new Date(auction.created),
@@ -98,7 +99,6 @@ const UpdateListing = () => {
     setDateWarnings(warnings);
   };
 
-  const [showPriceWarning, setShowPriceWarning] = useState();
   const applyPriceWarning = () => {
     const sPrice = startingPrice.current?.value.slice(1);
     const rPrice = reservePrice.current?.value.slice(1);
@@ -110,7 +110,6 @@ const UpdateListing = () => {
     setShowPriceWarning(false);
   };
 
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const handleSubmit = (event) => {
     event.preventDefault();
     if (dateWarnings && dateWarnings.length > 1) return;
@@ -133,11 +132,15 @@ const UpdateListing = () => {
     };
 
     if (auction.auctionType === "DUT" && !auction.isPublic) {
-      updatedAuction["startingPrice"] = startingPrice.current.value;
+      updatedAuction["startingPrice"] = parseFloat(
+        startingPrice.current.value.slice(1)
+      );
     }
 
     if (!auction.isPublic) {
-      updatedAuction["reservePrice"] = reservePrice.current.value;
+      updatedAuction["reservePrice"] = parseFloat(
+        reservePrice.current.value.slice(1)
+      );
 
       if (startDate.getTime() > new Date().getTime()) {
         updatedAuction["starting"] = startDate.toUTCString();
@@ -148,13 +151,10 @@ const UpdateListing = () => {
       updatedAuction["isPublic"] = isPublic;
     }
 
-    Axios.patch(`${BACKEND_HOST}/api/auctions/${auctionID}`, updatedAuction)
+    Axios.patch(`/api/auctions/${auctionID}`, updatedAuction)
       .then((_res) => {
         navigate("/auction/" + auctionID);
       })
-      .catch((err) => {
-        console.log(err);
-      });
   };
 
   const creationTooltip = (props) => (
@@ -260,7 +260,7 @@ const UpdateListing = () => {
                       readOnly={auction.isPublic}
                       onChange={applyPriceWarning}
                       prefix="£"
-                      defaultValue={parseFloat(auction.reservePrice.slice(1))}
+                      defaultValue={auction.reservePrice}
                       decimalsLimit={2}
                       placeholder="£30.99"
                     />
@@ -286,9 +286,7 @@ const UpdateListing = () => {
                           onChange={applyPriceWarning}
                           prefix="£"
                           decimalsLimit={2}
-                          defaultValue={parseFloat(
-                            auction.startingPrice.slice(1)
-                          )}
+                          defaultValue={auction.startingPrice}
                           placeholder="£30.99"
                         />
                       </OverlayTrigger>

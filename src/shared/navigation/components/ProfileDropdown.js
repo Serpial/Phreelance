@@ -5,8 +5,6 @@ import { useAuth } from "../../contexts/AuthContext";
 
 import "./ProfileDropdown.css";
 
-const BACKEND_HOST = process.env.REACT_APP_RUN_BACK_END_HOST;
-
 /**
  * Profile dropdown is available when the user hovers over their name
  * when the website is being displayed in desktop mode.
@@ -17,12 +15,14 @@ const BACKEND_HOST = process.env.REACT_APP_RUN_BACK_END_HOST;
  * @returns 
  */
 const ProfileDropdown = ({ children }) => {
-  const { activeUser } = useAuth();
   const [displayName, setDisplayName] = useState("");
+
+  const { activeUser } = useAuth();
+  
   useEffect(() => {
     let cancel = false;
 
-    Axios.get(`${BACKEND_HOST}/api/users/auth/${activeUser?.uid}`)
+    Axios.get(`/api/users/auth/${activeUser?.uid}`)
       .then((response) => {
         if (cancel) return;
         const user = response.data.user;

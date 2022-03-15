@@ -1,0 +1,33 @@
+.auction_publish-alert {
+  margin: 0.5em 0;
+}
+
+.auction_publish-alert_icon {
+  position: relative;
+  margin: 0 1em;
+  top: 50%;
+}
+
+.auction_top-bid-preface {
+  font-size: large;
+  font-weight: bold;
+}
+
+.auction_top-bid-value {
+  font-size: xx-large;
+  font-weight: bold;
+}
+
+.auction_button {
+  margin: 0.5em 0;
+}
+
+.auction_your-bid_container {
+  width: auto;
+}
+
+@media only screen and (min-width: 768px) {
+  .auction_your-bid_container {
+    width: 25vw;
+  }
+}

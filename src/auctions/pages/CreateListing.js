@@ -14,13 +14,10 @@ import ModalCard from "../../shared/components/ModalCard";
 import BasicCard from "../../shared/components/BasicCard";
 import DateTimeInput from "../components/DateTimeInput";
 import DateIsWithinRange from "../util/DateIsWithinRange";
-import LoadingWheel from "../../shared/navigation/components/LoadingWheel";
 import { useAuth } from "../../shared/contexts/AuthContext";
 import AuctionTypes from "../res/AuctionTypes.json";
 
 import "./CreateListing.css";
-
-const BACKEND_HOST = process.env.REACT_APP_RUN_BACK_END_HOST;
 
 // Starts tomorrow at 12pm
 const DEFAULT_START_DATE = new Date(new Date().getTime() + 86000000);
@@ -37,17 +34,25 @@ const AUCTION_DEFINITIONS = AuctionTypes.types;
  * @returns CreateListing page
  */
 const CreateListing = () => {
+  const [startDate, setStartDate] = useState(DEFAULT_START_DATE);
+  const [endDate, setEndDate] = useState(DEFAULT_END_DATE);
+  const [dateWarnings, setDateWarnings] = useState();
+  const [showPriceWarning, setShowPriceWarning] = useState();
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [useCustomStartTime, setUseCustomStartTime] = useState(false);
+  const [auctionType, setAuctionType] = useState(AUCTION_DEFINITIONS[0]);
+  const [auctionDescription, setAuctionDescription] = useState(
+    AUCTION_DEFINITIONS[0].description
+  );
+
   const title = useRef();
   const description = useRef();
   const reservePrice = useRef();
   const startingPrice = useRef();
 
-  const defaultAuctionType = AUCTION_DEFINITIONS[0];
-  const [auctionType, setAuctionType] = useState(defaultAuctionType);
-  const defaultAuctionDescription = AUCTION_DEFINITIONS[0].description;
-  const [auctionDescription, setAuctionDescription] = useState(
-    defaultAuctionDescription
-  );
+  const navigate = useNavigate();
+  const authId = useAuth()?.activeUser?.uid;
+
   const handleDropdownChange = (event) => {
     const newAuctionType = AUCTION_DEFINITIONS.find(
       (a) => a.fullName === event.target.value
@@ -56,9 +61,6 @@ const CreateListing = () => {
     setAuctionDescription(newAuctionType.description);
   };
 
-  const [startDate, setStartDate] = useState(DEFAULT_START_DATE);
-  const [endDate, setEndDate] = useState(DEFAULT_END_DATE);
-  const [dateWarnings, setDateWarnings] = useState();
   const applyDateWarning = ({ newStartDate, newEndDate }) => {
     const validateDate = DateIsWithinRange(
       new Date(),
@@ -82,7 +84,6 @@ const CreateListing = () => {
     setDateWarnings(warnings);
   };
 
-  const [showPriceWarning, setShowPriceWarning] = useState();
   const applyPriceWarning = () => {
     const sPrice = startingPrice.current?.value.slice(1);
     const rPrice = reservePrice.current?.value.slice(1);
@@ -94,8 +95,6 @@ const CreateListing = () => {
     setShowPriceWarning(false);
   };
 
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [useCustomStartTime, setUseCustomStartTime] = useState(false);
   const handleSubmit = (event) => {
     event.preventDefault();
     if (dateWarnings && dateWarnings.length > 1 && showPriceWarning) return;
@@ -109,46 +108,43 @@ const CreateListing = () => {
     publish({ isPublic });
   };
 
-  const authId = useAuth()?.activeUser?.uid;
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const publish = ({ isPublic }) => {
     setShowConfirmModal(false);
-    setLoading(true);
     const newAuction = {
       title: title.current.value,
       description: description.current.value,
-      reservePrice: reservePrice.current.value,
-      startingPrice: startingPrice.current?.value ?? "£0",
+      reservePrice: parseFloat(reservePrice.current.value.slice(1)),
+      startingPrice: 0,
       auctionType: auctionType.shortName,
       finishing: endDate.toUTCString(),
     };
 
+    if (startingPrice?.current?.value) {
+      const newStartPrice = parseFloat(startingPrice.current.value.slice(1));
+      newAuction.startingPrice = newStartPrice;
+    }
+
     if (useCustomStartTime) {
-      newAuction["starting"] = startDate.toUTCString();
+      newAuction.starting = startDate.toUTCString();
     }
 
     if (isPublic) {
-      newAuction["isPublic"] = isPublic;
+      newAuction.isPublic = isPublic;
     }
 
-    Axios.get(`${BACKEND_HOST}/api/users/auth/${authId}`)
+    Axios.get(`/api/users/auth/${authId}`)
       .then((res) => {
-        const uri = `${BACKEND_HOST}/api/auctions/${res?.data?.user?.id}`;
+        const uri = `/api/auctions/${res?.data?.user?.id}`;
         return Axios.post(uri, newAuction);
       })
       .then((res) => {
-        const newAuctionId = res?.data?.auction?.meaningfulId;
+        const newAuctionId = res?.data?.auction.meaningfulId;
         navigate("/auction/" + newAuctionId);
-      })
-      .catch((_err) => {
-        navigate("/my-auctions");
       });
   };
 
   return (
     <>
-      {loading && <LoadingWheel />}
       <ModalCard
         show={showConfirmModal}
         title="Publishing... Are you sure?"

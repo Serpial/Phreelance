@@ -1,0 +1,37 @@
+.bidding-modal {
+  width: 90vw;
+}
+
+.bidding-modal_button {
+  width: 97.5%;
+  margin: 2.5%;
+}
+
+.bidding-modal_button-container {
+  margin: 2.5% 0;
+}
+
+.bidding-modal_value-entry {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.bidding-modal_value-entry_padlock {
+  margin-right: 1em;
+}
+
+@media only screen and (min-width: 768px) {
+  .bidding-modal {
+    width: 40vw;
+  }
+
+  .bidding-modal_button {
+    width: 45%;
+    margin: 2.5%;
+  }
+
+  .bidding-modal_button-container {
+    margin: 2.5%;
+  }
+}

@@ -11,10 +11,9 @@ import {
 
 import FindTimeBetween from "../util/FindTimeBetween";
 import BasicCard from "../../shared/components/BasicCard";
+import ToDisplayValue from "../util/ToDisplayValue";
 
 import "./AuctionCard.css";
-
-const BACKEND_HOST = process.env.REACT_APP_RUN_BACK_END_HOST;
 
 /**
  * Individual auction card that displays surface
@@ -48,6 +47,13 @@ const AuctionCard = (props) => {
 
   const [doBidRefresh, setDoBidRefresh] = useState(true);
   const [doTimeRefresh, setDoTimeRefresh] = useState(true);
+  const [minBid, setMinBid] = useState();
+  const [userBid, setUserBid] = useState();
+  const [topBidIsUser, setBidTopIsUser] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState("");
+  const [started, setStarted] = useState(false);
+  const [elapsed, setElapsed] = useState(false);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setDoBidRefresh(true);
@@ -57,15 +63,12 @@ const AuctionCard = (props) => {
     return () => clearInterval(interval);
   }, []);
 
-  const [minBid, setMinBid] = useState();
-  const [userBid, setUserBid] = useState();
-  const [topBidIsUser, setBidTopIsUser] = useState(false);
   useEffect(() => {
     if (!doBidRefresh) return;
 
     let cancel = false;
 
-    Axios.get(`${BACKEND_HOST}/api/bids/auction/${auctionId}`)
+    Axios.get(`/api/bids/auction/${auctionId}`)
       .then((response) => {
         if (cancel) return;
 
@@ -73,12 +76,12 @@ const AuctionCard = (props) => {
         if (bids.length < 1) return;
         const minBidValue = Math.min(...bids.map((b) => b.value));
         if (!minBidValue) return;
-        setMinBid(parseBid(minBidValue));
+        setMinBid(ToDisplayValue(minBidValue));
 
         const usersBidValue = bids.find((b) => b.creator === userAppId)?.value;
         if (!usersBidValue) return;
 
-        const bidAsString = parseBid(usersBidValue);
+        const bidAsString = ToDisplayValue(usersBidValue);
         setUserBid(bidAsString);
 
         if (usersBidValue === minBidValue) {
@@ -91,9 +94,6 @@ const AuctionCard = (props) => {
     return () => (cancel = true);
   }, [userBid, minBid, auctionId, userAppId, doBidRefresh]);
 
-  const [timeRemaining, setTimeRemaining] = useState("");
-  const [started, setStarted] = useState(false);
-  const [elapsed, setElapsed] = useState(false);
   useEffect(() => {
     if (!doTimeRefresh) return;
 
@@ -120,12 +120,12 @@ const AuctionCard = (props) => {
       ? description
       : description.slice(0, 120).trim() + "...";
 
-  const topBidderTooltip = (props) => (
-    <Tooltip {...props}>You are the top bidder!</Tooltip>
+  const topBidderTooltip = (propss) => (
+    <Tooltip {...propss}>You are the top bidder!</Tooltip>
   );
 
-  const notTopTooltip = (props) => (
-    <Tooltip {...props}>You are no longer top bidder!</Tooltip>
+  const notTopTooltip = (propss) => (
+    <Tooltip {...propss}>You are no longer top bidder!</Tooltip>
   );
 
   return (
@@ -173,39 +173,37 @@ const AuctionCard = (props) => {
             <hr />
             <div className="auction-card_bid-container">
               <span className="auction-card_bid-label">Winning bid: </span>
-              <span className="auction-card_value-container">
-                {minBid}
-                <span className="auction-card_notification">
-                  {started && topBidIsUser && (
-                    <OverlayTrigger
-                      placement="top"
-                      delay={{ show: 250, hide: 400 }}
-                      overlay={topBidderTooltip}
-                    >
+              <OverlayTrigger
+                placement="top"
+                delay={{ show: 250, hide: 400 }}
+                overlay={(p) => {
+                  if (started && topBidIsUser) return topBidderTooltip(p);
+                  if (userBid && !elapsed && !topBidIsUser)
+                    return notTopTooltip(p);
+                }}
+              >
+                <span className="auction-card_value-container">
+                  {minBid}
+                  <span className="auction-card_notification">
+                    {started && topBidIsUser && (
                       <FontAwesomeIcon
                         className="auction-card_icon"
                         icon={faUserCircle}
                         fixedWidth
                         size="lg"
                       />
-                    </OverlayTrigger>
-                  )}
-                  {userBid && !elapsed && !topBidIsUser && (
-                    <OverlayTrigger
-                      placement="top"
-                      delay={{ show: 250, hide: 400 }}
-                      overlay={notTopTooltip}
-                    >
+                    )}
+                    {userBid && !elapsed && !topBidIsUser && (
                       <FontAwesomeIcon
                         className="auction-card_icon auction-card_warning-icon"
                         icon={faExclamationCircle}
                         fixedWidth
                         size="lg"
                       />
-                    </OverlayTrigger>
-                  )}
+                    )}
+                  </span>
                 </span>
-              </span>
+              </OverlayTrigger>
             </div>
           </>
         )}
@@ -220,16 +218,6 @@ const AuctionCard = (props) => {
       </Card.Body>
     </BasicCard>
   );
-};
-
-const parseBid = (valueNumber) => {
-  // source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat
-  const numberFormat = new Intl.NumberFormat("en-GB", {
-    style: "currency",
-    currency: "GBP",
-  });
-
-  return numberFormat.format(valueNumber);
 };
 
 export default AuctionCard;
