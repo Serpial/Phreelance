@@ -36,7 +36,9 @@ const Auctions = () => {
   const [auctionList, setAuctionList] = useState([]);
   const [auctionsOnPage, setAuctionsOnPage] = useState([]);
   const [userAppId, setUserAppId] = useState();
-  const [filterValues, setFilterValues] = useState();
+  const [filterValues, setFilterValues] = useState(
+    buildFilterValues(FILTER_DEFAULTS)
+  );
 
   const handleFilterSubmit = useRef();
 
@@ -45,25 +47,6 @@ const Auctions = () => {
   const navigate = useNavigate();
 
   const pageCount = Math.ceil(auctionList.length / AUCTIONS_PER_PAGE);
-
-  const buildFilterValues = (defaults) => {
-    const queryParams = new URLSearchParams(window.location.search);
-    let values = { ...defaults };
-    for (const key in defaults) {
-      if (queryParams.has(key)) {
-        const valueString = queryParams.get(key);
-
-        let booleanValue;
-        if (valueString === "true" || valueString === "false") {
-          booleanValue = valueString === "true";
-        }
-
-        values[key] =
-          booleanValue === undefined ? queryParams.get(key) : booleanValue;
-      }
-    }
-    return values;
-  };
 
   useEffect(() => {
     handleFilterSubmit.current = (filterTerms) => {
@@ -100,11 +83,8 @@ const Auctions = () => {
   useEffect(() => {
     let cancel = false;
 
-    const tempFilterValues = buildFilterValues(FILTER_DEFAULTS);
-    setFilterValues(tempFilterValues);
-
     Axios.get("/api/auctions", {
-      params: tempFilterValues,
+      params: filterValues,
     })
       .then((res) => {
         if (cancel || res.status !== 200) return;
@@ -123,7 +103,7 @@ const Auctions = () => {
         console.log(err.response);
       });
     return () => (cancel = true);
-  }, [userAppId, pageNumber]);
+  }, [userAppId, pageNumber, filterValues]);
 
   return (
     <Container fluid="sm">
@@ -154,6 +134,25 @@ const Auctions = () => {
       </Row>
     </Container>
   );
+};
+
+const buildFilterValues = (defaults) => {
+  const queryParams = new URLSearchParams(window.location.search);
+  let values = { ...defaults };
+  for (const key in defaults) {
+    if (queryParams.has(key)) {
+      const valueString = queryParams.get(key);
+
+      let booleanValue;
+      if (valueString === "true" || valueString === "false") {
+        booleanValue = valueString === "true";
+      }
+
+      values[key] =
+        booleanValue === undefined ? queryParams.get(key) : booleanValue;
+    }
+  }
+  return values;
 };
 
 export default Auctions;
