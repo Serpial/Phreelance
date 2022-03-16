@@ -11,6 +11,16 @@
   margin: 2.5% 0;
 }
 
+.bidding-modal_value-entry {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.bidding-modal_value-entry_padlock {
+  margin-right: 1em;
+}
+
 @media only screen and (min-width: 768px) {
   .bidding-modal {
     width: 40vw;

@@ -7,6 +7,10 @@ import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Alert from "react-bootstrap/Alert";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
+import { faLock } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import ModalCard from "../../shared/components/ModalCard";
 import ToDisplayValue from "../util/ToDisplayValue";
@@ -89,7 +93,11 @@ const BiddingModal = ({
     e.preventDefault();
 
     let tempAlertDescription;
-    if (topBid?.value && bidValue >= topBid?.value) {
+    if (
+      topBid?.value &&
+      bidValue >= topBid?.value &&
+      topBid?.creator !== currentUser?.id
+    ) {
       tempAlertDescription = (
         <span key="tooMuch">Your bid is higher than the current value.</span>
       );
@@ -130,6 +138,11 @@ const BiddingModal = ({
       });
     }
   };
+
+  const topBidderTooltip = (propss) => (
+    <Tooltip {...propss}>You are already the winning bidder.</Tooltip>
+  );
+
   return (
     <ModalCard
       className="bidding-modal"
@@ -150,16 +163,33 @@ const BiddingModal = ({
       )}
       <Form onSubmit={onSubmit}>
         <Form.Label>Bid:</Form.Label>
-        <CurrencyInput
-          className="form-control"
-          required
-          prefix="£"
-          onValueChange={(v) => setBidValue(v)}
-          value={bidValue}
-          decimalsLimit={2}
-          placeholder="£30.99"
-          allowNegativeValue={false}
-        />
+        <span className="bidding-modal_value-entry">
+          {topBid?.creator === currentUser?.id && (
+            <FontAwesomeIcon
+              icon={faLock}
+              className="bidding-modal_value-entry_padlock"
+            />
+          )}
+          <OverlayTrigger
+            placement="top"
+            delay={{ show: 250, hide: 400 }}
+            overlay={
+              topBid?.creator === currentUser?.id ? topBidderTooltip : <></>
+            }
+          >
+            <CurrencyInput
+              className="form-control"
+              required
+              prefix="£"
+              onValueChange={(v) => setBidValue(v)}
+              value={bidValue}
+              decimalsLimit={2}
+              placeholder="£30.99"
+              disabled={topBid?.creator === currentUser?.id}
+              allowNegativeValue={false}
+            />
+          </OverlayTrigger>
+        </span>
         <Form.Label>Estimated completion time:</Form.Label>
         <Container>
           <Row>
