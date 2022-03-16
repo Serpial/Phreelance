@@ -42,7 +42,8 @@ const App = () => {
             <Route path="/create-listing" element={<CreateListing />} />
             <Route exact path="/profile/:userID" element={<Profile />} />
             <Route
-              exactpath="/profile/:userID/edit"
+              exact
+              path="/profile/:userID/edit"
               element={<EditProfile />}
             />
             <Route exact path="/auction/:auctionID" element={<Auction />} />
