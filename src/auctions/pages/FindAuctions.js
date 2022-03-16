@@ -74,7 +74,7 @@ const Auctions = () => {
         setUserAppId(user.id);
       })
       .catch((err) => {
-        console.log(err.response);
+        console.log(err);
       });
 
     return () => (cancel = true);
@@ -100,7 +100,7 @@ const Auctions = () => {
         );
       })
       .catch((err) => {
-        console.log(err.response);
+        console.log(err);
       });
     return () => (cancel = true);
   }, [userAppId, pageNumber, filterValues]);
