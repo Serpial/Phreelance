@@ -1,7 +1,5 @@
-// See https://github.com/WebDevSimplified/React-Firebase-Auth/blob/master/src/contexts/AuthContext.js
 import React, { createContext, useContext, useEffect, useState } from "react";
 import Axios from "axios";
-import { getAppAuth } from "../util/firebase";
 import {
   createUserWithEmailAndPassword,
   deleteUser,
@@ -10,6 +8,9 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
+
+import { getAppAuth } from "../util/firebase";
+import LoadingWheel from "../components/LoadingWheel";
 
 const AuthContext = createContext();
 
@@ -26,7 +27,7 @@ export const useAuth = () => {
 };
 
 /**
- * Auth provder aims to provide auth information for
+ * Auth provider aims to provide auth information for
  * the rest of the application. Right now it is configured
  * for Firebase, but this could be traded for other authentication
  * methods.
@@ -38,63 +39,95 @@ export const useAuth = () => {
  * @returns Valid auth set up
  */
 export const AuthProvider = ({ children }) => {
-  const [activeUser, setActiveUser] = useState();
-  const [isLoading, setIsLoading] = useState(true);
+  const [authUser, setAuthUser] = useState();
+  const [appUser, setAppUser] = useState();
+  const [loading, setLoading] = useState(true);
+  const [isPostAuthComplete, setPostAuthComplete] = useState(false);
+
+  useEffect(() => {
+    let cancel = false;
+
+    if (!authUser) return;
+    Axios.get(`/api/users/auth/${authUser.uid}`)
+      .then((res) => {
+        if (cancel) return;
+        const userRes = res.data?.user;
+        if (!userRes) return;
+        setAppUser(userRes);
+        setLoading(false);
+      })
+      .catch((_err) => {
+        console.log("unable to retrieve appUser");
+      });
+
+    return () => (cancel = true);
+  }, [authUser, isPostAuthComplete]);
 
   const register = async (displayName, email, password) => {
     const auth = getAppAuth();
     let userCredentials;
-    try {
-      userCredentials = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-    } catch (error) {
-      const errorMessage = ERROR_CODES[error.code];
-      throw new Error(
-        errorMessage || "Could not create a new user with this information"
-      );
-    }
-
-    try {
-      await Axios.post("/api/users/signup", {
-        name: displayName,
-        email,
-        authId: userCredentials.user.uid,
+    return createUserWithEmailAndPassword(auth, email, password)
+      .then((userRes) => {
+        userCredentials = userRes;
+        const newUser = {
+          name: displayName,
+          email,
+          authId: userCredentials.user.uid,
+        };
+        return Axios.post("/api/users/signup", newUser);
+      })
+      .then((_res) => setPostAuthComplete(true))
+      .catch((err) => {
+        const errorMessage = ERROR_CODES[err.code];
+        if (userCredentials) {
+          deleteUser(userCredentials.user);
+        }
+        throw new Error(
+          errorMessage || "Could not create a new user with this information"
+        );
       });
-    } catch (err) {
-      deleteUser(userCredentials.user);
-      throw new Error("Could not validate user information.");
-    }
   };
 
   const login = async (email, password) => {
-    try {
-      const auth = getAppAuth();
-      await signInWithEmailAndPassword(auth, email, password);
-    } catch (err) {
-      const errorMessage = ERROR_CODES[err.code];
-      throw new Error(
-        errorMessage || "Could not log in at this time. Please try again later."
-      );
-    }
+    const auth = getAppAuth();
+    return signInWithEmailAndPassword(auth, email, password)
+      .then((_res) => setPostAuthComplete(true))
+      .catch((err) => {
+        const errorMessage = ERROR_CODES[err.code];
+        throw new Error(
+          errorMessage ||
+            "Could not log in at this time. Please try again later."
+        );
+      });
   };
 
-  const logout = () => signOut(getAppAuth());
-  const resetPassword = (email) => sendPasswordResetEmail(getAppAuth(), email);
+  const logout = () => {
+    const auth = getAppAuth();
+    signOut(auth).then((_res) => setPostAuthComplete(true));
+  };
+
+  const resetPassword = (email) => {
+    const auth = getAppAuth();
+    sendPasswordResetEmail(auth, email).then((_res) =>
+      setPostAuthComplete(true)
+    );
+  };
 
   useEffect(() => {
     const auth = getAppAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setActiveUser(user);
-      setIsLoading(false);
+      setAuthUser(user);
+
+      if (!user) {
+        setAppUser(null);
+        setLoading(false);
+      }
     });
     return unsubscribe;
   }, []);
 
   const properties = {
-    activeUser,
+    appUser,
     register,
     login,
     logout,
@@ -103,7 +136,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={properties}>
-      {!isLoading && children}
+      {loading ? <LoadingWheel /> : children}
     </AuthContext.Provider>
   );
 };

@@ -14,7 +14,7 @@ import { useAuth } from "../../shared/contexts/AuthContext";
 import BasicCard from "../../shared/components/BasicCard";
 import BiddingModal from "../components/BiddingModal";
 import BidList from "../components/BidList";
-import LoadingWheel from "../../shared/navigation/components/LoadingWheel";
+import LoadingWheel from "../../shared/components/LoadingWheel";
 import AuctionDisplayCard from "../components/AuctionDisplayCard";
 import ToDisplayValue from "../util/ToDisplayValue";
 import ModalCard from "../../shared/components/ModalCard";
@@ -33,7 +33,6 @@ const Auction = () => {
   const [bids, setBids] = useState([]);
   const [bidEmitted, setBidEmitted] = useState(false);
   const [creator, setCreator] = useState();
-  const [currentUser, setCurrentUser] = useState();
   const [auctionIsLoading, setAuctionIsLoading] = useState(true);
   const [bidsAreLoading, setBidsAreLoading] = useState(true);
   const [showBidding, setShowBidding] = useState(false);
@@ -42,23 +41,10 @@ const Auction = () => {
   const [topBid, setTopBid] = useState();
   const [hasBid, setHasBid] = useState(false);
 
-  const { activeUser } = useAuth();
+  const { appUser } = useAuth();
   const { auctionID } = useParams();
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    let cancel = false;
-
-    Axios.get(`/api/users/auth/${activeUser.uid}`)
-      .then((res) => {
-        if (cancel) return;
-        setCurrentUser(res.data.user);
-      })
-      .catch((err) => console.log(err));
-
-    return () => (cancel = true);
-  }, [activeUser]);
 
   useEffect(() => {
     let cancel = false;
@@ -101,11 +87,11 @@ const Auction = () => {
       setTopBid(bidsRes[0]);
       setBidEmitted(false);
       setBidsAreLoading(false);
-      setHasBid(bidsRes.find((b) => b.creator === currentUser.id));
+      setHasBid(bidsRes.find((b) => b.creator === appUser.id));
     });
 
     return () => (cancel = true);
-  }, [auction, currentUser, bidEmitted, bidsAreLoading]);
+  }, [auction, appUser, bidEmitted, bidsAreLoading]);
 
   useEffect(() => {
     if (!auction) return;
@@ -128,7 +114,7 @@ const Auction = () => {
   return (
     <>
       <BiddingModal
-        currentUser={currentUser}
+        currentUser={appUser}
         currentAuction={auction}
         onClose={(_e) => setShowBidding(false)}
         onBidSubmit={(_e) => {
@@ -193,7 +179,7 @@ const Auction = () => {
                   </span>
                 </div>
                 <hr />
-                {auction?.creator === currentUser?.id ? (
+                {auction?.creator === appUser?.id ? (
                   <>
                     <Button
                       className="auction_button"
@@ -242,7 +228,7 @@ const Auction = () => {
               <Row>
                 <h3>Bids:</h3>
                 <BidList
-                  isAuctionCreator={auction?.creator === currentUser?.id}
+                  isAuctionCreator={auction?.creator === appUser?.id}
                   bids={bids}
                 />
               </Row>

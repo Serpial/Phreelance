@@ -5,7 +5,7 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 
 import AuctionList from "../components/AuctionList";
-import LoadingWheel from "../../shared/navigation/components/LoadingWheel";
+import LoadingWheel from "../../shared/components/LoadingWheel";
 import { useAuth } from "../../shared/contexts/AuthContext";
 
 import "./MyAuctions.css";
@@ -18,35 +18,18 @@ import "./MyAuctions.css";
  * @returns
  */
 const MyAuctions = () => {
-  const [userAppId, setUserAppId] = useState();
   const [loadingCreator, setLoadingCreator] = useState(true);
   const [createdAuctionList, setCreatedAuctionList] = useState([]);
   const [loadingBids, setLoadingBids] = useState(true);
   const [bidAuctionList, setBidAuctionList] = useState([]);
 
-  const { activeUser } = useAuth();
+  const { appUser } = useAuth();
 
   useEffect(() => {
     let cancel = false;
 
-    Axios.get(`/api/users/auth/${activeUser.uid}`)
-      .then((res) => {
-        if (cancel) return;
-        const user = res.data.user;
-        setUserAppId(user.id);
-      })
-      .catch((err) => {
-        console.log(err.response);
-      });
-
-    return () => (cancel = true);
-  }, [activeUser]);
-
-  useEffect(() => {
-    let cancel = false;
-
-    if (!userAppId) return;
-    Axios.get(`/api/auctions/creator/${userAppId}`)
+    if (!appUser.id) return;
+    Axios.get(`/api/auctions/creator/${appUser.id}`)
       .then((res) => {
         if (cancel) return;
         setCreatedAuctionList(res.data.auctions);
@@ -55,13 +38,13 @@ const MyAuctions = () => {
       .catch((err) => console.log(err.response));
 
     return () => (cancel = true);
-  }, [userAppId]);
+  }, [appUser.id]);
 
   useEffect(() => {
     let cancel = false;
 
-    if (!userAppId) return;
-    Axios.get(`/api/auctions/bidder/${userAppId}`)
+    if (!appUser.id) return;
+    Axios.get(`/api/auctions/bidder/${appUser.id}`)
       .then((res) => {
         if (cancel) return;
         setBidAuctionList(res.data.auctions);
@@ -70,7 +53,7 @@ const MyAuctions = () => {
     setLoadingBids(false);
 
     return () => (cancel = true);
-  }, [userAppId]);
+  }, [appUser.id]);
 
   return (
     <>
@@ -81,12 +64,12 @@ const MyAuctions = () => {
           <Row>
             <Col sm className="my-auctions_content-area">
               <h2>Auctions you are participating in:</h2>
-              <AuctionList userAppId={userAppId} auctions={bidAuctionList} />
+              <AuctionList userAppId={appUser.id} auctions={bidAuctionList} />
             </Col>
             <Col sm className="my-auctions_content-area">
               <h2>Auctions you have created:</h2>
               <AuctionList
-                userAppId={userAppId}
+                userAppId={appUser.id}
                 auctions={createdAuctionList}
               />
             </Col>

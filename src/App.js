@@ -23,8 +23,9 @@ import EditProfile from "./profiles/pages/EditProfile";
 
 const App = () => {
   Axios.defaults.baseURL = process.env.REACT_APP_RUN_BACK_END_HOST;
-  const isLoggedIn = useAuth()?.activeUser;
-  const defaultRoute = isLoggedIn ? "/auctions-list" : "/login";
+
+  const loggedIn = useAuth()?.appUser;
+  const defaultRoute = loggedIn ? "/auctions-list" : "/login";
 
   return (
     <AuthProvider>

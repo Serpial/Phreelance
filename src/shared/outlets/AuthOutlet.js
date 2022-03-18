@@ -16,9 +16,9 @@ import "./AuthOutlet.css";
  * @returns outlet for authorisation pages
  */
 const AuthOutlet = () => {
-  const auth = useAuth();
-  const isLoggedIn = auth?.activeUser;
-  if (isLoggedIn) {
+  const { appUser } = useAuth();
+
+  if (appUser) {
     return <Navigate to={"/find-auctions"} />;
   }
 

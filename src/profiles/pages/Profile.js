@@ -18,9 +18,8 @@ import "./Profile.css";
  */
 const Profile = () => {
   const [subjectUser, setSubjectUser] = useState();
-  const [currentUser, setCurrentUser] = useState();
 
-  const { activeUser } = useAuth();
+  const { appUser } = useAuth();
   const { userID } = useParams();
   const navigate = useNavigate();
 
@@ -32,25 +31,20 @@ const Profile = () => {
         if (cancel) return;
         const userRes = res.data.user;
         setSubjectUser(userRes);
-        return Axios.get(`/api/users/auth/${activeUser.uid}`);
-      })
-      .then((res) => {
-        if (cancel) return;
-        setCurrentUser(res.data.user);
       })
       .catch((_err) => navigate("/find-auctions"));
 
     return () => {
       cancel = true;
     };
-  }, [activeUser, userID, navigate]);
+  }, [userID, navigate]);
 
   useEffect(() => {}, []);
 
   return (
     <Container>
       <Row>
-        <MainProfileCard currentUser={currentUser} subjectUser={subjectUser} />
+        <MainProfileCard currentUser={appUser} subjectUser={subjectUser} />
       </Row>
       <Row>
         <h3>
