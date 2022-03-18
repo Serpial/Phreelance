@@ -18,7 +18,7 @@ import BasicCard from "../../shared/components/BasicCard";
 import ModalCard from "../../shared/components/ModalCard";
 import DateTimeInput from "../components/DateTimeInput";
 import AuctionTypes from "../res/AuctionTypes.json";
-import LoadingWheel from "../../shared/navigation/components/LoadingWheel";
+import LoadingWheel from "../../shared/components/LoadingWheel";
 
 const AUCTION_DEFINITIONS = AuctionTypes.types;
 
@@ -37,25 +37,19 @@ const UpdateListing = () => {
   const currentAuctionType = useRef();
 
   const { auctionID } = useParams();
-  const { activeUser } = useAuth();
+  const { appUser } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     let cancel = false;
 
-    let userAppId;
-    Axios.get(`/api/users/auth/${activeUser.uid}`)
-      .then((res) => {
-        if (cancel) return;
-        userAppId = res.data?.user.id;
-        return Axios.get(`/api/auctions/${auctionID}`);
-      })
+    Axios.get(`/api/auctions/${auctionID}`)
       .then((res) => {
         if (cancel) return;
 
         const auctionResponse = res.data?.auction;
         if (
-          userAppId !== auctionResponse.creator ||
+          appUser.id !== auctionResponse.creator ||
           new Date().getTime() > new Date(auctionResponse.finishing).getTime()
         ) {
           navigate("/auction/" + auctionID, { replace: false });
@@ -74,7 +68,7 @@ const UpdateListing = () => {
       });
 
     return () => (cancel = true);
-  }, [activeUser, auctionID, navigate]);
+  }, [appUser, auctionID, navigate]);
 
   const applyDateWarning = ({ newStartDate, newEndDate }) => {
     const validateDate = DateIsWithinRange(

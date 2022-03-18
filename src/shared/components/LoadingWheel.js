@@ -4,6 +4,10 @@ import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 import "./LoadingWheel.css";
 
+/**
+ * Loading wheel that will fill the screen.
+ * @returns LoadingWheel
+ */
 const LoadingWheel = () => {
   return (
     <div className="loading-wheel">

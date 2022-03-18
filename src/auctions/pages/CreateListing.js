@@ -51,7 +51,7 @@ const CreateListing = () => {
   const startingPrice = useRef();
 
   const navigate = useNavigate();
-  const authId = useAuth()?.activeUser?.uid;
+  const { appId } = useAuth();
 
   const handleDropdownChange = (event) => {
     const newAuctionType = AUCTION_DEFINITIONS.find(
@@ -132,15 +132,10 @@ const CreateListing = () => {
       newAuction.isPublic = isPublic;
     }
 
-    Axios.get(`/api/users/auth/${authId}`)
-      .then((res) => {
-        const uri = `/api/auctions/${res?.data?.user?.id}`;
-        return Axios.post(uri, newAuction);
-      })
-      .then((res) => {
-        const newAuctionId = res?.data?.auction.meaningfulId;
-        navigate("/auction/" + newAuctionId);
-      });
+    Axios.post(`/api/auctions/${appId}`, newAuction).then((res) => {
+      const newAuctionId = res?.data?.auction.meaningfulId;
+      navigate("/auction/" + newAuctionId);
+    });
   };
 
   return (

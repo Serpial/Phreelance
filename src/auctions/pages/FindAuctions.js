@@ -35,14 +35,13 @@ const Auctions = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [auctionList, setAuctionList] = useState([]);
   const [auctionsOnPage, setAuctionsOnPage] = useState([]);
-  const [userAppId, setUserAppId] = useState();
   const [filterValues, setFilterValues] = useState(
     buildFilterValues(FILTER_DEFAULTS)
   );
 
   const handleFilterSubmit = useRef();
 
-  const { activeUser } = useAuth();
+  const { appUser } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -67,29 +66,13 @@ const Auctions = () => {
   useEffect(() => {
     let cancel = false;
 
-    Axios.get(`/api/users/auth/${activeUser.uid}`)
-      .then((res) => {
-        if (cancel) return;
-        const user = res.data.user;
-        setUserAppId(user.id);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    return () => (cancel = true);
-  }, [activeUser]);
-
-  useEffect(() => {
-    let cancel = false;
-
     Axios.get("/api/auctions", {
       params: filterValues,
     })
       .then((res) => {
         if (cancel || res.status !== 200) return;
         const auctions = res.data.auctions.filter(
-          (a) => a.creator !== userAppId
+          (a) => a.creator !== appUser.id
         );
         setAuctionList(auctions);
         setAuctionsOnPage(
@@ -103,7 +86,7 @@ const Auctions = () => {
         console.log(err);
       });
     return () => (cancel = true);
-  }, [userAppId, pageNumber, filterValues]);
+  }, [appUser.id, pageNumber, filterValues]);
 
   return (
     <Container fluid="sm">
@@ -116,7 +99,7 @@ const Auctions = () => {
         </Col>
         <Col md={7} lg={8}>
           <AuctionList
-            userAppId={userAppId}
+            userAppId={appUser.id}
             auctions={auctionsOnPage}
             emptyMessage="Could not find any auctions with these filters."
           />
