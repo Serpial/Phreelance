@@ -71,7 +71,7 @@ const Auctions = () => {
     })
       .then((res) => {
         if (cancel || res.status !== 200) return;
-        const auctions = res.data.auctions.filter(
+        const auctions = res.data?.auctions.filter(
           (a) => a.creator !== appUser.id
         );
         setAuctionList(auctions);
