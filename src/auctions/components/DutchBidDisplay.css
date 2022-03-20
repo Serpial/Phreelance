@@ -1,0 +1,9 @@
+.dutch-bid-display_main-price {
+  font-size: x-large;
+  font-weight: bolder;
+}
+
+.dutch-bid-display_automated-bid-warning {
+  color:rgb(138, 138, 138);
+  font-size: small;
+}

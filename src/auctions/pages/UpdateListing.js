@@ -264,7 +264,7 @@ const UpdateListing = () => {
                       <Form.Label>Starting Price</Form.Label>
                       {showPriceWarning && (
                         <Alert variant="danger">
-                          The starting price should be greater than the reserve
+                          The starting price should be less than the reserve
                           price.
                         </Alert>
                       )}

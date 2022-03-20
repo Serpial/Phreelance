@@ -51,7 +51,7 @@ const CreateListing = () => {
   const startingPrice = useRef();
 
   const navigate = useNavigate();
-  const { appId } = useAuth();
+  const { appUser } = useAuth();
 
   const handleDropdownChange = (event) => {
     const newAuctionType = AUCTION_DEFINITIONS.find(
@@ -88,7 +88,7 @@ const CreateListing = () => {
     const sPrice = startingPrice.current?.value.slice(1);
     const rPrice = reservePrice.current?.value.slice(1);
 
-    if (sPrice && rPrice && parseFloat(sPrice) <= parseFloat(rPrice)) {
+    if (sPrice && rPrice && parseFloat(rPrice) <= parseFloat(sPrice)) {
       setShowPriceWarning(true);
       return;
     }
@@ -132,7 +132,7 @@ const CreateListing = () => {
       newAuction.isPublic = isPublic;
     }
 
-    Axios.post(`/api/auctions/${appId}`, newAuction).then((res) => {
+    Axios.post(`/api/auctions/${appUser.id}`, newAuction).then((res) => {
       const newAuctionId = res?.data?.auction.meaningfulId;
       navigate("/auction/" + newAuctionId);
     });
@@ -219,14 +219,14 @@ const CreateListing = () => {
                   prefix="£"
                   onChange={applyPriceWarning}
                   decimalsLimit={2}
-                  placeholder="£30.99"
+                  placeholder="£100"
                 />
                 {auctionType.shortName === "DUT" && (
                   <>
                     <Form.Label>Starting Price</Form.Label>
                     {showPriceWarning && (
                       <Alert variant="danger">
-                        The starting price should be greater than the reserve
+                        The starting price should be less than the reserve
                         price.
                       </Alert>
                     )}

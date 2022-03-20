@@ -8,22 +8,20 @@
   top: 50%;
 }
 
-.auction_top-bid-preface {
-  font-size: large;
-  font-weight: bold;
-}
-
-.auction_top-bid-value {
-  font-size: xx-large;
-  font-weight: bold;
-}
-
 .auction_button {
   margin: 0.5em 0;
 }
 
 .auction_your-bid_container {
   width: auto;
+}
+
+.auction-bid_lock_icon {
+  margin: 0 1em 0 0;
+}
+
+.auction_bid_button_container > button {
+  width: 100%;
 }
 
 @media only screen and (min-width: 768px) {

@@ -3,12 +3,12 @@
     {
       "shortName": "ENG",
       "fullName": "English auction",
-      "description": "English"
+      "description": "In this English auction, the lowest bidder wins within the auction time limit. The reserve price can be set high to minimise loss. It is displayed to bidders."
     },
     {
       "shortName": "DUT",
       "fullName": "Dutch auction",
-      "description": "Dutch"
+      "description": "You set a low starting price. The price then increases over the course of the auction until a bidder bids or your reserve price is reached."
     }
   ]
 }

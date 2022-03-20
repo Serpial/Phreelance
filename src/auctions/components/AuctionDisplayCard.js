@@ -16,7 +16,7 @@ import "./AuctionDisplayCard.css";
  * Object of the creator of the auction
  *
  * @param {Function} getCurrentStatus
- * Callback method to retreive the current status of the auction.
+ * Callback method to retrieve the current status of the auction.
  *
  * @return AuctionDisplayCard
  */

@@ -7,8 +7,10 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faInfoCircle, faLock } from "@fortawesome/free-solid-svg-icons";
 
 import { useAuth } from "../../shared/contexts/AuthContext";
 import BasicCard from "../../shared/components/BasicCard";
@@ -16,11 +18,12 @@ import BiddingModal from "../components/BiddingModal";
 import BidList from "../components/BidList";
 import LoadingWheel from "../../shared/components/LoadingWheel";
 import AuctionDisplayCard from "../components/AuctionDisplayCard";
-import ToDisplayValue from "../util/ToDisplayValue";
 import ModalCard from "../../shared/components/ModalCard";
 import BidCard from "../components/BidCard";
+import EnglishBidDisplay from "../components/EnglishBidDisplay";
 
 import "./Auction.css";
+import DutchBidDisplay from "../components/DutchBidDisplay";
 
 /**
  * Auction page that contains information about an individual auction.
@@ -66,29 +69,37 @@ const Auction = () => {
       .catch((err) => console.log(err.response));
 
     return () => (cancel = true);
-  }, [auctionID]);
+  }, [auctionID, bidEmitted]);
 
   useEffect(() => {
     let cancel = false;
 
     if (!auction) return;
     if (!bidsAreLoading && !bidEmitted) return;
-    Axios.get(`/api/bids/auction/${auction.meaningfulId}`).then((res) => {
-      if (cancel) return;
+    Axios.get(`/api/bids/top-bid/${auction.meaningfulId}`)
+      .then((res) => {
+        if (cancel) return;
+        setTopBid(res.data.bid);
+        return Axios.get(`/api/bids/auction/${auction.meaningfulId}`);
+      })
+      .then((res) => {
+        if (cancel) return;
 
-      const bidsRes = res.data.bids;
-      if (!bidsRes || bidsRes.length === 0) {
+        const bidsRes = res.data.bids;
+        if (!bidsRes || bidsRes.length === 0) {
+          setBidsAreLoading(false);
+          return;
+        }
+
+        bidsRes.sort((a, b) =>
+          Date(a.lastChange) > Date(b.lastChange) ? 1 : -1
+        );
+        setBids(bidsRes);
+        setHasBid(bidsRes.find((b) => b.creator === appUser.id));
+        setBidEmitted(false);
         setBidsAreLoading(false);
-        return;
-      }
-
-      bidsRes.sort((a, b) => (a.value > b.value ? 1 : -1));
-      setBids(bidsRes);
-      setTopBid(bidsRes[0]);
-      setBidEmitted(false);
-      setBidsAreLoading(false);
-      setHasBid(bidsRes.find((b) => b.creator === appUser.id));
-    });
+      })
+      .catch((err) => console.log(err));
 
     return () => (cancel = true);
   }, [auction, appUser, bidEmitted, bidsAreLoading]);
@@ -110,6 +121,12 @@ const Auction = () => {
       navigate("/my-auctions");
     });
   };
+
+  const bidButtonTooltip = (propss) => (
+    <Tooltip {...propss}>
+      This auction is currently {status.toLowerCase()}.
+    </Tooltip>
+  );
 
   return (
     <>
@@ -162,22 +179,16 @@ const Auction = () => {
             </Col>
             <Col md={4}>
               <BasicCard>
-                {auction.auctionType === "DUT" && (
-                  <div>
-                    <span className="auction_starting-price-preface">
-                      Starting price:{" "}
-                    </span>
-                    <span className="auction_starting-price-value">
-                      {auction.startingPrice}
-                    </span>
-                  </div>
+                {auction?.auctionType === "ENG" && (
+                  <EnglishBidDisplay auction={auction} topBid={topBid} />
                 )}
-                <div>
-                  <span className="auction_top-bid-preface">Winning bid: </span>
-                  <span className="auction_top-bid-value">
-                    {topBid ? ToDisplayValue(topBid.value) : "£-.--"}
-                  </span>
-                </div>
+                {auction?.auctionType === "DUT" && (
+                  <DutchBidDisplay
+                    auction={auction}
+                    topBid={topBid}
+                    status={status}
+                  />
+                )}
                 <hr />
                 {auction?.creator === appUser?.id ? (
                   <>
@@ -203,18 +214,33 @@ const Auction = () => {
                     )}
                   </>
                 ) : (
-                  <Button
-                    className="auction_button"
-                    variant="primary"
-                    onClick={() => {
-                      if (status === "Active") {
-                        setShowBidding(true);
-                      }
-                    }}
+                  <OverlayTrigger
+                    placement="bottom"
+                    delay={{ show: 250, hide: 400 }}
+                    overlay={status !== "Active" ? bidButtonTooltip : <></>}
                   >
-                    {hasBid ? "Modify " : "Create "}
-                    bid
-                  </Button>
+                    <div className="auction_bid_button_container">
+                      <Button
+                        className="auction_button"
+                        variant="primary"
+                        disabled={status !== "Active"}
+                        onClick={() => {
+                          if (status === "Active") {
+                            setShowBidding(true);
+                          }
+                        }}
+                      >
+                        {status !== "Active" && (
+                          <FontAwesomeIcon
+                            className="auction-bid_lock_icon"
+                            icon={faLock}
+                          />
+                        )}
+                        {hasBid ? "Modify " : "Create "}
+                        bid
+                      </Button>
+                    </div>
+                  </OverlayTrigger>
                 )}
               </BasicCard>
             </Col>
