@@ -1,0 +1,21 @@
+.edit-profile_button {
+  margin: 0.2em 0;
+  width: 100%;
+}
+
+.edit-profile_button-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media only screen and (min-width: 576px) {
+  .edit-profile_button {
+    max-width: 200px;
+  }
+
+  .edit-profile_button-group {
+    max-width: 400px;
+  }
+}

@@ -103,7 +103,12 @@ const BiddingModal = ({
   }, []);
 
   useEffect(() => {
-    if (!refreshAutoPrice || !currentAuction) return;
+    if (
+      currentAuction?.auctionType === "ENG" ||
+      !refreshAutoPrice ||
+      !currentAuction
+    )
+      return;
     const currentIncrement = calculateCurrentIncrement(
       new Date().getTime(),
       new Date(currentAuction.starting).getTime(),
@@ -126,6 +131,7 @@ const BiddingModal = ({
       value: bidValue,
       timeEstimation: timeEstimate + " " + timeEstimateBase,
     };
+    console.log(newBid);
     if (oldBid) {
       Axios.patch(`/api/bids/${oldBid.id}`, newBid)
         .then(() => {
@@ -179,8 +185,12 @@ const BiddingModal = ({
         </Alert>
       )}
       <div>
-        <span>Reserve price:</span>
-        <span>{" " + ToDisplayValue(currentAuction?.reservePrice)}</span>
+        <span className="bidding-modal_reserve-price_afore">
+          Reserve price:
+        </span>
+        <span className="bidding-modal_reserve-price_value">
+          {" " + ToDisplayValue(currentAuction?.reservePrice)}
+        </span>
       </div>
       <div>
         <span className="bidding-modal_current-price_afore">Winning bid: </span>
@@ -207,10 +217,11 @@ const BiddingModal = ({
             >
               <CurrencyInput
                 className="form-control"
+                name="bid"
                 required
                 prefix="£"
-                onValueChange={(v) => setBidValue(v)}
-                value={bidValue}
+                onValueChange={setBidValue}
+                defaultValue={bidValue}
                 decimalsLimit={2}
                 placeholder="£30.99"
                 disabled={topBid?.creator === currentUser?.id}
@@ -235,7 +246,7 @@ const BiddingModal = ({
                 required
                 prefix="£"
                 decimalsLimit={2}
-                value={bidValue}
+                defaultValue={bidValue}
                 disabled
               />
             </OverlayTrigger>
@@ -246,9 +257,10 @@ const BiddingModal = ({
           <Row>
             <Col>
               <Form.Control
-                required
+                name="completion-time"
                 as="input"
                 type="number"
+                required
                 defaultValue={timeEstimate}
                 onChange={(e) => setTimeEstimate(e.target.value)}
                 min={1}
@@ -269,6 +281,7 @@ const BiddingModal = ({
         <Form.Label>Proposal:</Form.Label>
         <Form.Control
           as="textarea"
+          name="proposal"
           rows={3}
           minLength={10}
           required

@@ -1,6 +1,7 @@
 import React from "react";
 
 import { useAuth } from "../../contexts/AuthContext";
+import ProfilePhotoCircle from "../../components/ProfilePhotoCircle";
 
 import "./ProfileDropdown.css";
 
@@ -11,7 +12,7 @@ import "./ProfileDropdown.css";
  * @param {JSX.Element} children
  * List of DropdownNavItem Elements
  *
- * @returns
+ * @returns ProfileDropdown
  */
 const ProfileDropdown = ({ children }) => {
   const { appUser } = useAuth();
@@ -19,12 +20,10 @@ const ProfileDropdown = ({ children }) => {
   return (
     <div className="profile-dropdown_container">
       <div className="profile-dropdown">
-        <span className="profile-dropdown_profile-photo">
-          <img
-            src="https://placekitten.com/50/50"
-            alt={`${appUser.name}'s profile`}
-          />
-        </span>
+        <ProfilePhotoCircle
+          subjectUser={appUser}
+          className="profile-dropdown_profile-photo"
+        />
         <span className="profile-dropdown_display-name">{appUser.name}</span>
       </div>
       <div className="profile-dropdown_content">{children}</div>

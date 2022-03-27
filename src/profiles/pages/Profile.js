@@ -19,7 +19,6 @@ import "./Profile.css";
 const Profile = () => {
   const [subjectUser, setSubjectUser] = useState();
 
-  const { appUser } = useAuth();
   const { userID } = useParams();
   const navigate = useNavigate();
 
@@ -39,12 +38,10 @@ const Profile = () => {
     };
   }, [userID, navigate]);
 
-  useEffect(() => {}, []);
-
   return (
     <Container>
       <Row>
-        <MainProfileCard currentUser={appUser} subjectUser={subjectUser} />
+        <MainProfileCard subjectUser={subjectUser} />
       </Row>
       <Row>
         <h3>

@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 
 import BasicCard from "../../shared/components/BasicCard";
 import ToDisplayValue from "../util/ToDisplayValue";
+import ProfileButton from "../../shared/components/ProfileButton";
 
 import "./BidCard.css";
 
@@ -53,8 +52,7 @@ const BidCard = ({ showAdditionalDetail, bid }) => {
           )}
           <hr />
           <span>
-            <FontAwesomeIcon className="bid-card_icon" icon={faUserCircle} />
-            <span>{bidCreator?.name} </span>
+            <ProfileButton subjectId={bidCreator?.id} />
           </span>
           <span className="bid-card_last-modified">
             Modified: {new Date(bid.lastChange).toLocaleString()}

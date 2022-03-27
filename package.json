@@ -19,7 +19,7 @@
     "react-dom": "^17.0.2",
     "react-paginate": "^8.1.0",
     "react-router-dom": "^6.2.1",
-    "react-scripts": "^3.0.1",
+    "react-scripts": "^5.0.0",
     "react-transition-group": "^4.4.2",
     "socket.io-client": "^4.4.1"
   },
@@ -27,6 +27,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test:e2e": ".\\node_modules\\.bin\\cypress open",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -46,5 +47,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "cypress": "^9.5.2"
   }
 }

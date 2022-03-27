@@ -45,7 +45,7 @@ const Register = () => {
 
     setError("");
     setIsLoading(true);
-    
+
     register(
       name.current.value.trim(),
       email.current.value,
@@ -65,6 +65,7 @@ const Register = () => {
       {error && <Alert variant="danger">{error}</Alert>}
       <Form.Label>Name</Form.Label>
       <Form.Control
+        name="display-name"
         type="text"
         ref={name}
         placeholder="You or your company's name."
@@ -73,6 +74,7 @@ const Register = () => {
       />
       <Form.Label>Email</Form.Label>
       <Form.Control
+        name="email"
         type="email"
         ref={email}
         placeholder="john@doe.com"
@@ -84,12 +86,24 @@ const Register = () => {
         placement="auto"
         overlay={passwordPopover}
       >
-        <Form.Control type="password" ref={password} required minLength={6} />
+        <Form.Control
+          name="password"
+          type="password"
+          ref={password}
+          required
+          minLength={6}
+        />
       </OverlayTrigger>
       <Form.Label>Re-type password</Form.Label>
-      <Form.Control type="password" ref={passwordConfirm} required />
+      <Form.Control
+        name="password-confirm"
+        type="password"
+        ref={passwordConfirm}
+        required
+      />
       <Button
         as="input"
+        className="register_register-button"
         variant="primary"
         type="submit"
         value="Register"
@@ -97,6 +111,7 @@ const Register = () => {
       />
       <Button
         as="input"
+        className="register_to-login-button"
         variant="outline-secondary"
         type="button"
         value="Already have an account? Log in"

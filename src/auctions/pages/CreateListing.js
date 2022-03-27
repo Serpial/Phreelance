@@ -85,8 +85,8 @@ const CreateListing = () => {
   };
 
   const applyPriceWarning = () => {
-    const sPrice = startingPrice.current?.value.slice(1);
-    const rPrice = reservePrice.current?.value.slice(1);
+    const sPrice = startingPrice.current?.value.replace(",", "").slice(1);
+    const rPrice = reservePrice.current?.value.replace(",", "").slice(1);
 
     if (sPrice && rPrice && parseFloat(rPrice) <= parseFloat(sPrice)) {
       setShowPriceWarning(true);
@@ -113,17 +113,20 @@ const CreateListing = () => {
     const newAuction = {
       title: title.current.value,
       description: description.current.value,
-      reservePrice: parseFloat(reservePrice.current.value.slice(1)),
+      reservePrice: parseFloat(
+        reservePrice.current.value.replace(",", "").slice(1)
+      ),
       startingPrice: 0,
       auctionType: auctionType.shortName,
       finishing: endDate.toUTCString(),
     };
 
     if (startingPrice?.current?.value) {
-      const newStartPrice = parseFloat(startingPrice.current.value.slice(1));
+      const newStartPrice = parseFloat(
+        startingPrice.current.value.replace(",", "").slice(1)
+      );
       newAuction.startingPrice = newStartPrice;
     }
-
     if (useCustomStartTime) {
       newAuction.starting = startDate.toUTCString();
     }
@@ -164,6 +167,7 @@ const CreateListing = () => {
                 <Form.Label>Title</Form.Label>
                 <Form.Control
                   type="text"
+                  name="title"
                   ref={title}
                   required
                   placeholder="My new contract"
@@ -171,6 +175,7 @@ const CreateListing = () => {
                 <Form.Label>Description</Form.Label>
                 <Form.Control
                   as="textarea"
+                  name="description"
                   rows={3}
                   minLength={10}
                   required
@@ -214,6 +219,7 @@ const CreateListing = () => {
                 <Form.Label>Reserve Price</Form.Label>
                 <CurrencyInput
                   className="form-control"
+                  name="reserve-price"
                   ref={reservePrice}
                   required
                   prefix="£"
@@ -232,6 +238,7 @@ const CreateListing = () => {
                     )}
                     <CurrencyInput
                       className="form-control"
+                      name="start-price"
                       ref={startingPrice}
                       required
                       prefix="£"

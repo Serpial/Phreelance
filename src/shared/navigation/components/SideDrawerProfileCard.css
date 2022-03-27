@@ -1,0 +1,21 @@
+.side-drawer-profile-card_header {
+  background-color: rgb(230, 230, 230);
+  height: auto;
+  background-image: url("../../res/layered-peaks-haikei.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 1em;
+}
+
+.side-drawer-profile-card_header-profile-photo {
+  height: 25vw;
+  width: 25vw;
+}
+
+.side-drawer-profile-card_header-secondary {
+  color: rgb(102, 102, 102);
+  font-size: 0.9em;
+}

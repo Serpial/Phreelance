@@ -35,7 +35,6 @@ const Auction = () => {
   const [auctionSocket, setAuctionSocket] = useState();
   const [bids, setBids] = useState([]);
   const [bidEmitted, setBidEmitted] = useState(false);
-  const [creator, setCreator] = useState();
   const [auctionIsLoading, setAuctionIsLoading] = useState(true);
   const [bidsAreLoading, setBidsAreLoading] = useState(true);
   const [showBidding, setShowBidding] = useState(false);
@@ -57,13 +56,6 @@ const Auction = () => {
         if (cancel) return;
         const auctionRes = res.data.auction;
         setAuction(auctionRes);
-
-        return Axios.get(`/api/users/${auctionRes.creator}`);
-      })
-      .then((res) => {
-        if (cancel) return;
-        const creatorRes = res.data.user;
-        setCreator(creatorRes);
         setAuctionIsLoading(false);
       })
       .catch((err) => console.log(err.response));
@@ -173,7 +165,6 @@ const Auction = () => {
               )}
               <AuctionDisplayCard
                 auction={auction}
-                creator={creator}
                 getCurrentStatus={setStatus}
               />
             </Col>

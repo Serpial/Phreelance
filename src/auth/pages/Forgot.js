@@ -49,12 +49,14 @@ const Forgot = () => {
       {error && <Alert variant="danger">{error}</Alert>}
       <Form.Control
         type="email"
+        className="forgot_email-input"
         ref={email}
         placeholder="john@doe.com"
         required
       />
       <Button
         as="input"
+        className="forgot_submit-button"
         variant="primary"
         type="submit"
         value="Send reset request"
@@ -62,6 +64,7 @@ const Forgot = () => {
       />
       <Button
         as="input"
+        className="forgot_back-button"
         variant="outline-secondary"
         type="submit"
         value="Return to login"
