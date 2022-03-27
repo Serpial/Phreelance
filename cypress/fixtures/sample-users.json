@@ -1,0 +1,12 @@
+{
+  "bidder": {
+    "name": "bidder",
+    "email": "bidder@test.com",
+    "password" : "bidder-password"
+  },
+  "vendor" : {
+    "name": "vendor",
+    "email": "vendor@test.com",
+    "password": "vendor-password"
+  }
+}
