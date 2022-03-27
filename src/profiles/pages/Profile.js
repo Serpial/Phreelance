@@ -6,7 +6,6 @@ import Row from "react-bootstrap/Row";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrophy } from "@fortawesome/free-solid-svg-icons";
 
-import { useAuth } from "../../shared/contexts/AuthContext";
 import MainProfileCard from "../components/MainProfileCard";
 import AuctionList from "../../auctions/components/AuctionList";
 
