@@ -12,7 +12,7 @@ import AuctionList from "../../auctions/components/AuctionList";
 import "./Profile.css";
 
 /**
- *
+ * Profile page that allows the user to present themselves.
  * @returns Profile
  */
 const Profile = () => {

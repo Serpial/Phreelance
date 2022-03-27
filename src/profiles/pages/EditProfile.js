@@ -15,6 +15,10 @@ import useCloudStorage from "../../shared/hooks/useCloudStorage";
 
 import "./EditProfile.css";
 
+/**
+ * Edit profile and settings page. Only accessible by the intended user
+ * @returns EditProfile
+ */
 const EditProfile = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [hasUploadError, setHasUploadError] = useState(false);

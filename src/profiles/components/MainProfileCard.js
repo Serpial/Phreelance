@@ -9,9 +9,9 @@ import { faCog } from "@fortawesome/free-solid-svg-icons";
 
 import { useAuth } from "../../shared/contexts/AuthContext";
 import BasicCard from "../../shared/components/BasicCard";
+import ProfilePhotoCircle from "../../shared/components/ProfilePhotoCircle";
 
 import "./MainProfileCard.css";
-import ProfilePhotoCircle from "../../shared/components/ProfilePhotoCircle";
 
 /**
  * Profile card that displays the users information.
