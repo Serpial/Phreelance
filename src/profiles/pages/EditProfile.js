@@ -106,6 +106,8 @@ const EditProfile = () => {
               type="text"
               name="name"
               ref={name}
+              minLength={6}
+              required
               defaultValue={appUser.name}
             />
             <Form.Label>Biography</Form.Label>
@@ -113,6 +115,7 @@ const EditProfile = () => {
               as="textarea"
               name="biography"
               ref={biography}
+              minLength={10}
               defaultValue={appUser.biography}
             />
             <Form.Label>Profile photo</Form.Label>

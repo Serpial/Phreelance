@@ -39,7 +39,7 @@ const ProfilePhotoCircle = ({ subjectUser, className }) => {
         "profile-photo-circle_container" + (className ? " " + className : "")
       }
     >
-      {subjectUser?.profilePhoto !== "" ? (
+      {subjectUser?.profilePhoto && subjectUser.profilePhoto!== "" ? (
         <img
           className="profile-photo-circle_profile-photo"
           alt={subjectUser?.name + "'s profile picture"}

@@ -17,12 +17,24 @@
 
 .main-profile-card_display-name {
   text-align: center;
-  margin: 1rem;
+  margin: 0.7rem 0 0 0.7rem;
+}
+
+.main-profile-card_email {
+  font-size: 1.2em;
+  text-align: center;
+  color: grey;
+  width: 100%;
 }
 
 @media only screen and (min-width: 576px) {
   .main-profile-card_display-name {
     text-align: left;
     margin-left: 0;
+  }
+
+  .main-profile-card_email {
+    text-align: left;
+    width: auto;
   }
 }

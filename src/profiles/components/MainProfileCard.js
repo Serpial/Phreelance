@@ -58,10 +58,15 @@ const MainProfileCard = ({ subjectUser }) => {
                     {subjectUser?.name}
                   </h1>
                 </div>
+                <div>
+                  <div className="main-profile-card_email">
+                    {subjectUser?.email}
+                  </div>
+                </div>
                 <div className="main-profile-card_description">
                   <h4>Biography</h4>
-                  {subjectUser?.biography !== ""
-                    ? subjectUser?.biography
+                  {subjectUser?.biography && subjectUser.biography !== ""
+                    ? subjectUser.biography
                     : "This user has no biography at this time. Check again later."}
                 </div>
               </Col>
