@@ -19,30 +19,6 @@
   z-index: 100;
 }
 
-.side-drawer_header {
-  display: flex;
-  background-color: rgb(230, 230, 230);
-  height: auto;
-  background-image: url("../res/layered-peaks-haikei.svg");
-  background-repeat: no-repeat;
-  background-size: cover;
-  flex-direction: column;
-  box-sizing: border-box;
-  padding: 0 1.8em;
-}
-
-.side-drawer_header-profile-photo > img {
-  width: auto;
-  height: 100px;
-  border-radius: 50%;
-}
-
-.side-drawer_header-profile-photo {
-  padding: 1.5em 0 1em 0;
-  width: auto;
-  height: 100%;
-}
-
 .side-drawer_nav {
   box-sizing: border-box;
   margin-bottom: auto;
@@ -58,19 +34,10 @@
   padding: 1em;
 }
 
-.side-drawer_header-info-container {
-  padding-bottom: 1.5em;
-}
-
 .side-drawer_separator {
   margin: 0 auto;
   width: 90%;
   color: rgb(179, 179, 179);
-}
-
-.side-drawer_header-secondary {
-  color: rgb(102, 102, 102);
-  font-size: 0.9em;
 }
 
 .expand-right-enter {

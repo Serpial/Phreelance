@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Card from "react-bootstrap/Card";
 
 import BasicCard from "../../shared/components/BasicCard";
+import ProfileButton from "../../shared/components/ProfileButton";
 import FindTimeBetween from "../util/FindTimeBetween";
 
 import "./AuctionDisplayCard.css";
@@ -16,7 +17,7 @@ import "./AuctionDisplayCard.css";
  * Object of the creator of the auction
  *
  * @param {Function} getCurrentStatus
- * Callback method to retreive the current status of the auction.
+ * Callback method to retrieve the current status of the auction.
  *
  * @return AuctionDisplayCard
  */
@@ -77,7 +78,7 @@ const AuctionDisplayCard = ({ auction, creator, getCurrentStatus }) => {
     >
       <span className="auction_status">{status}</span>
       <BasicCard>
-        <Card.Title>{auction?.title}</Card.Title>
+        <Card.Title className="auction_title">{auction?.title}</Card.Title>
         <Card.Body>
           <div className="auction_description-container">
             {auction?.description}
@@ -103,9 +104,7 @@ const AuctionDisplayCard = ({ auction, creator, getCurrentStatus }) => {
           <hr />
           <div>
             <span className="auction_main-card_heading">Contract Vendor:</span>
-            <span>
-              {creator?.name} ({creator?.email})
-            </span>
+            <ProfileButton subjectId={auction.creator} />
           </div>
         </Card.Body>
       </BasicCard>

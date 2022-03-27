@@ -11,7 +11,7 @@ import "./NavItem.css";
  * Name of the link
  *
  * @param {FontAwesomeIcon} icon
- * Insert a fontawesome icon object.
+ * Insert a fontAwesome icon object.
  *
  * @param {String} className
  * Insert className for custom styling
@@ -22,7 +22,7 @@ import "./NavItem.css";
  * @param {Function} onClick
  * Custom onClick element
  *
- * @returns
+ * @returns NavItem
  */
 const NavItem = ({ name, icon, className, location, onClick }) => {
   const { pathname } = useLocation();

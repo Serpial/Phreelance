@@ -1,0 +1,26 @@
+.profile-photo-circle_container {
+  border: 5px solid rgb(228, 228, 228);
+  background-color: rgb(248, 248, 248);
+  width: 25vw;
+  height: 25vw;
+  max-width: 150px;
+  max-height: 150px;
+  border-radius: 50%;
+  margin: 0.5rem auto;
+  overflow: hidden;
+}
+
+.profile-photo-circle_profile-photo {
+  position: relative;
+  left: 50%;
+  max-height: 100%;
+  transform: translateX(-50%);
+}
+
+.profile-photo-circle_icon {
+  position: relative;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: rgb(146, 146, 146);
+}

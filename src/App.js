@@ -18,6 +18,8 @@ import Auction from "./auctions/pages/Auction";
 import CreateListing from "./auctions/pages/CreateListing";
 import UpdateListing from "./auctions/pages/UpdateListing";
 import { AuthProvider, useAuth } from "./shared/contexts/AuthContext";
+import Profile from "./profiles/pages/Profile";
+import EditProfile from "./profiles/pages/EditProfile";
 
 const App = () => {
   Axios.defaults.baseURL = process.env.REACT_APP_RUN_BACK_END_HOST;
@@ -39,12 +41,18 @@ const App = () => {
             <Route path="/find-auctions" element={<FindAuctions />} />
             <Route path="/my-auctions" element={<MyAuctions />} />
             <Route path="/create-listing" element={<CreateListing />} />
+            <Route exact path="/profile/:userID" element={<Profile />} />
+            <Route
+              exact
+              path="/profile/:userID/edit"
+              element={<EditProfile />}
+            />
+            <Route exact path="/auction/:auctionID" element={<Auction />} />
             <Route
               exact
               path="/auction/:auctionID/edit"
               element={<UpdateListing />}
             />
-            <Route path="/auction/:auctionID" element={<Auction />} />
           </Route>
           <Route path="*" element={<Navigate to={defaultRoute} />} />
         </Routes>

@@ -8,7 +8,6 @@
 
 .dropdown-nav-item:hover,
 .dropdown-nav-item:active {
-  cursor: default;
   padding-left: 3%;
   margin-left: -3%;
   color: rgb(73, 92, 126);

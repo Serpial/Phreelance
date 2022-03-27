@@ -15,12 +15,10 @@
   align-items: center;
 }
 
-.profile-dropdown_profile-photo > img {
-  width: auto;
-  height: 85%;
-  border: 1px solid transparent;
-  border-radius: 50px;
-  margin-right: 1em;
+.profile-dropdown_profile-photo {
+  width: 6vh;
+  height: 6vh;
+  margin: 0 .25em;
 }
 
 .profile-dropdown_content {
@@ -37,6 +35,7 @@
 
 .profile-dropdown_display-name {
   font-size: 100vi;
+  padding: 0 1.5em;
 }
 
 .profile-dropdown_container:hover .profile-dropdown_content {

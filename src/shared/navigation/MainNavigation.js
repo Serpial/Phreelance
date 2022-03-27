@@ -7,6 +7,8 @@ import {
   faList,
   faCalendarPlus,
   faSignOutAlt,
+  faCog,
+  faUser,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { useAuth } from "../contexts/AuthContext";
@@ -49,10 +51,10 @@ const NAV_LOCATIONS = [
  */
 const MainNavigation = () => {
   const [showSideDrawer, setShowSideDrawer] = useState(false);
-  
-  const { logout } = useAuth();
+
+  const { logout, appUser } = useAuth();
   const navigate = useNavigate();
-  
+
   const handleLogout = async (event) => {
     event.preventDefault();
     try {
@@ -80,6 +82,11 @@ const MainNavigation = () => {
         {NAV_LOCATIONS.map((nl) => (
           <MobileNavItem key={nl.key} {...nl} />
         ))}
+        <MobileNavItem
+          name="Settings"
+          location={`/profile/${appUser.id}/edit`}
+          icon={faCog}
+        />
       </SideDrawer>
       <MainHeader>
         <span
@@ -93,6 +100,16 @@ const MainNavigation = () => {
             <DesktopNavItem {...nl} />
           ))}
           <ProfileDropdown>
+          <DropdownNavItem
+              name="Profile"
+              onClick={() => navigate(`/profile/${appUser.id}`)}
+              icon={faUser}
+            />
+            <DropdownNavItem
+              name="Settings"
+              onClick={() => navigate(`/profile/${appUser.id}/edit`)}
+              icon={faCog}
+            />
             <DropdownNavItem
               name="Sign out"
               onClick={handleLogout}

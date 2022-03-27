@@ -1,0 +1,13 @@
+.profile-button {
+  background-color: rgb(72, 72, 94);
+  color: white;
+  width: auto;
+  display: inline;
+  padding: .1em .5em;
+  margin: 0 0.5em;
+  border-radius: 15px;
+}
+
+.profile-button_name {
+  margin: 0 0.5em;
+}

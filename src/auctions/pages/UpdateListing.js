@@ -94,8 +94,8 @@ const UpdateListing = () => {
   };
 
   const applyPriceWarning = () => {
-    const sPrice = startingPrice.current?.value.slice(1);
-    const rPrice = reservePrice.current?.value.slice(1);
+    const sPrice = startingPrice.current?.value.replace(",", "").slice(1);
+    const rPrice = reservePrice.current?.value.replace(",", "").slice(1);
 
     if (sPrice && rPrice && parseFloat(sPrice) <= parseFloat(rPrice)) {
       setShowPriceWarning(true);
@@ -127,13 +127,13 @@ const UpdateListing = () => {
 
     if (auction.auctionType === "DUT" && !auction.isPublic) {
       updatedAuction["startingPrice"] = parseFloat(
-        startingPrice.current.value.slice(1)
+        startingPrice.current.value.replace(",", "").slice(1)
       );
     }
 
     if (!auction.isPublic) {
       updatedAuction["reservePrice"] = parseFloat(
-        reservePrice.current.value.slice(1)
+        reservePrice.current.value.replace(",", "").slice(1)
       );
 
       if (startDate.getTime() > new Date().getTime()) {
@@ -145,10 +145,9 @@ const UpdateListing = () => {
       updatedAuction["isPublic"] = isPublic;
     }
 
-    Axios.patch(`/api/auctions/${auctionID}`, updatedAuction)
-      .then((_res) => {
-        navigate("/auction/" + auctionID);
-      })
+    Axios.patch(`/api/auctions/${auctionID}`, updatedAuction).then((_res) => {
+      navigate("/auction/" + auctionID);
+    });
   };
 
   const creationTooltip = (props) => (
@@ -264,7 +263,7 @@ const UpdateListing = () => {
                       <Form.Label>Starting Price</Form.Label>
                       {showPriceWarning && (
                         <Alert variant="danger">
-                          The starting price should be greater than the reserve
+                          The starting price should be less than the reserve
                           price.
                         </Alert>
                       )}

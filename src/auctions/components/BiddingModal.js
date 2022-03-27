@@ -14,11 +14,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import ModalCard from "../../shared/components/ModalCard";
 import ToDisplayValue from "../util/ToDisplayValue";
+import {
+  calculateCurrentIncrement,
+  calculateCurrentPrice,
+} from "../util/DutchAuctionPriceHelper";
 
 import "./BiddingModal.css";
 
 /**
- * Bidding modal that is sharing the reponsibility of creating and adjusting
+ * Bidding modal that is sharing the responsibility of creating and adjusting
  * the user's bid.
  *
  * @param {Object} currentUser
@@ -43,7 +47,7 @@ import "./BiddingModal.css";
  * Object containing the current top bid.
  *
  * @param {Object} props
- * Some additional props are neccessary for the Modal Card.
+ * Some additional props are necessary for the Modal Card.
  *
  * @returns BiddingModal
  */
@@ -61,6 +65,7 @@ const BiddingModal = ({
   const [bidValue, setBidValue] = useState();
   const [proposal, setProposal] = useState();
   const [timeEstimate, setTimeEstimate] = useState();
+  const [refreshAutoPrice, setRefreshAutoPrice] = useState(true);
   const [timeEstimateBase, setTimeEstimateBase] = useState("days");
   const [oldBid, setOldBid] = useState();
 
@@ -89,58 +94,82 @@ const BiddingModal = ({
     return () => (cancel = true);
   }, [currentUser, currentAuction, show]);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRefreshAutoPrice(true);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (
+      currentAuction?.auctionType === "ENG" ||
+      !refreshAutoPrice ||
+      !currentAuction
+    )
+      return;
+    const currentIncrement = calculateCurrentIncrement(
+      new Date().getTime(),
+      new Date(currentAuction.starting).getTime(),
+      new Date(currentAuction.finishing).getTime()
+    );
+    const price = calculateCurrentPrice(
+      currentAuction.startingPrice,
+      currentAuction.reservePrice,
+      currentIncrement
+    );
+    setBidValue(price);
+    setRefreshAutoPrice(false);
+  }, [currentAuction, refreshAutoPrice]);
+
   const onSubmit = (e) => {
     e.preventDefault();
-
-    let tempAlertDescription;
-    if (
-      topBid?.value &&
-      bidValue >= topBid?.value &&
-      topBid?.creator !== currentUser?.id
-    ) {
-      tempAlertDescription = (
-        <span key="tooMuch">Your bid is higher than the current value.</span>
-      );
-    } else if (
-      !topBid &&
-      currentAuction.auctionType === "DUT" &&
-      bidValue >= currentAuction.startingPrice
-    ) {
-      tempAlertDescription = (
-        <span key="biggerStarting">
-          Your bid is higher than the starting price.
-        </span>
-      );
-    }
-
-    if (tempAlertDescription) {
-      setAlertDescription(tempAlertDescription);
-      return;
-    }
 
     const newBid = {
       description: proposal,
       value: bidValue,
       timeEstimation: timeEstimate + " " + timeEstimateBase,
     };
+    console.log(newBid);
     if (oldBid) {
-      Axios.patch(`/api/bids/${oldBid.id}`, newBid).then(() => {
-        socket.emit("posting-bid", { auctionId: currentAuction.meaningfulId });
-        onBidSubmit();
-      });
+      Axios.patch(`/api/bids/${oldBid.id}`, newBid)
+        .then(() => {
+          socket.emit("posting-bid", {
+            auctionId: currentAuction.meaningfulId,
+          });
+          onBidSubmit();
+        })
+        .catch((err) => {
+          const error = err.response.data.message;
+          setAlertDescription(<span>{error}</span>);
+        });
     } else {
       Axios.post(
         `/api/bids/create/${currentAuction.meaningfulId}/${currentUser.id}`,
         newBid
-      ).then(() => {
-        socket.emit("posting-bid", { auctionId: currentAuction.meaningfulId });
-        onBidSubmit();
-      });
+      )
+        .then(() => {
+          socket.emit("posting-bid", {
+            auctionId: currentAuction.meaningfulId,
+          });
+          onBidSubmit();
+        })
+        .catch((err) => {
+          const error = err.response.data.message;
+          setAlertDescription(<span>{error}</span>);
+        });
     }
   };
 
   const topBidderTooltip = (propss) => (
     <Tooltip {...propss}>You are already the winning bidder.</Tooltip>
+  );
+
+  const isDutchTooltip = (propss) => (
+    <Tooltip {...propss}>
+      You are not able to modify your bid in this auction.
+    </Tooltip>
   );
 
   return (
@@ -150,54 +179,88 @@ const BiddingModal = ({
       show={show}
       {...props}
     >
+      {alertDescription && (
+        <Alert className="bidding-modal_alerts" variant="danger">
+          {alertDescription}
+        </Alert>
+      )}
+      <div>
+        <span className="bidding-modal_reserve-price_afore">
+          Reserve price:
+        </span>
+        <span className="bidding-modal_reserve-price_value">
+          {" " + ToDisplayValue(currentAuction?.reservePrice)}
+        </span>
+      </div>
       <div>
         <span className="bidding-modal_current-price_afore">Winning bid: </span>
         <span className="bidding-modal_current-price_value">
           {topBid?.value ? ToDisplayValue(topBid.value) : "No bids"}
         </span>
       </div>
-      {alertDescription && (
-        <Alert className="bidding-modal_alerts" variant="danger">
-          {alertDescription}
-        </Alert>
-      )}
       <Form onSubmit={onSubmit}>
         <Form.Label>Bid:</Form.Label>
-        <span className="bidding-modal_value-entry">
-          {topBid?.creator === currentUser?.id && (
+        {currentAuction?.auctionType === "ENG" && (
+          <span className="bidding-modal_value-entry">
+            {topBid?.creator === currentUser?.id && (
+              <FontAwesomeIcon
+                icon={faLock}
+                className="bidding-modal_value-entry_padlock"
+              />
+            )}
+            <OverlayTrigger
+              placement="top"
+              delay={{ show: 250, hide: 400 }}
+              overlay={
+                topBid?.creator === currentUser?.id ? topBidderTooltip : <></>
+              }
+            >
+              <CurrencyInput
+                className="form-control"
+                name="bid"
+                required
+                prefix="£"
+                onValueChange={setBidValue}
+                defaultValue={bidValue}
+                decimalsLimit={2}
+                placeholder="£30.99"
+                disabled={topBid?.creator === currentUser?.id}
+                allowNegativeValue={false}
+              />
+            </OverlayTrigger>
+          </span>
+        )}
+        {currentAuction?.auctionType === "DUT" && (
+          <span className="bidding-modal_value-entry">
             <FontAwesomeIcon
               icon={faLock}
               className="bidding-modal_value-entry_padlock"
             />
-          )}
-          <OverlayTrigger
-            placement="top"
-            delay={{ show: 250, hide: 400 }}
-            overlay={
-              topBid?.creator === currentUser?.id ? topBidderTooltip : <></>
-            }
-          >
-            <CurrencyInput
-              className="form-control"
-              required
-              prefix="£"
-              onValueChange={(v) => setBidValue(v)}
-              value={bidValue}
-              decimalsLimit={2}
-              placeholder="£30.99"
-              disabled={topBid?.creator === currentUser?.id}
-              allowNegativeValue={false}
-            />
-          </OverlayTrigger>
-        </span>
+            <OverlayTrigger
+              placement="top"
+              delay={{ show: 250, hide: 400 }}
+              overlay={isDutchTooltip}
+            >
+              <CurrencyInput
+                className="form-control"
+                required
+                prefix="£"
+                decimalsLimit={2}
+                defaultValue={bidValue}
+                disabled
+              />
+            </OverlayTrigger>
+          </span>
+        )}
         <Form.Label>Estimated completion time:</Form.Label>
         <Container>
           <Row>
             <Col>
               <Form.Control
-                required
+                name="completion-time"
                 as="input"
                 type="number"
+                required
                 defaultValue={timeEstimate}
                 onChange={(e) => setTimeEstimate(e.target.value)}
                 min={1}
@@ -218,6 +281,7 @@ const BiddingModal = ({
         <Form.Label>Proposal:</Form.Label>
         <Form.Control
           as="textarea"
+          name="proposal"
           rows={3}
           minLength={10}
           required

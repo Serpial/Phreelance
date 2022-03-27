@@ -9,15 +9,15 @@ import "./AuctionList.css";
  * Takes a list of auctions objects and generates
  * auctions cards to be displayed to the user.
  *
- * @param {String} userId
- * This refers to the user in the backend to retreive
+ * @param {String} userAppId
+ * This refers to the user in the backend to retrieve
  * bids.
  *
  * @param {Array} auctions
  * Array of auction objects to be turned into cards.
  * 
  * @param {String} emptyMessage
- * Sttring that you wish to be displayed when the list
+ * String that you wish to be displayed when the list
  * is empty
  *
  * @returns list of auctions to be displayed.

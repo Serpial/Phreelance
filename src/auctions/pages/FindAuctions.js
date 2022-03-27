@@ -83,7 +83,7 @@ const Auctions = () => {
         );
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err.response);
       });
     return () => (cancel = true);
   }, [appUser.id, pageNumber, filterValues]);
