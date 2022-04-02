@@ -99,7 +99,6 @@ const Auctions = () => {
         </Col>
         <Col md={7} lg={8}>
           <AuctionList
-            userAppId={appUser.id}
             auctions={auctionsOnPage}
             emptyMessage="Could not find any auctions with these filters."
           />

@@ -64,12 +64,11 @@ const MyAuctions = () => {
           <Row>
             <Col sm className="my-auctions_content-area">
               <h2>Auctions you are participating in:</h2>
-              <AuctionList userAppId={appUser.id} auctions={bidAuctionList} />
+              <AuctionList auctions={bidAuctionList} />
             </Col>
             <Col sm className="my-auctions_content-area">
               <h2>Auctions you have created:</h2>
               <AuctionList
-                userAppId={appUser.id}
                 auctions={createdAuctionList}
               />
             </Col>

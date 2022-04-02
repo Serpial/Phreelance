@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 import AuctionCard from "./AuctionCard";
+import { useAuth } from "../../shared/contexts/AuthContext";
 
 import "./AuctionList.css";
 
@@ -9,21 +10,18 @@ import "./AuctionList.css";
  * Takes a list of auctions objects and generates
  * auctions cards to be displayed to the user.
  *
- * @param {String} userAppId
- * This refers to the user in the backend to retrieve
- * bids.
- *
  * @param {Array} auctions
  * Array of auction objects to be turned into cards.
- * 
+ *
  * @param {String} emptyMessage
  * String that you wish to be displayed when the list
  * is empty
  *
  * @returns list of auctions to be displayed.
  */
-const AuctionList = ({ userAppId, auctions, emptyMessage }) => {
+const AuctionList = ({ auctions, emptyMessage }) => {
   const navigate = useNavigate();
+  const { appUser } = useAuth();
 
   if (auctions.length === 0) {
     return (
@@ -45,7 +43,7 @@ const AuctionList = ({ userAppId, auctions, emptyMessage }) => {
             isPublic={auction.isPublic}
             startTime={auction.starting}
             closeTime={auction.finishing}
-            userAppId={userAppId}
+            userAppId={appUser}
           />
         </li>
       ))}

@@ -17,6 +17,9 @@ import "./Profile.css";
  */
 const Profile = () => {
   const [subjectUser, setSubjectUser] = useState();
+  const [winningBids, setWinningBids] = useState();
+  const [winningAuctions, setWinningAuctions] = useState([]);
+  const [loadingAuctions, setLoadingAuctions] = useState(true);
 
   const { userID } = useParams();
   const navigate = useNavigate();
@@ -24,18 +27,48 @@ const Profile = () => {
   useEffect(() => {
     let cancel = false;
 
+    setLoadingAuctions(true);
     Axios.get(`/api/users/${userID}`)
-      .then((res) => {
+      .then(({ data }) => {
         if (cancel) return;
-        const userRes = res.data.user;
-        setSubjectUser(userRes);
+        console.log("subject:", data.user.id);
+        setSubjectUser(data.user);
+        return Axios.get(`/api/bids/winning-bids/user/${data.user.id}`);
       })
-      .catch((_err) => navigate("/find-auctions"));
+      .then((bidsRes) => {
+        if (cancel) return;
+        console.log("bid:", bidsRes.data.bids);
+        setWinningBids(bidsRes.data.bids);
+      })
+      .catch((_err) => console.log(_err));
 
     return () => {
       cancel = true;
     };
   }, [userID, navigate]);
+
+  useEffect(() => {
+    if (!winningBids || winningBids.length === 0) {
+      setLoadingAuctions(false);
+      return;
+    }
+
+    const winningAuctionsRetrieved = [];
+    for (const bid of winningBids) {
+      Axios.get(`/api/auctions/${bid.auction}`)
+        .then(({ data }) => {
+          winningAuctionsRetrieved.push(data.auction);
+        })
+        .catch((_err) => {
+          console.log("Error loading bid:", bid.id);
+        });
+    }
+
+    console.log(winningAuctionsRetrieved);
+
+    setWinningAuctions(winningAuctionsRetrieved);
+    setLoadingAuctions(false);
+  }, [winningBids]);
 
   return (
     <Container>
@@ -50,7 +83,12 @@ const Profile = () => {
           />
           <span>Auctions victories:</span>
         </h3>
-        <AuctionList userAppId={subjectUser?.id} auctions={[]} />
+        {!loadingAuctions && (
+          <AuctionList
+            auctions={winningAuctions}
+            emptyMessage={"This user has not yet won an auction."}
+          />
+        )}
       </Row>
     </Container>
   );

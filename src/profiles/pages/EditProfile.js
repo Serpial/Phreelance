@@ -55,8 +55,6 @@ const EditProfile = () => {
             biography: currentBiography.value,
             profilePhoto: snapshot.metadata.fullPath,
           };
-          console.log(snapshot);
-          console.log(newProfile);
           return Axios.patch(
             `/api/users/update-profile/${appUser.id}`,
             newProfile

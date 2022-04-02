@@ -81,10 +81,11 @@ const BiddingModal = ({
 
         if (!bidRes) return;
         setOldBid(bidRes);
-
         setBidValue(bidRes.value);
+
         setTimeEstimate(parseInt(bidRes.timeEstimation.split(" ")[0]));
         setTimeEstimateBase(bidRes.timeEstimation.split(" ")[1]);
+
         setProposal(bidRes.description);
       })
       .catch((err) => {
@@ -103,12 +104,8 @@ const BiddingModal = ({
   }, []);
 
   useEffect(() => {
-    if (
-      currentAuction?.auctionType === "ENG" ||
-      !refreshAutoPrice ||
-      !currentAuction
-    )
-      return;
+    if (!refreshAutoPrice || !currentAuction) return;
+    if (currentAuction?.auctionType === "ENG") return;
     const currentIncrement = calculateCurrentIncrement(
       new Date().getTime(),
       new Date(currentAuction.starting).getTime(),
@@ -131,7 +128,6 @@ const BiddingModal = ({
       value: bidValue,
       timeEstimation: timeEstimate + " " + timeEstimateBase,
     };
-    console.log(newBid);
     if (oldBid) {
       Axios.patch(`/api/bids/${oldBid.id}`, newBid)
         .then(() => {
@@ -246,7 +242,8 @@ const BiddingModal = ({
                 required
                 prefix="£"
                 decimalsLimit={2}
-                defaultValue={bidValue}
+                value={bidValue}
+                readOnly
                 disabled
               />
             </OverlayTrigger>
