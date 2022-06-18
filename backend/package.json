@@ -1,0 +1,37 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "apidoc": {
+    "name": "PhreelanceBackend",
+    "version": "1.0.0",
+    "description": "API docs",
+    "title": "Phreelance backend API",
+    "url": "http://localhost:3000/api"
+  },
+  "scripts": {
+    "start": "node ./src/app.js",
+    "dev": "SET NODE_ENV=dev&& nodemon -r dotenv/config ./src/app.js",
+    "test": "SET NODE_ENV=test&& mocha --timeout 10000 'test/**/*.js' --recursive -r dotenv/config --exit",
+    "doc": "apidoc -i src/controllers -o apidoc"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.1",
+    "config": "^3.3.6",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.2",
+    "express-validator": "^6.14.0",
+    "mongoose": "^6.1.4",
+    "nodemailer": "^6.7.3",
+    "nodemon": "^2.0.15",
+    "socket.io": "^4.4.1"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-http": "^4.3.0",
+    "mocha": "^9.1.3"
+  }
+}

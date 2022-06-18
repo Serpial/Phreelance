@@ -1,0 +1,4 @@
+{
+  "DBHost": "phreelance.zcglt.mongodb.net/test?retryWrites=true&w=majority",
+  "FrontEndHost": "http://localhost:3000"
+}
